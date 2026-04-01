@@ -140,7 +140,7 @@ function StepDialog({ step }: StepDialogProps) {
             </div>
           ))}
         </div>
-        <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+        <div className="rounded-none bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
           {step.person} · {step.timestamp}
         </div>
       </DialogContent>

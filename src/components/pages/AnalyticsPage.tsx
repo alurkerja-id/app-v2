@@ -142,7 +142,7 @@ export function AnalyticsPage() {
             <div
               key={card.label}
               className={cn(
-                "rounded-2xl border bg-card p-4 ring-1",
+                "rounded-none border bg-card p-4 ring-1",
                 card.ring
               )}
             >
@@ -150,7 +150,7 @@ export function AnalyticsPage() {
                 <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   {card.label}
                 </p>
-                <div className={cn("flex size-7 items-center justify-center rounded-lg", card.iconBg)}>
+                <div className={cn("flex size-7 items-center justify-center rounded-none", card.iconBg)}>
                   <Icon className="size-3.5" />
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function AnalyticsPage() {
       {/* Charts row */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Bar chart (2/3) */}
-        <div className="rounded-2xl border border-border bg-card p-4 lg:col-span-2">
+        <div className="rounded-none border border-border bg-card p-4 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xs font-semibold">Request Volume Trends</h3>
@@ -218,12 +218,12 @@ export function AnalyticsPage() {
             {BAR_DATA.map((d, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5 group h-full">
                 {/* Tooltip */}
-                <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-foreground text-background text-[10px] rounded px-1.5 py-0.5 pointer-events-none z-10">
+                <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-foreground text-background text-[10px] rounded-none px-1.5 py-0.5 pointer-events-none z-10">
                   {d.val}
                 </div>
                 <div className="w-full flex-1 flex flex-col justify-end">
                   <div
-                    className="w-full rounded-t-sm bg-gradient-to-t from-blue-600 to-indigo-500 transition-all hover:from-blue-500 hover:to-indigo-400 cursor-default"
+                    className="w-full rounded-none bg-gradient-to-t from-blue-600 to-indigo-500 transition-all hover:from-blue-500 hover:to-indigo-400 cursor-default"
                     style={{ height: `${(d.val / maxVal) * 100}%` }}
                   />
                 </div>
@@ -234,7 +234,7 @@ export function AnalyticsPage() {
         </div>
 
         {/* Donut chart (1/3) */}
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-none border border-border bg-card p-4">
           <div className="mb-4">
             <h3 className="text-xs font-semibold">Status Distribution</h3>
             <p className="text-[11px] text-muted-foreground">Request breakdown by status</p>

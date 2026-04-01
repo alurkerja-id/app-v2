@@ -148,7 +148,7 @@ export function RequestsPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="rounded-none border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
@@ -203,7 +203,7 @@ export function RequestsPage() {
                       <div className="flex items-start gap-2.5">
                         <div
                           className={cn(
-                            "flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white text-[9px] font-bold mt-0.5",
+                            "flex size-7 shrink-0 items-center justify-center rounded-none bg-gradient-to-br text-white text-[9px] font-bold mt-0.5",
                             gradient
                           )}
                         >

@@ -53,7 +53,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
     <button
       onClick={() => onClick(task)}
       className={cn(
-        "w-full text-left rounded-xl border bg-card p-3 transition-all hover:shadow-sm hover:border-blue-200 dark:hover:border-blue-800",
+        "w-full text-left rounded-none border bg-card p-3 transition-all hover:shadow-sm hover:border-blue-200 dark:hover:border-blue-800",
         selected
           ? "border-blue-400 dark:border-blue-600 ring-1 ring-blue-400/30"
           : "border-border"
@@ -63,7 +63,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
         {/* Process icon */}
         <div
           className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white text-[10px] font-bold",
+            "flex size-8 shrink-0 items-center justify-center rounded-none bg-gradient-to-br text-white text-[10px] font-bold",
             gradient
           )}
         >

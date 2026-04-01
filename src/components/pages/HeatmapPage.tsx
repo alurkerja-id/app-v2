@@ -100,7 +100,7 @@ export function HeatmapPage() {
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-none border border-border bg-card p-3">
         <div className="flex items-center gap-1.5">
           <label className="text-[11px] font-medium text-muted-foreground whitespace-nowrap">From</label>
           <Input
@@ -151,7 +151,7 @@ export function HeatmapPage() {
         {summaryStats.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border bg-card px-3 py-2.5 text-center"
+            className="rounded-none border border-border bg-card px-3 py-2.5 text-center"
           >
             <p className="text-lg font-bold">{s.value}</p>
             <p className="text-[11px] font-medium text-foreground/70">{s.label}</p>
@@ -161,7 +161,7 @@ export function HeatmapPage() {
       </div>
 
       {/* BPMN placeholder */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-none border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-3 py-2 flex items-center justify-between">
           <div>
             <h3 className="text-xs font-semibold">Process Flow Heatmap</h3>
@@ -174,7 +174,7 @@ export function HeatmapPage() {
             <span className="text-[10px] text-muted-foreground">Low</span>
             <div className="flex gap-0.5">
               {HEAT_COLORS.map((c, i) => (
-                <div key={i} className={cn("h-3 w-4 rounded-sm", c)} />
+                <div key={i} className={cn("h-3 w-4 rounded-none", c)} />
               ))}
             </div>
             <span className="text-[10px] text-muted-foreground">High</span>
@@ -218,7 +218,7 @@ export function HeatmapPage() {
                     y={58}
                     width={110}
                     height={44}
-                    rx={6}
+                    rx={0}
                     fill={fill}
                     stroke="#93c5fd"
                     strokeWidth="1.5"
@@ -249,7 +249,7 @@ export function HeatmapPage() {
       </div>
 
       {/* Metrics table */}
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="rounded-none border border-border overflow-hidden">
         <div className="border-b border-border px-3 py-2">
           <h3 className="text-xs font-semibold">Activity Metrics</h3>
         </div>
@@ -319,7 +319,7 @@ export function HeatmapPage() {
                       <div
                         key={i}
                         className={cn(
-                          "h-3 w-3.5 rounded-sm",
+                          "h-3 w-3.5 rounded-none",
                           i <= row.heatLevel - 1
                             ? HEAT_COLORS[i]
                             : "bg-muted"

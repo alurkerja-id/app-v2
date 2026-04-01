@@ -1,7 +1,7 @@
 export function DiagramTab() {
   return (
     <div className="p-4">
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-none border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-3 py-2">
           <h3 className="text-xs font-semibold">Process Flow Diagram</h3>
           <p className="text-[11px] text-muted-foreground">Employee Onboarding – Current Step: Manager Review</p>
@@ -52,12 +52,12 @@ export function DiagramTab() {
             <text x="36" y="125" textAnchor="middle" fontSize="9" fill="#6b7280">Start</text>
 
             {/* Submit Request task */}
-            <rect x="100" y="78" width="120" height="44" rx="6" fill="white" stroke="#3b82f6" strokeWidth="1.5" />
+            <rect x="100" y="78" width="120" height="44" rx="0" fill="white" stroke="#3b82f6" strokeWidth="1.5" />
             <text x="160" y="97" textAnchor="middle" fontSize="10" fontWeight="600" fill="#1d4ed8">Submit</text>
             <text x="160" y="110" textAnchor="middle" fontSize="10" fontWeight="600" fill="#1d4ed8">Request</text>
 
             {/* Manager Review task (current - amber) */}
-            <rect x="270" y="78" width="120" height="44" rx="6" fill="#fffbeb" stroke="#f59e0b" strokeWidth="2" />
+            <rect x="270" y="78" width="120" height="44" rx="0" fill="#fffbeb" stroke="#f59e0b" strokeWidth="2" />
             <circle cx="282" cy="90" r="4" fill="#f59e0b" opacity="0.8">
               <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
             </circle>
@@ -69,7 +69,7 @@ export function DiagramTab() {
             <text x="465" y="104" textAnchor="middle" fontSize="11" fill="#6b7280" fontWeight="700">×</text>
 
             {/* Execute task (gray - future) */}
-            <rect x="530" y="78" width="100" height="44" rx="6" fill="#f9fafb" stroke="#d1d5db" strokeWidth="1.5" />
+            <rect x="530" y="78" width="100" height="44" rx="0" fill="#f9fafb" stroke="#d1d5db" strokeWidth="1.5" />
             <text x="580" y="97" textAnchor="middle" fontSize="10" fill="#9ca3af">Execute</text>
             <text x="580" y="110" textAnchor="middle" fontSize="10" fill="#9ca3af">Process</text>
 

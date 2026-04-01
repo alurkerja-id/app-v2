@@ -63,7 +63,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
       <Dialog>
         <DialogTrigger asChild>
           <button className="flex items-center gap-2.5 px-3 py-3.5 hover:bg-zinc-800 transition-colors text-left w-full border-b border-zinc-800">
-            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white select-none">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-none bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white select-none">
               L
             </div>
             <div className="min-w-0 flex-1">
@@ -92,7 +92,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 key={ws.id}
                 className="flex items-center gap-2.5 rounded-none px-2 py-2 text-xs hover:bg-accent transition-colors"
               >
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-none bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
                   {ws.name[0]}
                 </div>
                 <span className="flex-1 text-left font-medium">{ws.name}</span>

@@ -109,7 +109,7 @@ export function HomePage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* Task Summary Banner */}
-      <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white relative">
+      <div className="rounded-none overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white relative">
         {/* Noise texture overlay */}
         <div
           className="absolute inset-0 opacity-[0.06]"
@@ -141,7 +141,7 @@ export function HomePage() {
                 return (
                   <div
                     key={card.label}
-                    className="rounded-xl border border-white/10 bg-white/10 backdrop-blur-sm p-3"
+                    className="rounded-none border border-white/10 bg-white/10 backdrop-blur-sm p-3"
                   >
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Icon className="size-3.5 opacity-80" />
@@ -189,7 +189,7 @@ export function HomePage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5">
+            <div className="flex items-center gap-0.5 rounded-none border border-border bg-muted/40 p-0.5">
               <Button
                 variant="ghost"
                 size="icon-xs"
@@ -215,11 +215,11 @@ export function HomePage() {
             {filtered.map((proc) => (
               <button
                 key={proc.id}
-                className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800"
+                className="group flex flex-col gap-3 rounded-none border border-border bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800"
               >
                 <div
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br text-white text-sm font-bold shadow-sm",
+                    "flex size-10 items-center justify-center rounded-none bg-gradient-to-br text-white text-sm font-bold shadow-sm",
                     proc.gradient
                   )}
                 >
@@ -243,11 +243,11 @@ export function HomePage() {
             {filtered.map((proc) => (
               <button
                 key={proc.id}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2.5 text-left hover:bg-muted/50 hover:border-blue-200 dark:hover:border-blue-800 transition-all group"
+                className="flex items-center gap-3 rounded-none border border-border bg-card px-3 py-2.5 text-left hover:bg-muted/50 hover:border-blue-200 dark:hover:border-blue-800 transition-all group"
               >
                 <div
                   className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white text-[10px] font-bold",
+                    "flex size-7 shrink-0 items-center justify-center rounded-none bg-gradient-to-br text-white text-[10px] font-bold",
                     proc.gradient
                   )}
                 >

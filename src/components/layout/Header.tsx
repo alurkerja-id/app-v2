@@ -137,7 +137,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
               return (
                 <DropdownMenuItem key={app.title} className="gap-3 py-2">
                   <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${app.gradient} text-white`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-none bg-gradient-to-br ${app.gradient} text-white`}
                   >
                     <Icon className="size-4" />
                   </div>

@@ -38,7 +38,7 @@ export function FormTab({ task }: FormTabProps) {
   return (
     <div className="flex flex-col gap-3 p-4">
       {Object.entries(grouped).map(([group, fields], gi) => (
-        <div key={group} className="rounded-xl border border-border bg-card">
+        <div key={group} className="rounded-none border border-border bg-card">
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <span className={cn("size-2 rounded-full", GROUP_COLORS[gi % 6])} />
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -111,7 +111,7 @@ function FieldInput({ field }: { field: TaskField }) {
     return (
       <div className="sm:col-span-2">
         {label}
-        <div className="rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 text-center">
+        <div className="rounded-none border-2 border-dashed border-border bg-muted/30 p-4 text-center">
           <RiUploadCloud2Line className="mx-auto mb-1.5 size-6 text-muted-foreground" />
           <p className="text-xs text-muted-foreground">Drop files here or click to upload</p>
         </div>
@@ -120,7 +120,7 @@ function FieldInput({ field }: { field: TaskField }) {
             {files.map((f) => (
               <div
                 key={f}
-                className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-2.5 py-1.5"
+                className="flex items-center gap-2 rounded-none border border-border bg-muted/30 px-2.5 py-1.5"
               >
                 <RiFileTextLine className="size-3.5 shrink-0 text-blue-500" />
                 <span className="text-xs text-foreground">{f}</span>
@@ -141,12 +141,12 @@ function FieldInput({ field }: { field: TaskField }) {
           {imgs.map((img) => (
             <div
               key={img}
-              className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-muted"
+              className="flex h-16 w-16 items-center justify-center rounded-none border border-border bg-muted"
             >
               <RiImageLine className="size-5 text-muted-foreground" />
             </div>
           ))}
-          <div className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border hover:border-blue-400 transition-colors">
+          <div className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-none border-2 border-dashed border-border hover:border-blue-400 transition-colors">
             <span className="text-lg text-muted-foreground">+</span>
           </div>
         </div>

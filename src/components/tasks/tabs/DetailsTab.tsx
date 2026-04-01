@@ -60,7 +60,7 @@ function formatValue(field: TaskField) {
 
   if (field.type === "json") {
     return (
-      <pre className="overflow-x-auto rounded-lg bg-muted p-2 font-mono text-[10px]">
+      <pre className="overflow-x-auto rounded-none bg-muted p-2 font-mono text-[10px]">
         {JSON.stringify(field.value, null, 2)}
       </pre>
     )
@@ -73,7 +73,7 @@ function formatValue(field: TaskField) {
         {imgs.map((img) => (
           <div
             key={img}
-            className="flex h-14 w-14 items-center justify-center rounded-lg bg-muted grayscale transition-all hover:grayscale-0"
+            className="flex h-14 w-14 items-center justify-center rounded-none bg-muted grayscale transition-all hover:grayscale-0"
           >
             <RiFileTextLine className="size-4 text-muted-foreground" />
           </div>
@@ -89,7 +89,7 @@ function formatValue(field: TaskField) {
         {files.map((f) => (
           <div
             key={f}
-            className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-1.5"
+            className="flex items-center gap-2 rounded-none border border-border bg-muted/40 px-2 py-1.5"
           >
             <RiFileTextLine className="size-3.5 shrink-0 text-blue-500" />
             <span className="flex-1 text-xs">{f}</span>
@@ -115,7 +115,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Field Details
         </h3>
-        <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5">
+        <div className="flex items-center gap-0.5 rounded-none border border-border bg-muted/40 p-0.5">
           {(
             [
               { mode: "one" as LayoutMode, icon: RiListCheck2, label: "Single column" },
@@ -174,7 +174,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
 
       {/* Table */}
       {layout === "table" && (
-        <div className="rounded-xl border border-border overflow-hidden">
+        <div className="rounded-none border border-border overflow-hidden">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/40">
@@ -203,7 +203,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-border bg-card p-3">
+        <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
             <RiTimeLine className="size-4 text-blue-500" />
             <span className="text-xs font-semibold">Time Tracked</span>
@@ -211,7 +211,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
           <p className="text-xl font-bold">4h 32m</p>
           <p className="text-[11px] text-muted-foreground">Across 3 sessions</p>
         </div>
-        <div className="rounded-xl border border-border bg-card p-3">
+        <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
             <RiAttachmentLine className="size-4 text-emerald-500" />
             <span className="text-xs font-semibold">Attachments</span>

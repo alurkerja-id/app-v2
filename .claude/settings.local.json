@@ -8,7 +8,10 @@
       "Bash(echo \"OK: $icon\")",
       "Bash(echo \"MISSING: $icon\")",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(sed -i '' 's/rx=\"\"6\"\"/rx=\"\"0\"\"/g' /Users/uyab/Code/lotus/app-v2/src/components/tasks/tabs/DiagramTab.tsx)",
+      "Bash(sed -i '' 's/rx={6}/rx={0}/g' /Users/uyab/Code/lotus/app-v2/src/components/pages/HeatmapPage.tsx)"
     ]
   }
 }
