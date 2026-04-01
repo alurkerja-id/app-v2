@@ -1,6 +1,6 @@
 import {
   RiCloseLine,
-  RiFormLine,
+  RiFileEditLine,
   RiListCheck2,
   RiFlowChart,
   RiHistoryLine,
@@ -96,7 +96,7 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
         <div className="border-b border-border px-2 pt-2">
           <TabsList variant="line" className="h-auto gap-0">
             {[
-              { value: "form", label: "Form", icon: RiFormLine },
+              { value: "form", label: "Form", icon: RiFileEditLine },
               { value: "details", label: "Details", icon: RiListCheck2 },
               { value: "diagram", label: "Diagram", icon: RiFlowChart },
               { value: "history", label: "History", icon: RiHistoryLine },

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(for icon:*)",
+      "Bash(do)",
+      "Bash(grep -q \"declare const $icon:\" /Users/uyab/Code/lotus/app-v2/node_modules/@remixicon/react/index.d.ts)",
+      "Bash(echo \"OK: $icon\")",
+      "Bash(echo \"MISSING: $icon\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

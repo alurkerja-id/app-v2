@@ -7,8 +7,8 @@ import {
   RiGridLine,
   RiListCheck2,
   RiSearchLine,
-  RiChevronDownLine,
-  RiChevronUpLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
   RiArrowRightSLine,
 } from "@remixicon/react"
 import { Input } from "@/components/ui/input"
@@ -128,9 +128,9 @@ export function HomePage() {
               <span className="text-sm font-semibold">Task Summary</span>
             </div>
             {bannerExpanded ? (
-              <RiChevronUpLine className="size-4 opacity-70" />
+              <RiArrowUpSLine className="size-4 opacity-70" />
             ) : (
-              <RiChevronDownLine className="size-4 opacity-70" />
+              <RiArrowDownSLine className="size-4 opacity-70" />
             )}
           </button>
 

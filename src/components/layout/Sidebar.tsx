@@ -5,7 +5,7 @@ import {
   RiInboxLine,
   RiBarChartLine,
   RiMapLine,
-  RiChevronDownLine,
+  RiArrowDownSLine,
   RiCheckLine,
   RiSearchLine,
   RiBuildingLine,
@@ -70,7 +70,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               <p className="truncate text-xs font-semibold text-zinc-100">Lotus HQ</p>
               <p className="truncate text-[10px] text-zinc-400">Enterprise</p>
             </div>
-            <RiChevronDownLine className="size-3.5 shrink-0 text-zinc-400" />
+            <RiArrowDownSLine className="size-3.5 shrink-0 text-zinc-400" />
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xs">

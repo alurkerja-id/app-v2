@@ -1,6 +1,6 @@
 import {
   RiCalendarLine,
-  RiChatLine,
+  RiChat1Line,
   RiAttachmentLine,
   RiArrowRightSLine,
 } from "@remixicon/react"
@@ -128,7 +128,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
             <span className="ml-auto flex items-center gap-1.5 text-[10px] text-muted-foreground">
               {task.comments > 0 && (
                 <span className="flex items-center gap-0.5">
-                  <RiChatLine className="size-3" />
+                  <RiChat1Line className="size-3" />
                   {task.comments}
                 </span>
               )}
