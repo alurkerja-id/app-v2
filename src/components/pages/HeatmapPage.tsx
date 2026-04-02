@@ -94,8 +94,8 @@ export function HeatmapPage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       <div>
-        <h1 className="text-base font-semibold font-heading">Process Discovery</h1>
-        <p className="text-xs text-muted-foreground">
+        <h1 className="font-semibold font-heading">Process Discovery</h1>
+        <p className="text-muted-foreground">
           Analyze process execution patterns and activity heatmaps
         </p>
       </div>
@@ -106,7 +106,7 @@ export function HeatmapPage() {
           <label className="text-[11px] font-medium text-muted-foreground whitespace-nowrap">From</label>
           <Input
             type="date"
-            className="h-7 text-xs w-36"
+            className="h-7 w-36"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
@@ -115,13 +115,13 @@ export function HeatmapPage() {
           <label className="text-[11px] font-medium text-muted-foreground whitespace-nowrap">To</label>
           <Input
             type="date"
-            className="h-7 text-xs w-36"
+            className="h-7 w-36"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
         <Select value={instanceType} onValueChange={setInstanceType}>
-          <SelectTrigger className="h-7 text-xs w-40">
+          <SelectTrigger className="h-7 w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -133,7 +133,7 @@ export function HeatmapPage() {
           </SelectContent>
         </Select>
         <Select value={heatmapType} onValueChange={setHeatmapType}>
-          <SelectTrigger className="h-7 text-xs w-36">
+          <SelectTrigger className="h-7 w-36">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -154,7 +154,7 @@ export function HeatmapPage() {
             key={s.label}
             className="rounded-none border border-border bg-card px-3 py-2.5 text-center"
           >
-            <p className="text-lg font-bold">{s.value}</p>
+            <p className="font-bold">{s.value}</p>
             <p className="text-[11px] font-medium text-foreground/70">{s.label}</p>
             <p className="text-[10px] text-muted-foreground">{s.unit}</p>
           </div>
@@ -165,7 +165,7 @@ export function HeatmapPage() {
       <div className="rounded-none border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-3 py-2 flex items-center justify-between">
           <div>
-            <h3 className="text-xs font-semibold font-heading">Process Flow Heatmap</h3>
+            <h3 className="font-semibold font-heading">Process Flow Heatmap</h3>
             <p className="text-[11px] text-muted-foreground">
               Color intensity represents {heatmapType === "frequency" ? "activity frequency" : heatmapType === "duration" ? "avg duration" : "SLA compliance"}
             </p>
@@ -252,7 +252,7 @@ export function HeatmapPage() {
       {/* Metrics table */}
       <div className="rounded-none border border-border overflow-hidden">
         <div className="border-b border-border px-3 py-2">
-          <h3 className="text-xs font-semibold font-heading">Activity Metrics</h3>
+          <h3 className="font-semibold font-heading">Activity Metrics</h3>
         </div>
         <Table>
           <TableHeader>
@@ -291,9 +291,9 @@ export function HeatmapPage() {
           <TableBody>
             {sorted.map((row) => (
               <TableRow key={row.activity} className="hover:bg-muted/30">
-                <TableCell className="text-xs font-medium py-2.5">{row.activity}</TableCell>
-                <TableCell className="text-xs py-2.5">{row.frequency.toLocaleString()}</TableCell>
-                <TableCell className="text-xs py-2.5">{row.avgDuration}h</TableCell>
+                <TableCell className="font-medium py-2.5">{row.activity}</TableCell>
+                <TableCell className="py-2.5">{row.frequency.toLocaleString()}</TableCell>
+                <TableCell className="py-2.5">{row.avgDuration}h</TableCell>
                 <TableCell className="py-2.5">
                   {row.slaStatus === "ok" && (
                     <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">

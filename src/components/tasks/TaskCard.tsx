@@ -73,7 +73,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-1 mb-1">
-            <p className="text-xs font-semibold leading-snug line-clamp-1">{task.title}</p>
+            <p className="font-semibold leading-snug line-clamp-1">{task.title}</p>
             <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 shrink-0 text-muted-foreground mt-0.5" />
           </div>
 

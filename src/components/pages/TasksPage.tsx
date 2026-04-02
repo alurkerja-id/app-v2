@@ -59,7 +59,7 @@ export function TasksPage() {
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search tasks..."
-                className="pl-8 text-xs"
+                className="pl-8"
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value)
@@ -79,7 +79,7 @@ export function TasksPage() {
                 setPage(1)
               }}
             >
-              <SelectTrigger className="h-7 text-xs flex-1">
+              <SelectTrigger className="h-7 flex-1">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -97,7 +97,7 @@ export function TasksPage() {
                 setPage(1)
               }}
             >
-              <SelectTrigger className="h-7 text-xs flex-1">
+              <SelectTrigger className="h-7 flex-1">
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
@@ -123,8 +123,8 @@ export function TasksPage() {
             {paginated.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
-                <p className="text-sm font-medium">No tasks found</p>
-                <p className="text-xs text-muted-foreground">Adjust your filters</p>
+                <p className="font-medium">No tasks found</p>
+                <p className="text-muted-foreground">Adjust your filters</p>
               </div>
             ) : (
               paginated.map((task) => (

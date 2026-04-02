@@ -114,7 +114,7 @@ export function DiscussionTab() {
           <Textarea
             placeholder="Write a comment..."
             rows={3}
-            className="resize-none text-xs"
+            className="resize-none"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
           />
@@ -133,7 +133,7 @@ export function DiscussionTab() {
       {/* Comments list */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <h3 className="text-xs font-semibold font-heading">Comments</h3>
+          <h3 className="font-semibold font-heading">Comments</h3>
           <span className="flex size-4 items-center justify-center rounded-full bg-muted text-[10px] font-bold">
             {comments.length}
           </span>
@@ -151,12 +151,12 @@ export function DiscussionTab() {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1.5 mb-0.5">
-                  <span className="text-xs font-semibold">{c.author}</span>
+                  <span className="font-semibold">{c.author}</span>
                   <span className="text-[11px] text-muted-foreground">{c.time}</span>
                 </div>
-                <p className="text-xs leading-relaxed">{formatMessage(c)}</p>
+                <p className="leading-relaxed">{formatMessage(c)}</p>
                 {c.bullets && (
-                  <ul className="mt-1.5 ml-3 list-disc text-xs space-y-0.5 text-muted-foreground">
+                  <ul className="mt-1.5 ml-3 list-disc space-y-0.5 text-muted-foreground">
                     {c.bullets.map((b) => (
                       <li key={b}>{b}</li>
                     ))}

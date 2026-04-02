@@ -5,6 +5,7 @@ import {
   AiBeautifyIcon,
   TerminalIcon,
   CpuIcon,
+  Globe02Icon,
   Notification02Icon,
   UserIcon,
   Settings02Icon,
@@ -50,6 +51,12 @@ const appItems = [
     title: "Simulation Engine",
     description: "Model & test workflows",
     gradient: "from-emerald-500 to-teal-600",
+  },
+  {
+    icon: Globe02Icon,
+    title: "Microsite",
+    description: "Publish branded web pages",
+    gradient: "from-orange-500 to-amber-600",
   },
 ]
 
@@ -130,19 +137,19 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
               <span className="font-semibold text-blue-600 dark:text-blue-400">App</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64">
+          <DropdownMenuContent align="start" className="w-72">
             <DropdownMenuLabel>Switch App</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {appItems.map((app) => (
                 <DropdownMenuItem key={app.title} className="gap-3 py-2">
                   <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-none bg-gradient-to-br ${app.gradient} text-white`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${app.gradient} text-white`}
                   >
                     <HugeiconsIcon icon={app.icon} className="size-4" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium">{app.title}</p>
-                    <p className="text-muted-foreground">{app.description}</p>
+                    <p className="truncate text-muted-foreground">{app.description}</p>
                   </div>
                 </DropdownMenuItem>
             ))}
@@ -150,7 +157,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
         </DropdownMenu>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1 text-muted-foreground">
           <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
           <span className="font-medium text-foreground">{PAGE_LABELS[activePage]}</span>
         </div>
@@ -216,7 +223,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="truncate text-xs font-semibold">Alice Wang</p>
+                <p className="truncate font-semibold">Alice Wang</p>
                 <p className="truncate text-[10px] text-muted-foreground">alice@company.com</p>
               </div>
             </div>

@@ -100,8 +100,8 @@ export function RequestsPage() {
     <div className="flex flex-col gap-4 p-4 md:p-6">
       {/* Header */}
       <div>
-        <h1 className="text-base font-semibold font-heading">Requests</h1>
-        <p className="text-xs text-muted-foreground">Track and manage all submitted process requests</p>
+        <h1 className="font-semibold font-heading">Requests</h1>
+        <p className="text-muted-foreground">Track and manage all submitted process requests</p>
       </div>
 
       {/* Toolbar */}
@@ -110,7 +110,7 @@ export function RequestsPage() {
           <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search requests..."
-            className="pl-8 text-xs"
+            className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -119,7 +119,7 @@ export function RequestsPage() {
           value={statusFilter}
           onValueChange={(v) => setStatusFilter(v as RequestStatus | "All")}
         >
-          <SelectTrigger className="w-36 text-xs">
+          <SelectTrigger className="w-36">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -130,7 +130,7 @@ export function RequestsPage() {
           </SelectContent>
         </Select>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-40 text-xs">
+          <SelectTrigger className="w-40">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -191,7 +191,7 @@ export function RequestsPage() {
               <TableRow>
                 <TableCell colSpan={5} className="py-16 text-center">
                   <HugeiconsIcon icon={Search01Icon} className="mx-auto mb-2 size-7 text-muted-foreground" />
-                  <p className="text-xs font-medium">No requests found</p>
+                  <p className="font-medium">No requests found</p>
                   <p className="text-[11px] text-muted-foreground">Try adjusting your filters</p>
                 </TableCell>
               </TableRow>
@@ -211,7 +211,7 @@ export function RequestsPage() {
                           {req.id.replace("REQ-", "")}
                         </div>
                         <div>
-                          <p className="text-xs font-medium">{req.title}</p>
+                          <p className="font-medium">{req.title}</p>
                           <p className="text-[11px] text-muted-foreground">{req.type}</p>
                         </div>
                       </div>
@@ -229,7 +229,7 @@ export function RequestsPage() {
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-xs font-medium">{req.requester}</p>
+                          <p className="font-medium">{req.requester}</p>
                           <p className="text-[11px] text-muted-foreground">
                             {relativeTime(req.requestedAt)}
                           </p>
@@ -248,7 +248,7 @@ export function RequestsPage() {
                                   : "bg-muted-foreground"
                               )}
                             />
-                            <span className="text-xs font-medium">{req.currentTask}</span>
+                            <span className="font-medium">{req.currentTask}</span>
                           </div>
                           <p className="mt-0.5 text-[11px] text-muted-foreground pl-3">
                             {req.assignee}
@@ -263,7 +263,7 @@ export function RequestsPage() {
                         {req.status === "Open" && (
                           <>
                             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                            <span className="font-medium text-blue-600 dark:text-blue-400">
                               Open
                             </span>
                           </>
@@ -271,7 +271,7 @@ export function RequestsPage() {
                         {req.status === "Completed" && (
                           <>
                             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-emerald-500" />
-                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                            <span className="font-medium text-emerald-600 dark:text-emerald-400">
                               Completed
                             </span>
                           </>
@@ -279,7 +279,7 @@ export function RequestsPage() {
                         {req.status === "Closed" && (
                           <>
                             <HugeiconsIcon icon={CancelCircleIcon} className="size-3.5 text-muted-foreground" />
-                            <span className="text-xs font-medium text-muted-foreground">
+                            <span className="font-medium text-muted-foreground">
                               Closed
                             </span>
                           </>

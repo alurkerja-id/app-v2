@@ -42,7 +42,7 @@ export function FormTab({ task }: FormTabProps) {
         <div key={group} className="rounded-none border border-border bg-card">
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <span className={cn("size-2 rounded-full", GROUP_COLORS[gi % 6])} />
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <span className="font-semibold uppercase tracking-wider text-muted-foreground">
               {group}
             </span>
           </div>
@@ -71,7 +71,7 @@ function FieldInput({ field }: { field: TaskField }) {
         <Textarea
           defaultValue={field.value as string}
           rows={3}
-          className="resize-none text-xs"
+          className="resize-none"
         />
       </div>
     )
@@ -84,7 +84,7 @@ function FieldInput({ field }: { field: TaskField }) {
         <Textarea
           defaultValue={JSON.stringify(field.value, null, 2)}
           rows={4}
-          className="resize-none font-mono text-xs"
+          className="resize-none font-mono"
         />
       </div>
     )
@@ -95,7 +95,7 @@ function FieldInput({ field }: { field: TaskField }) {
       <div>
         {label}
         <Select defaultValue={field.value ? "yes" : "no"}>
-          <SelectTrigger className="w-full text-xs">
+          <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -114,7 +114,7 @@ function FieldInput({ field }: { field: TaskField }) {
         {label}
         <div className="rounded-none border-2 border-dashed border-border bg-muted/30 p-4 text-center">
           <HugeiconsIcon icon={CloudUploadIcon} className="mx-auto mb-1.5 size-6 text-muted-foreground" />
-          <p className="text-xs text-muted-foreground">Drop files here or click to upload</p>
+          <p className="text-muted-foreground">Drop files here or click to upload</p>
         </div>
         {files.length > 0 && (
           <div className="mt-2 flex flex-col gap-1">
@@ -124,7 +124,7 @@ function FieldInput({ field }: { field: TaskField }) {
                 className="flex items-center gap-2 rounded-none border border-border bg-muted/30 px-2.5 py-1.5"
               >
                 <HugeiconsIcon icon={File01Icon} className="size-3.5 shrink-0 text-blue-500" />
-                <span className="text-xs text-foreground">{f}</span>
+                <span className="text-foreground">{f}</span>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ function FieldInput({ field }: { field: TaskField }) {
             </div>
           ))}
           <div className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-none border-2 border-dashed border-border hover:border-blue-400 transition-colors">
-            <span className="text-lg text-muted-foreground">+</span>
+            <span className="text-muted-foreground">+</span>
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ function FieldInput({ field }: { field: TaskField }) {
       <Input
         type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
         defaultValue={field.value as string | number}
-        className="text-xs"
+        className=""
       />
     </div>
   )

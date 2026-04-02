@@ -93,7 +93,7 @@ function formatValue(field: TaskField) {
             className="flex items-center gap-2 rounded-none border border-border bg-muted/40 px-2 py-1.5"
           >
             <HugeiconsIcon icon={File01Icon} className="size-3.5 shrink-0 text-blue-500" />
-            <span className="flex-1 text-xs">{f}</span>
+            <span className="flex-1">{f}</span>
             <Button variant="ghost" size="icon-xs">
               <HugeiconsIcon icon={Download01Icon} />
             </Button>
@@ -113,7 +113,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
     <div className="flex flex-col gap-4 p-4">
       {/* Layout switcher */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <h3 className="font-semibold uppercase tracking-wider text-muted-foreground">
           Field Details
         </h3>
         <div className="flex items-center gap-0.5 rounded-none border border-border bg-muted/40 p-0.5">
@@ -146,7 +146,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {f.label}
               </span>
-              <div className="text-xs">{formatValue(f)}</div>
+              <div className="">{formatValue(f)}</div>
             </div>
           ))}
         </div>
@@ -167,7 +167,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {f.label}
               </span>
-              <div className="text-xs">{formatValue(f)}</div>
+              <div className="">{formatValue(f)}</div>
             </div>
           ))}
         </div>
@@ -176,7 +176,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
       {/* Table */}
       {layout === "table" && (
         <div className="rounded-none border border-border overflow-hidden">
-          <table className="w-full text-xs">
+          <table className="w-full">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider text-muted-foreground w-1/3">
@@ -207,17 +207,17 @@ export function DetailsTab({ task }: DetailsTabProps) {
         <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
             <HugeiconsIcon icon={Time01Icon} className="size-4 text-blue-500" />
-            <span className="text-xs font-semibold font-heading">Time Tracked</span>
+            <span className="font-semibold font-heading">Time Tracked</span>
           </div>
-          <p className="text-xl font-bold">4h 32m</p>
+          <p className="font-bold">4h 32m</p>
           <p className="text-[11px] text-muted-foreground">Across 3 sessions</p>
         </div>
         <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
             <HugeiconsIcon icon={Attachment01Icon} className="size-4 text-emerald-500" />
-            <span className="text-xs font-semibold font-heading">Attachments</span>
+            <span className="font-semibold font-heading">Attachments</span>
           </div>
-          <p className="text-xl font-bold">{task.attachments}</p>
+          <p className="font-bold">{task.attachments}</p>
           <p className="text-[11px] text-muted-foreground">Files attached</p>
         </div>
       </div>

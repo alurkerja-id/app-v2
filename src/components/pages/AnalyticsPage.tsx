@@ -131,8 +131,8 @@ export function AnalyticsPage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       <div>
-        <h1 className="text-base font-semibold font-heading">Analytics</h1>
-        <p className="text-xs text-muted-foreground">Performance overview across all processes</p>
+        <h1 className="font-semibold font-heading">Analytics</h1>
+        <p className="text-muted-foreground">Performance overview across all processes</p>
       </div>
 
       {/* Stat cards */}
@@ -154,7 +154,7 @@ export function AnalyticsPage() {
                   <HugeiconsIcon icon={card.icon} className="size-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold">{card.value}</p>
+              <p className="font-bold">{card.value}</p>
               <div className="mt-1 flex items-center gap-1">
                 <span
                   className={cn(
@@ -198,11 +198,11 @@ export function AnalyticsPage() {
         <div className="rounded-none border border-border bg-card p-4 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xs font-semibold font-heading">Request Volume Trends</h3>
+              <h3 className="font-semibold font-heading">Request Volume Trends</h3>
               <p className="text-[11px] text-muted-foreground">Daily request activity</p>
             </div>
             <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-28 h-7 text-xs">
+              <SelectTrigger className="w-28 h-7">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -236,7 +236,7 @@ export function AnalyticsPage() {
         {/* Donut chart (1/3) */}
         <div className="rounded-none border border-border bg-card p-4">
           <div className="mb-4">
-            <h3 className="text-xs font-semibold font-heading">Status Distribution</h3>
+            <h3 className="font-semibold font-heading">Status Distribution</h3>
             <p className="text-[11px] text-muted-foreground">Request breakdown by status</p>
           </div>
 
@@ -288,9 +288,9 @@ export function AnalyticsPage() {
                     className="size-2.5 rounded-full"
                     style={{ background: seg.color }}
                   />
-                  <span className="text-xs text-muted-foreground">{seg.label}</span>
+                  <span className="text-muted-foreground">{seg.label}</span>
                 </div>
-                <span className="text-xs font-semibold">{seg.pct}%</span>
+                <span className="font-semibold">{seg.pct}%</span>
               </div>
             ))}
           </div>

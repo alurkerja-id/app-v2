@@ -126,7 +126,7 @@ export function HomePage() {
           >
             <div className="flex items-center gap-2">
               <HugeiconsIcon icon={Task01Icon} className="size-4" />
-              <span className="text-sm font-semibold">Task Summary</span>
+              <span className="font-semibold">Task Summary</span>
             </div>
             {bannerExpanded ? (
               <HugeiconsIcon icon={ArrowUp01Icon} className="size-4 opacity-70" />
@@ -149,7 +149,7 @@ export function HomePage() {
                         {card.label}
                       </span>
                     </div>
-                    <p className="text-2xl font-bold">{card.value}</p>
+                    <p className="font-bold">{card.value}</p>
                     <p className="text-[11px] opacity-60 mt-0.5">{card.description}</p>
                   </div>
                 )
@@ -164,7 +164,7 @@ export function HomePage() {
                     className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-2.5 py-1"
                   >
                     <HugeiconsIcon icon={card.icon} className="size-3 opacity-80" />
-                    <span className="text-xs font-semibold">{card.value}</span>
+                    <span className="font-semibold">{card.value}</span>
                     <span className="text-[11px] opacity-70">{card.label}</span>
                   </div>
                 )
@@ -177,13 +177,13 @@ export function HomePage() {
       {/* Start a Process */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold font-heading">Start a Process</h2>
+          <h2 className="font-semibold font-heading">Start a Process</h2>
           <div className="flex items-center gap-2">
             <div className="relative">
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search processes..."
-                className="pl-8 h-7 text-xs w-40"
+                className="pl-8 h-7 w-40"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -218,14 +218,14 @@ export function HomePage() {
               >
                 <div
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-none bg-gradient-to-br text-white text-sm font-bold shadow-sm",
+                    "flex size-10 items-center justify-center rounded-none bg-gradient-to-br text-white font-bold shadow-sm",
                     proc.gradient
                   )}
                 >
                   {proc.abbr}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold">{proc.name}</p>
+                  <p className="font-semibold">{proc.name}</p>
                   <p className="mt-0.5 text-[11px] text-muted-foreground leading-relaxed">
                     {proc.description}
                   </p>
@@ -253,7 +253,7 @@ export function HomePage() {
                   {proc.abbr}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold">{proc.name}</p>
+                  <p className="font-semibold">{proc.name}</p>
                   <p className="text-[11px] text-muted-foreground truncate">{proc.description}</p>
                 </div>
                 <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground group-hover:text-blue-500 transition-colors" />
@@ -265,8 +265,8 @@ export function HomePage() {
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium">No processes found</p>
-            <p className="text-xs text-muted-foreground">Try a different search term</p>
+            <p className="font-medium">No processes found</p>
+            <p className="text-muted-foreground">Try a different search term</p>
           </div>
         )}
       </div>

@@ -119,7 +119,7 @@ function StepDialog({ step }: StepDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="text-xs font-medium hover:underline text-foreground transition-colors hover:text-blue-600">
+        <button className="font-medium hover:underline text-foreground transition-colors hover:text-blue-600">
           {step.name}
         </button>
       </DialogTrigger>
@@ -135,8 +135,8 @@ function StepDialog({ step }: StepDialogProps) {
         <div className="flex flex-col gap-0">
           {Object.entries(step.details).map(([key, val]) => (
             <div key={key} className="flex items-center justify-between border-b border-border py-2 last:border-0">
-              <span className="text-xs text-muted-foreground">{key}</span>
-              <span className="text-xs font-medium">{val}</span>
+              <span className="text-muted-foreground">{key}</span>
+              <span className="font-medium">{val}</span>
             </div>
           ))}
         </div>

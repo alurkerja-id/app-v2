@@ -48,7 +48,7 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
             <span className="text-[11px] text-muted-foreground">·</span>
             <span className="text-[11px] text-muted-foreground">{task.process}</span>
           </div>
-          <h2 className="text-sm font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
+          <h2 className="font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
           <div className="mt-1.5 flex items-center gap-2 flex-wrap">
             {/* Status */}
             <span className={cn("text-[11px] font-medium", STATUS_COLOR[task.status])}>

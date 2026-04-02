@@ -9,11 +9,9 @@ import {
   ArrowDown01Icon,
   Tick02Icon,
   Search01Icon,
-  Building01Icon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Dialog,
@@ -64,11 +62,11 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
       <Dialog>
         <DialogTrigger asChild>
           <button className="flex items-center gap-2.5 px-3 py-3.5 hover:bg-zinc-800 transition-colors text-left w-full border-b border-zinc-800">
-            <div className="flex size-7 shrink-0 items-center justify-center rounded-none bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white select-none">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white select-none">
               L
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-zinc-100">Lotus HQ</p>
+              <p className="truncate font-semibold text-zinc-100">Lotus HQ</p>
               <p className="truncate text-[10px] text-zinc-400">Enterprise</p>
             </div>
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-400" />
@@ -91,9 +89,9 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             {filteredWs.map((ws) => (
               <button
                 key={ws.id}
-                className="flex items-center gap-2.5 rounded-none px-2 py-2 text-xs hover:bg-accent transition-colors"
+                className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-accent transition-colors"
               >
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-none bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
                   {ws.name[0]}
                 </div>
                 <span className="flex-1 text-left font-medium">{ws.name}</span>
@@ -121,7 +119,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-none px-2 py-1.5 text-xs transition-colors",
+                  "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors",
                   active
                     ? "bg-zinc-700/60 text-zinc-100 font-medium"
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
@@ -138,31 +136,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             )
           })}
         </div>
-
-        <div className="mt-4 px-2">
-          <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Organization
-          </p>
-          <button className="flex w-full items-center gap-2.5 rounded-none px-2 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
-            <HugeiconsIcon icon={Building01Icon} className="size-4 shrink-0" />
-            <span className="flex-1 text-left">Company</span>
-            <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-blue-400" />
-          </button>
-        </div>
       </nav>
-
-      {/* User footer */}
-      <div className="border-t border-zinc-800 px-3 py-2.5">
-        <div className="flex items-center gap-2">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-[10px] font-semibold text-white">
-            AW
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-medium text-zinc-200">Alice Wang</p>
-            <p className="truncate text-[10px] text-zinc-500">Admin</p>
-          </div>
-        </div>
-      </div>
     </aside>
   )
 }
