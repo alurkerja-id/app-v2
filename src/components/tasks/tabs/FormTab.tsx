@@ -1,4 +1,5 @@
-import { RiUploadCloud2Line, RiFileTextLine, RiImageLine } from "@remixicon/react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { CloudUploadIcon, File01Icon, Image01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -112,7 +113,7 @@ function FieldInput({ field }: { field: TaskField }) {
       <div className="sm:col-span-2">
         {label}
         <div className="rounded-none border-2 border-dashed border-border bg-muted/30 p-4 text-center">
-          <RiUploadCloud2Line className="mx-auto mb-1.5 size-6 text-muted-foreground" />
+          <HugeiconsIcon icon={CloudUploadIcon} className="mx-auto mb-1.5 size-6 text-muted-foreground" />
           <p className="text-xs text-muted-foreground">Drop files here or click to upload</p>
         </div>
         {files.length > 0 && (
@@ -122,7 +123,7 @@ function FieldInput({ field }: { field: TaskField }) {
                 key={f}
                 className="flex items-center gap-2 rounded-none border border-border bg-muted/30 px-2.5 py-1.5"
               >
-                <RiFileTextLine className="size-3.5 shrink-0 text-blue-500" />
+                <HugeiconsIcon icon={File01Icon} className="size-3.5 shrink-0 text-blue-500" />
                 <span className="text-xs text-foreground">{f}</span>
               </div>
             ))}
@@ -143,7 +144,7 @@ function FieldInput({ field }: { field: TaskField }) {
               key={img}
               className="flex h-16 w-16 items-center justify-center rounded-none border border-border bg-muted"
             >
-              <RiImageLine className="size-5 text-muted-foreground" />
+              <HugeiconsIcon icon={Image01Icon} className="size-5 text-muted-foreground" />
             </div>
           ))}
           <div className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-none border-2 border-dashed border-border hover:border-blue-400 transition-colors">

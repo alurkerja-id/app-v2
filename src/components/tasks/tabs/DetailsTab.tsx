@@ -1,16 +1,17 @@
 import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiListCheck2,
-  RiLayoutGridLine,
-  RiTableLine,
-  RiCheckboxCircleLine,
-  RiCloseCircleLine,
-  RiCalendarLine,
-  RiFileTextLine,
-  RiDownloadLine,
-  RiTimeLine,
-  RiAttachmentLine,
-} from "@remixicon/react"
+  CheckListIcon,
+  LayoutGridIcon,
+  Table01Icon,
+  CheckmarkCircle02Icon,
+  CancelCircleIcon,
+  Calendar01Icon,
+  File01Icon,
+  Download01Icon,
+  Time01Icon,
+  Attachment01Icon,
+} from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import type { Task, TaskField } from "@/data/tasks"
@@ -34,7 +35,7 @@ function formatValue(field: TaskField) {
     const d = new Date(field.value as string)
     return (
       <span className="flex items-center gap-1">
-        <RiCalendarLine className="size-3 text-muted-foreground" />
+        <HugeiconsIcon icon={Calendar01Icon} className="size-3 text-muted-foreground" />
         {d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
       </span>
     )
@@ -43,12 +44,12 @@ function formatValue(field: TaskField) {
   if (field.type === "boolean") {
     return field.value ? (
       <span className="flex items-center gap-1 text-emerald-600">
-        <RiCheckboxCircleLine className="size-3.5" />
+        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5" />
         Yes
       </span>
     ) : (
       <span className="flex items-center gap-1 text-red-500">
-        <RiCloseCircleLine className="size-3.5" />
+        <HugeiconsIcon icon={CancelCircleIcon} className="size-3.5" />
         No
       </span>
     )
@@ -75,7 +76,7 @@ function formatValue(field: TaskField) {
             key={img}
             className="flex h-14 w-14 items-center justify-center rounded-none bg-muted grayscale transition-all hover:grayscale-0"
           >
-            <RiFileTextLine className="size-4 text-muted-foreground" />
+            <HugeiconsIcon icon={File01Icon} className="size-4 text-muted-foreground" />
           </div>
         ))}
       </div>
@@ -91,10 +92,10 @@ function formatValue(field: TaskField) {
             key={f}
             className="flex items-center gap-2 rounded-none border border-border bg-muted/40 px-2 py-1.5"
           >
-            <RiFileTextLine className="size-3.5 shrink-0 text-blue-500" />
+            <HugeiconsIcon icon={File01Icon} className="size-3.5 shrink-0 text-blue-500" />
             <span className="flex-1 text-xs">{f}</span>
             <Button variant="ghost" size="icon-xs">
-              <RiDownloadLine />
+              <HugeiconsIcon icon={Download01Icon} />
             </Button>
           </div>
         ))}
@@ -118,11 +119,11 @@ export function DetailsTab({ task }: DetailsTabProps) {
         <div className="flex items-center gap-0.5 rounded-none border border-border bg-muted/40 p-0.5">
           {(
             [
-              { mode: "one" as LayoutMode, icon: RiListCheck2, label: "Single column" },
-              { mode: "two" as LayoutMode, icon: RiLayoutGridLine, label: "Two columns" },
-              { mode: "table" as LayoutMode, icon: RiTableLine, label: "Table view" },
+              { mode: "one" as LayoutMode, icon: CheckListIcon, label: "Single column" },
+              { mode: "two" as LayoutMode, icon: LayoutGridIcon, label: "Two columns" },
+              { mode: "table" as LayoutMode, icon: Table01Icon, label: "Table view" },
             ] as const
-          ).map(({ mode, icon: Icon, label }) => (
+          ).map(({ mode, icon, label }) => (
             <Button
               key={mode}
               variant="ghost"
@@ -131,7 +132,7 @@ export function DetailsTab({ task }: DetailsTabProps) {
               className={cn(layout === mode && "bg-background shadow-xs")}
               onClick={() => setLayout(mode)}
             >
-              <Icon />
+              <HugeiconsIcon icon={icon} />
             </Button>
           ))}
         </div>
@@ -205,16 +206,16 @@ export function DetailsTab({ task }: DetailsTabProps) {
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
-            <RiTimeLine className="size-4 text-blue-500" />
-            <span className="text-xs font-semibold">Time Tracked</span>
+            <HugeiconsIcon icon={Time01Icon} className="size-4 text-blue-500" />
+            <span className="text-xs font-semibold font-heading">Time Tracked</span>
           </div>
           <p className="text-xl font-bold">4h 32m</p>
           <p className="text-[11px] text-muted-foreground">Across 3 sessions</p>
         </div>
         <div className="rounded-none border border-border bg-card p-3">
           <div className="flex items-center gap-2 mb-1">
-            <RiAttachmentLine className="size-4 text-emerald-500" />
-            <span className="text-xs font-semibold">Attachments</span>
+            <HugeiconsIcon icon={Attachment01Icon} className="size-4 text-emerald-500" />
+            <span className="text-xs font-semibold font-heading">Attachments</span>
           </div>
           <p className="text-xl font-bold">{task.attachments}</p>
           <p className="text-[11px] text-muted-foreground">Files attached</p>

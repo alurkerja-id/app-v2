@@ -1,15 +1,16 @@
 import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiHome4Line,
-  RiTaskLine,
-  RiInboxLine,
-  RiBarChartLine,
-  RiMapLine,
-  RiArrowDownSLine,
-  RiCheckLine,
-  RiSearchLine,
-  RiBuildingLine,
-} from "@remixicon/react"
+  Home01Icon,
+  Task01Icon,
+  InboxIcon,
+  BarChartIcon,
+  MapsIcon,
+  ArrowDown01Icon,
+  Tick02Icon,
+  Search01Icon,
+  Building01Icon,
+} from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -30,12 +31,12 @@ interface SidebarProps {
   open?: boolean
 }
 
-const navItems: { id: Page; label: string; icon: React.ElementType; badge?: string }[] = [
-  { id: "home", label: "Home", icon: RiHome4Line },
-  { id: "tasks", label: "My Tasks", icon: RiTaskLine, badge: "3" },
-  { id: "requests", label: "Requests", icon: RiInboxLine },
-  { id: "analytics", label: "Analytics", icon: RiBarChartLine },
-  { id: "heatmap", label: "Process Discovery", icon: RiMapLine },
+const navItems: { id: Page; label: string; icon: typeof Home01Icon; badge?: string }[] = [
+  { id: "home", label: "Home", icon: Home01Icon },
+  { id: "tasks", label: "My Tasks", icon: Task01Icon, badge: "3" },
+  { id: "requests", label: "Requests", icon: InboxIcon },
+  { id: "analytics", label: "Analytics", icon: BarChartIcon },
+  { id: "heatmap", label: "Process Discovery", icon: MapsIcon },
 ]
 
 const workspaces = [
@@ -70,7 +71,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               <p className="truncate text-xs font-semibold text-zinc-100">Lotus HQ</p>
               <p className="truncate text-[10px] text-zinc-400">Enterprise</p>
             </div>
-            <RiArrowDownSLine className="size-3.5 shrink-0 text-zinc-400" />
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-400" />
           </button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xs">
@@ -78,7 +79,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             <DialogTitle>Switch Workspace</DialogTitle>
           </DialogHeader>
           <div className="relative">
-            <RiSearchLine className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search workspaces..."
               className="pl-8"
@@ -114,7 +115,6 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             Main
           </p>
           {navItems.map((item) => {
-            const Icon = item.icon
             const active = activePage === item.id
             return (
               <button
@@ -127,7 +127,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
                 )}
               >
-                <Icon className="size-4 shrink-0" />
+                <HugeiconsIcon icon={item.icon} className="size-4 shrink-0" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && (
                   <span className="flex size-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
@@ -144,9 +144,9 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             Organization
           </p>
           <button className="flex w-full items-center gap-2.5 rounded-none px-2 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
-            <RiBuildingLine className="size-4 shrink-0" />
+            <HugeiconsIcon icon={Building01Icon} className="size-4 shrink-0" />
             <span className="flex-1 text-left">Company</span>
-            <RiCheckLine className="size-3.5 text-blue-400" />
+            <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-blue-400" />
           </button>
         </div>
       </nav>

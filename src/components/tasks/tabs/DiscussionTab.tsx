@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { RiAttachmentLine, RiSendPlaneLine } from "@remixicon/react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Attachment01Icon, SentIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -119,10 +120,10 @@ export function DiscussionTab() {
           />
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon-sm">
-              <RiAttachmentLine />
+              <HugeiconsIcon icon={Attachment01Icon} />
             </Button>
             <Button size="sm" disabled={!draft.trim()}>
-              <RiSendPlaneLine />
+              <HugeiconsIcon icon={SentIcon} />
               Comment
             </Button>
           </div>
@@ -132,7 +133,7 @@ export function DiscussionTab() {
       {/* Comments list */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <h3 className="text-xs font-semibold">Comments</h3>
+          <h3 className="text-xs font-semibold font-heading">Comments</h3>
           <span className="flex size-4 items-center justify-center rounded-full bg-muted text-[10px] font-bold">
             {comments.length}
           </span>

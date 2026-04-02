@@ -1,13 +1,14 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiCloseLine,
-  RiFileEditLine,
-  RiListCheck2,
-  RiFlowChart,
-  RiHistoryLine,
-  RiChat1Line,
-  RiCalendarLine,
-  RiUserLine,
-} from "@remixicon/react"
+  Cancel01Icon,
+  FileEditIcon,
+  CheckListIcon,
+  Flowchart01Icon,
+  WorkHistoryIcon,
+  BubbleChatIcon,
+  Calendar01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -47,7 +48,7 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
             <span className="text-[11px] text-muted-foreground">·</span>
             <span className="text-[11px] text-muted-foreground">{task.process}</span>
           </div>
-          <h2 className="text-sm font-semibold leading-snug line-clamp-2">{task.title}</h2>
+          <h2 className="text-sm font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
           <div className="mt-1.5 flex items-center gap-2 flex-wrap">
             {/* Status */}
             <span className={cn("text-[11px] font-medium", STATUS_COLOR[task.status])}>
@@ -60,7 +61,7 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
             </span>
             {/* Due */}
             <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <RiCalendarLine className="size-3" />
+              <HugeiconsIcon icon={Calendar01Icon} className="size-3" />
               {new Date(task.dueDate).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -70,13 +71,13 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
           </div>
           {/* Author */}
           <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-            <RiUserLine className="size-3" />
+            <HugeiconsIcon icon={UserIcon} className="size-3" />
             <span>Submitted by</span>
             <span className="font-medium text-foreground/70">{task.author}</span>
           </div>
         </div>
         <Button variant="ghost" size="icon-sm" onClick={onClose} className="shrink-0 mt-0.5">
-          <RiCloseLine />
+          <HugeiconsIcon icon={Cancel01Icon} />
         </Button>
       </div>
 
@@ -96,14 +97,14 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
         <div className="border-b border-border px-2 pt-2">
           <TabsList variant="line" className="h-auto gap-0">
             {[
-              { value: "form", label: "Form", icon: RiFileEditLine },
-              { value: "details", label: "Details", icon: RiListCheck2 },
-              { value: "diagram", label: "Diagram", icon: RiFlowChart },
-              { value: "history", label: "History", icon: RiHistoryLine },
-              { value: "discussion", label: "Discussion", icon: RiChat1Line },
-            ].map(({ value, label, icon: Icon }) => (
+              { value: "form", label: "Form", icon: FileEditIcon },
+              { value: "details", label: "Details", icon: CheckListIcon },
+              { value: "diagram", label: "Diagram", icon: Flowchart01Icon },
+              { value: "history", label: "History", icon: WorkHistoryIcon },
+              { value: "discussion", label: "Discussion", icon: BubbleChatIcon },
+            ].map(({ value, label, icon }) => (
               <TabsTrigger key={value} value={value} className="gap-1.5 px-3">
-                <Icon className="size-3.5" />
+                <HugeiconsIcon icon={icon} className="size-3.5" />
                 {label}
               </TabsTrigger>
             ))}

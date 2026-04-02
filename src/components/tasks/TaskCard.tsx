@@ -1,9 +1,10 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiCalendarLine,
-  RiChat1Line,
-  RiAttachmentLine,
-  RiArrowRightSLine,
-} from "@remixicon/react"
+  Calendar01Icon,
+  BubbleChatIcon,
+  Attachment01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { Task } from "@/data/tasks"
@@ -73,7 +74,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-1 mb-1">
             <p className="text-xs font-semibold leading-snug line-clamp-1">{task.title}</p>
-            <RiArrowRightSLine className="size-3.5 shrink-0 text-muted-foreground mt-0.5" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 shrink-0 text-muted-foreground mt-0.5" />
           </div>
 
           <p className="text-[11px] text-muted-foreground mb-2">{task.process}</p>
@@ -120,7 +121,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
                 isOverdue ? "text-red-500" : "text-muted-foreground"
               )}
             >
-              <RiCalendarLine className="size-3" />
+              <HugeiconsIcon icon={Calendar01Icon} className="size-3" />
               {dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
 
@@ -128,13 +129,13 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
             <span className="ml-auto flex items-center gap-1.5 text-[10px] text-muted-foreground">
               {task.comments > 0 && (
                 <span className="flex items-center gap-0.5">
-                  <RiChat1Line className="size-3" />
+                  <HugeiconsIcon icon={BubbleChatIcon} className="size-3" />
                   {task.comments}
                 </span>
               )}
               {task.attachments > 0 && (
                 <span className="flex items-center gap-0.5">
-                  <RiAttachmentLine className="size-3" />
+                  <HugeiconsIcon icon={Attachment01Icon} className="size-3" />
                   {task.attachments}
                 </span>
               )}

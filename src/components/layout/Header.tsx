@@ -1,15 +1,16 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiMenu2Line,
-  RiApps2Line,
-  RiBrushAiLine,
-  RiTerminalBoxLine,
-  RiCpuLine,
-  RiBellLine,
-  RiUserLine,
-  RiSettings4Line,
-  RiLogoutBoxRLine,
-  RiArrowRightSLine,
-} from "@remixicon/react"
+  Menu02Icon,
+  GridViewIcon,
+  AiBeautifyIcon,
+  TerminalIcon,
+  CpuIcon,
+  Notification02Icon,
+  UserIcon,
+  Settings02Icon,
+  Logout01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -33,19 +34,19 @@ const PAGE_LABELS: Record<Page, string> = {
 
 const appItems = [
   {
-    icon: RiBrushAiLine,
+    icon: AiBeautifyIcon,
     title: "Studio",
     description: "Design & build processes",
     gradient: "from-violet-500 to-purple-600",
   },
   {
-    icon: RiApps2Line,
+    icon: GridViewIcon,
     title: "App",
     description: "End-user task management",
     gradient: "from-blue-500 to-indigo-600",
   },
   {
-    icon: RiCpuLine,
+    icon: CpuIcon,
     title: "Simulation Engine",
     description: "Model & test workflows",
     gradient: "from-emerald-500 to-teal-600",
@@ -114,7 +115,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
           className="lg:hidden"
           onClick={onMenuToggle}
         >
-          <RiMenu2Line />
+          <HugeiconsIcon icon={Menu02Icon} />
         </Button>
 
         {/* App Switcher */}
@@ -125,35 +126,32 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
               size="sm"
               className="gap-1.5 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-blue-200/50 dark:border-blue-800/50 hover:from-blue-500/20 hover:to-indigo-500/20"
             >
-              <RiApps2Line className="size-3.5 text-blue-500" />
+              <HugeiconsIcon icon={GridViewIcon} className="size-3.5 text-blue-500" />
               <span className="font-semibold text-blue-600 dark:text-blue-400">App</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-64">
             <DropdownMenuLabel>Switch App</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {appItems.map((app) => {
-              const Icon = app.icon
-              return (
+            {appItems.map((app) => (
                 <DropdownMenuItem key={app.title} className="gap-3 py-2">
                   <div
                     className={`flex size-8 shrink-0 items-center justify-center rounded-none bg-gradient-to-br ${app.gradient} text-white`}
                   >
-                    <Icon className="size-4" />
+                    <HugeiconsIcon icon={app.icon} className="size-4" />
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium">{app.title}</p>
                     <p className="text-muted-foreground">{app.description}</p>
                   </div>
                 </DropdownMenuItem>
-              )
-            })}
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <RiArrowRightSLine className="size-3.5" />
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
           <span className="font-medium text-foreground">{PAGE_LABELS[activePage]}</span>
         </div>
       </div>
@@ -167,7 +165,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon-sm" className="relative">
-              <RiBellLine />
+              <HugeiconsIcon icon={Notification02Icon} />
               <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-red-500" />
             </Button>
           </DropdownMenuTrigger>
@@ -224,16 +222,16 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2">
-              <RiUserLine className="size-3.5" />
+              <HugeiconsIcon icon={UserIcon} className="size-3.5" />
               Profile Settings
             </DropdownMenuItem>
             <DropdownMenuItem className="gap-2">
-              <RiSettings4Line className="size-3.5" />
+              <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
               Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" className="gap-2">
-              <RiLogoutBoxRLine className="size-3.5" />
+              <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
               Log Out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
-import { RiSearchLine, RiFilterLine } from "@remixicon/react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon, FilterIcon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -55,7 +56,7 @@ export function TasksPage() {
         <div className="flex flex-col gap-2 border-b border-border p-3">
           <div className="flex items-center gap-1.5">
             <div className="relative flex-1">
-              <RiSearchLine className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search tasks..."
                 className="pl-8 text-xs"
@@ -67,7 +68,7 @@ export function TasksPage() {
               />
             </div>
             <Button variant="outline" size="icon-sm">
-              <RiFilterLine />
+              <HugeiconsIcon icon={FilterIcon} />
             </Button>
           </div>
           <div className="flex items-center gap-1.5">
@@ -121,7 +122,7 @@ export function TasksPage() {
           <div className="flex flex-col gap-2 p-3">
             {paginated.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <RiSearchLine className="size-8 text-muted-foreground mb-2" />
+                <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
                 <p className="text-sm font-medium">No tasks found</p>
                 <p className="text-xs text-muted-foreground">Adjust your filters</p>
               </div>

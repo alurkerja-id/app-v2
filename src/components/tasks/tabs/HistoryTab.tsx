@@ -1,11 +1,12 @@
 import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiCheckboxCircleLine,
-  RiSearchEyeLine,
-  RiFileEditLine,
-  RiShieldCheckLine,
-  RiUserLine,
-} from "@remixicon/react"
+  CheckmarkCircle02Icon,
+  InspectCodeIcon,
+  FileEditIcon,
+  Shield01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons"
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,7 @@ interface HistoryStep {
   timestamp: string
   status: "done" | "current" | "pending"
   color: string
-  icon: React.ElementType
+  icon: typeof FileEditIcon
   details: Record<string, string>
 }
 
@@ -36,7 +37,7 @@ const steps: HistoryStep[] = [
     timestamp: "Mar 28, 2026 · 09:12 AM",
     status: "done",
     color: "bg-blue-500",
-    icon: RiFileEditLine,
+    icon: FileEditIcon,
     details: {
       "Action": "Form submitted",
       "Channel": "Web App",
@@ -52,7 +53,7 @@ const steps: HistoryStep[] = [
     timestamp: "Mar 28, 2026 · 09:15 AM",
     status: "done",
     color: "bg-emerald-500",
-    icon: RiSearchEyeLine,
+    icon: InspectCodeIcon,
     details: {
       "Action": "Auto-assigned to HR queue",
       "SLA Target": "4 hours",
@@ -68,7 +69,7 @@ const steps: HistoryStep[] = [
     timestamp: "Mar 28, 2026 · 10:30 AM",
     status: "done",
     color: "bg-indigo-500",
-    icon: RiFileEditLine,
+    icon: FileEditIcon,
     details: {
       "Action": "Employee record created in HRIS",
       "System": "SAP SuccessFactors",
@@ -84,7 +85,7 @@ const steps: HistoryStep[] = [
     timestamp: "Mar 29, 2026 · 11:00 AM",
     status: "done",
     color: "bg-violet-500",
-    icon: RiShieldCheckLine,
+    icon: Shield01Icon,
     details: {
       "Action": "Documents validated",
       "Documents Checked": "3",
@@ -100,7 +101,7 @@ const steps: HistoryStep[] = [
     timestamp: "Mar 30, 2026 · 02:00 PM",
     status: "current",
     color: "bg-amber-500",
-    icon: RiUserLine,
+    icon: UserIcon,
     details: {
       "Action": "Awaiting manager approval",
       "Assigned To": "David Park",
@@ -115,7 +116,6 @@ interface StepDialogProps {
 }
 
 function StepDialog({ step }: StepDialogProps) {
-  const Icon = step.icon
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -127,7 +127,7 @@ function StepDialog({ step }: StepDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span className={cn("flex size-5 items-center justify-center rounded-full text-white", step.color)}>
-              <Icon className="size-3" />
+              <HugeiconsIcon icon={step.icon} className="size-3" />
             </span>
             {step.name}
           </DialogTitle>
@@ -153,7 +153,6 @@ export function HistoryTab() {
     <div className="p-4">
       <div className="relative flex flex-col gap-0">
         {steps.map((step, i) => {
-          const Icon = step.icon
           const isLast = i === steps.length - 1
           return (
             <div key={step.id} className="flex gap-3">
@@ -166,7 +165,7 @@ export function HistoryTab() {
                     step.status === "current" && "ring-4 ring-amber-500/30"
                   )}
                 >
-                  <Icon className="size-3.5" />
+                  <HugeiconsIcon icon={step.icon} className="size-3.5" />
                   {step.status === "current" && (
                     <span className="absolute size-7 animate-ping rounded-full bg-amber-400 opacity-30" />
                   )}

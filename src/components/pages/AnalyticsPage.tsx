@@ -1,10 +1,11 @@
 import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiInboxLine,
-  RiTimeLine,
-  RiStarLine,
-  RiTeamLine,
-} from "@remixicon/react"
+  InboxIcon,
+  Time01Icon,
+  StarIcon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons"
 import {
   Select,
   SelectContent,
@@ -22,7 +23,7 @@ const statCards = [
     trend: "+12%",
     trendUp: true,
     sub: "vs last month",
-    icon: RiInboxLine,
+    icon: InboxIcon,
     ring: "ring-blue-200 dark:ring-blue-800",
     iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
@@ -32,7 +33,7 @@ const statCards = [
     trend: "+8%",
     trendUp: true,
     sub: "faster than last month",
-    icon: RiTimeLine,
+    icon: Time01Icon,
     ring: "ring-violet-200 dark:ring-violet-800",
     iconBg: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
   },
@@ -42,7 +43,7 @@ const statCards = [
     trend: "Target: 95%",
     trendUp: true,
     sub: "user rating",
-    icon: RiStarLine,
+    icon: StarIcon,
     ring: "ring-amber-200 dark:ring-amber-800",
     iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
   },
@@ -52,7 +53,7 @@ const statCards = [
     trend: "+38 more",
     trendUp: true,
     sub: "team members",
-    icon: RiTeamLine,
+    icon: UserGroupIcon,
     ring: "ring-teal-200 dark:ring-teal-800",
     iconBg: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
   },
@@ -130,14 +131,13 @@ export function AnalyticsPage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       <div>
-        <h1 className="text-base font-semibold">Analytics</h1>
+        <h1 className="text-base font-semibold font-heading">Analytics</h1>
         <p className="text-xs text-muted-foreground">Performance overview across all processes</p>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {statCards.map((card) => {
-          const Icon = card.icon
           return (
             <div
               key={card.label}
@@ -151,7 +151,7 @@ export function AnalyticsPage() {
                   {card.label}
                 </p>
                 <div className={cn("flex size-7 items-center justify-center rounded-none", card.iconBg)}>
-                  <Icon className="size-3.5" />
+                  <HugeiconsIcon icon={card.icon} className="size-3.5" />
                 </div>
               </div>
               <p className="text-2xl font-bold">{card.value}</p>
@@ -198,7 +198,7 @@ export function AnalyticsPage() {
         <div className="rounded-none border border-border bg-card p-4 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xs font-semibold">Request Volume Trends</h3>
+              <h3 className="text-xs font-semibold font-heading">Request Volume Trends</h3>
               <p className="text-[11px] text-muted-foreground">Daily request activity</p>
             </div>
             <Select value={period} onValueChange={setPeriod}>
@@ -236,7 +236,7 @@ export function AnalyticsPage() {
         {/* Donut chart (1/3) */}
         <div className="rounded-none border border-border bg-card p-4">
           <div className="mb-4">
-            <h3 className="text-xs font-semibold">Status Distribution</h3>
+            <h3 className="text-xs font-semibold font-heading">Status Distribution</h3>
             <p className="text-[11px] text-muted-foreground">Request breakdown by status</p>
           </div>
 

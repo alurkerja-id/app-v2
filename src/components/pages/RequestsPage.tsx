@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiSearchLine,
-  RiDownloadLine,
-  RiEyeLine,
-  RiArrowUpDownLine,
-  RiCheckboxCircleLine,
-  RiCloseCircleLine,
-} from "@remixicon/react"
+  Search01Icon,
+  Download01Icon,
+  EyeIcon,
+  ArrowUpDownIcon,
+  CheckmarkCircle02Icon,
+  CancelCircleIcon,
+} from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -99,14 +100,14 @@ export function RequestsPage() {
     <div className="flex flex-col gap-4 p-4 md:p-6">
       {/* Header */}
       <div>
-        <h1 className="text-base font-semibold">Requests</h1>
+        <h1 className="text-base font-semibold font-heading">Requests</h1>
         <p className="text-xs text-muted-foreground">Track and manage all submitted process requests</p>
       </div>
 
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-40">
-          <RiSearchLine className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search requests..."
             className="pl-8 text-xs"
@@ -142,7 +143,7 @@ export function RequestsPage() {
           </SelectContent>
         </Select>
         <Button variant="outline" size="sm" className="gap-1.5">
-          <RiDownloadLine />
+          <HugeiconsIcon icon={Download01Icon} />
           Export
         </Button>
       </div>
@@ -158,7 +159,7 @@ export function RequestsPage() {
               >
                 <span className="flex items-center gap-1">
                   Request
-                  <RiArrowUpDownLine
+                  <HugeiconsIcon icon={ArrowUpDownIcon}
                     className={cn(
                       "size-3",
                       sortKey === "id" ? "text-foreground" : "text-muted-foreground"
@@ -172,7 +173,7 @@ export function RequestsPage() {
               >
                 <span className="flex items-center gap-1">
                   Requester
-                  <RiArrowUpDownLine
+                  <HugeiconsIcon icon={ArrowUpDownIcon}
                     className={cn(
                       "size-3",
                       sortKey === "requester" ? "text-foreground" : "text-muted-foreground"
@@ -189,7 +190,7 @@ export function RequestsPage() {
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-16 text-center">
-                  <RiSearchLine className="mx-auto mb-2 size-7 text-muted-foreground" />
+                  <HugeiconsIcon icon={Search01Icon} className="mx-auto mb-2 size-7 text-muted-foreground" />
                   <p className="text-xs font-medium">No requests found</p>
                   <p className="text-[11px] text-muted-foreground">Try adjusting your filters</p>
                 </TableCell>
@@ -269,7 +270,7 @@ export function RequestsPage() {
                         )}
                         {req.status === "Completed" && (
                           <>
-                            <RiCheckboxCircleLine className="size-3.5 text-emerald-500" />
+                            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-emerald-500" />
                             <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
                               Completed
                             </span>
@@ -277,7 +278,7 @@ export function RequestsPage() {
                         )}
                         {req.status === "Closed" && (
                           <>
-                            <RiCloseCircleLine className="size-3.5 text-muted-foreground" />
+                            <HugeiconsIcon icon={CancelCircleIcon} className="size-3.5 text-muted-foreground" />
                             <span className="text-xs font-medium text-muted-foreground">
                               Closed
                             </span>
@@ -287,7 +288,7 @@ export function RequestsPage() {
                     </TableCell>
                     <TableCell className="py-3">
                       <Button variant="ghost" size="icon-xs">
-                        <RiEyeLine />
+                        <HugeiconsIcon icon={EyeIcon} />
                       </Button>
                     </TableCell>
                   </TableRow>

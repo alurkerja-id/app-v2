@@ -3,7 +3,7 @@ export function DiagramTab() {
     <div className="p-4">
       <div className="rounded-none border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-3 py-2">
-          <h3 className="text-xs font-semibold">Process Flow Diagram</h3>
+          <h3 className="text-xs font-semibold font-heading">Process Flow Diagram</h3>
           <p className="text-[11px] text-muted-foreground">Employee Onboarding – Current Step: Manager Review</p>
         </div>
         <div className="overflow-x-auto p-4">

@@ -1,9 +1,10 @@
 import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RiArrowUpDownLine,
-  RiCheckboxCircleLine,
-  RiAlertLine,
-} from "@remixicon/react"
+  ArrowUpDownIcon,
+  CheckmarkCircle02Icon,
+  Alert01Icon,
+} from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -93,7 +94,7 @@ export function HeatmapPage() {
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       <div>
-        <h1 className="text-base font-semibold">Process Discovery</h1>
+        <h1 className="text-base font-semibold font-heading">Process Discovery</h1>
         <p className="text-xs text-muted-foreground">
           Analyze process execution patterns and activity heatmaps
         </p>
@@ -164,7 +165,7 @@ export function HeatmapPage() {
       <div className="rounded-none border border-border bg-card overflow-hidden">
         <div className="border-b border-border px-3 py-2 flex items-center justify-between">
           <div>
-            <h3 className="text-xs font-semibold">Process Flow Heatmap</h3>
+            <h3 className="text-xs font-semibold font-heading">Process Flow Heatmap</h3>
             <p className="text-[11px] text-muted-foreground">
               Color intensity represents {heatmapType === "frequency" ? "activity frequency" : heatmapType === "duration" ? "avg duration" : "SLA compliance"}
             </p>
@@ -251,7 +252,7 @@ export function HeatmapPage() {
       {/* Metrics table */}
       <div className="rounded-none border border-border overflow-hidden">
         <div className="border-b border-border px-3 py-2">
-          <h3 className="text-xs font-semibold">Activity Metrics</h3>
+          <h3 className="text-xs font-semibold font-heading">Activity Metrics</h3>
         </div>
         <Table>
           <TableHeader>
@@ -262,7 +263,7 @@ export function HeatmapPage() {
               >
                 <span className="flex items-center gap-1">
                   Activity
-                  <RiArrowUpDownLine className="size-3 text-muted-foreground" />
+                  <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3 text-muted-foreground" />
                 </span>
               </TableHead>
               <TableHead
@@ -271,7 +272,7 @@ export function HeatmapPage() {
               >
                 <span className="flex items-center gap-1">
                   Frequency
-                  <RiArrowUpDownLine className="size-3 text-muted-foreground" />
+                  <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3 text-muted-foreground" />
                 </span>
               </TableHead>
               <TableHead
@@ -280,7 +281,7 @@ export function HeatmapPage() {
               >
                 <span className="flex items-center gap-1">
                   Avg Duration
-                  <RiArrowUpDownLine className="size-3 text-muted-foreground" />
+                  <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3 text-muted-foreground" />
                 </span>
               </TableHead>
               <TableHead className="text-[11px]">SLA Status</TableHead>
@@ -296,19 +297,19 @@ export function HeatmapPage() {
                 <TableCell className="py-2.5">
                   {row.slaStatus === "ok" && (
                     <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                      <RiCheckboxCircleLine className="size-3.5" />
+                      <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5" />
                       On Track
                     </span>
                   )}
                   {row.slaStatus === "warn" && (
                     <span className="flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400">
-                      <RiAlertLine className="size-3.5" />
+                      <HugeiconsIcon icon={Alert01Icon} className="size-3.5" />
                       At Risk
                     </span>
                   )}
                   {row.slaStatus === "breach" && (
                     <span className="flex items-center gap-1 text-[11px] font-medium text-red-600 dark:text-red-400">
-                      <RiAlertLine className="size-3.5" />
+                      <HugeiconsIcon icon={Alert01Icon} className="size-3.5" />
                       Breached
                     </span>
                   )}
