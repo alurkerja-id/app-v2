@@ -191,18 +191,20 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
 
   return (
     <div className="p-4 md:p-6">
-      <div className="flex gap-6 items-start">
+      <div className="flex items-start gap-6 lg:items-stretch">
         {/* ── Desktop Filter Sidebar ── */}
-        <div className="hidden lg:block w-56 shrink-0 sticky top-16">
-          <FilterPanelContent
-            search={search}
-            onSearchChange={handleSearchChange}
-            dueFilter={dueFilter}
-            onDueFilterChange={handleDueFilterChange}
-            processFilter={processFilter}
-            onToggleProcess={toggleProcess}
-            onClearProcesses={clearProcesses}
-          />
+        <div className="hidden w-56 shrink-0 lg:block">
+          <div className="h-full p-4">
+            <FilterPanelContent
+              search={search}
+              onSearchChange={handleSearchChange}
+              dueFilter={dueFilter}
+              onDueFilterChange={handleDueFilterChange}
+              processFilter={processFilter}
+              onToggleProcess={toggleProcess}
+              onClearProcesses={clearProcesses}
+            />
+          </div>
         </div>
 
         {/* ── Task List ── */}
