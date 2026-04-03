@@ -87,14 +87,13 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
     )
   }
 
-  const isRequestPage = activePage === "requests-active" || activePage === "requests-completed"
-
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 flex w-56 flex-col bg-zinc-900 text-zinc-100 transition-transform duration-200",
-        open ? "translate-x-0" : "-translate-x-full"
+        "fixed inset-y-0 left-0 z-40 flex w-56 flex-col border-r border-zinc-800 bg-zinc-900 text-zinc-100 shadow-2xl transition-transform duration-200 lg:shadow-none",
+        open ? "translate-x-0" : "-translate-x-full pointer-events-none"
       )}
+      aria-hidden={!open}
     >
       {/* Workspace Switcher */}
       <Dialog>

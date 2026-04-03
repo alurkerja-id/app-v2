@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 
@@ -24,7 +23,26 @@ function useIsDesktop() {
 
 export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) {
   const isDesktop = useIsDesktop()
-  const [sidebarOpen, setSidebarOpen] = useState(isDesktop)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    if (isDesktop) {
+      setMobileSidebarOpen(false)
+    }
+  }, [isDesktop])
+
+  useEffect(() => {
+    if (!mobileSidebarOpen) return
+
+    const { overflow } = document.body.style
+    document.body.style.overflow = "hidden"
+
+    return () => {
+      document.body.style.overflow = overflow
+    }
+  }, [mobileSidebarOpen])
+
+  const sidebarOpen = isDesktop || mobileSidebarOpen
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -33,7 +51,7 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
         activePage={activePage}
         onNavigate={(page) => {
           onNavigate(page)
-          if (!isDesktop) setSidebarOpen(false)
+          if (!isDesktop) setMobileSidebarOpen(false)
         }}
         open={sidebarOpen}
       />
@@ -42,20 +60,15 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
       {/* Main content */}
-      <div
-        className={cn(
-          "flex flex-1 flex-col transition-all duration-200",
-          sidebarOpen ? "lg:pl-56" : "pl-0"
-        )}
-      >
+      <div className="flex flex-1 flex-col transition-[padding] duration-200 lg:pl-56">
         <Header
           activePage={activePage}
-          onMenuToggle={() => setSidebarOpen((v) => !v)}
+          onMenuToggle={() => setMobileSidebarOpen((v) => !v)}
         />
         <main className="flex-1 overflow-auto">{children}</main>
       </div>

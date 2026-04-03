@@ -3,7 +3,6 @@ import {
   Menu02Icon,
   GridViewIcon,
   AiBeautifyIcon,
-  TerminalIcon,
   CpuIcon,
   Globe02Icon,
   Notification02Icon,
