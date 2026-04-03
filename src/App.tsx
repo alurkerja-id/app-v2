@@ -6,7 +6,7 @@ import { RequestsPage } from "@/components/pages/RequestsPage"
 import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
 import { HeatmapPage } from "@/components/pages/HeatmapPage"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
 
 export default function App() {
   const [activePage, setActivePage] = useState<Page>("home")
@@ -19,8 +19,10 @@ export default function App() {
         return <TasksPage />
       case "group-tasks":
         return <TasksPage mode="group-tasks" />
-      case "requests":
-        return <RequestsPage />
+      case "requests-active":
+        return <RequestsPage status="active" />
+      case "requests-completed":
+        return <RequestsPage status="completed" />
       case "analytics":
         return <AnalyticsPage />
       case "heatmap":

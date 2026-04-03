@@ -32,17 +32,38 @@ const PROCESS_THEME: Record<string, { gradient: string; accent: string; abbr: st
 
 const DEFAULT_THEME = { gradient: "from-zinc-600 to-zinc-700", accent: "bg-zinc-400/20", abbr: "??" }
 
-function getRequestAge(createdDate: string) {
-  const now = new Date()
-  const created = new Date(createdDate)
-  const diffMs = now.getTime() - created.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  if (diffDays === 0) return "Today"
-  if (diffDays === 1) return "1 day"
-  if (diffDays < 7) return `${diffDays} days`
-  const weeks = Math.floor(diffDays / 7)
-  if (weeks === 1) return "1 week"
-  return `${weeks} weeks`
+function formatDateTime(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+function getHumanDuration(startDate: string, endDate: string) {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+  const diffMs = end.getTime() - start.getTime()
+  const diffMins = Math.floor(diffMs / (1000 * 60))
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffDays > 0) {
+    const remainHours = diffHours % 24
+    return remainHours > 0 ? `${diffDays}d ${remainHours}h` : `${diffDays}d`
+  }
+  if (diffHours > 0) {
+    const remainMins = diffMins % 60
+    return remainMins > 0 ? `${diffHours}h ${remainMins}m` : `${diffHours}h`
+  }
+  return `${diffMins}m`
+}
+
+function getProcessDuration(request: { createdDate: string; completedDate?: string; status: string }) {
+  const endDate = request.completedDate ?? new Date().toISOString()
+  return getHumanDuration(request.createdDate, endDate)
 }
 
 export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps) {
@@ -89,29 +110,36 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-6">
             <div className="flex items-start gap-3 sm:gap-5 flex-1 min-w-0 flex-wrap">
               <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Age</p>
-                <p className="text-sm font-semibold">{getRequestAge(request.createdDate)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Priority</p>
-                <p className="text-sm font-semibold">{request.priority}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Current Task</p>
-                <p className="text-sm font-semibold">{request.currentTask === "-" ? "—" : request.currentTask}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Assignee</p>
-                <p className="text-sm font-semibold">{request.assignee === "-" ? "—" : request.assignee}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Requester</p>
+                <p className="text-[11px] text-white/60 mb-0.5">Requestor</p>
                 <p className="text-sm font-semibold flex items-center gap-1.5">
                   <span className="flex size-5 items-center justify-center rounded-full bg-white/20 text-[9px] font-bold backdrop-blur-sm">
                     {request.requester.split(" ").map((w) => w[0]).join("").slice(0, 2)}
                   </span>
                   {request.requester}
                 </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Requested at</p>
+                <p className="text-sm font-semibold">{formatDateTime(request.createdDate)}</p>
+              </div>
+              {request.completedDate ? (
+                <div>
+                  <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
+                  <p className="text-sm font-semibold">{formatDateTime(request.completedDate)}</p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
+                  <p className="text-sm font-semibold text-white/40">—</p>
+                </div>
+              )}
+              <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Process Duration</p>
+                <p className="text-sm font-semibold">{getProcessDuration(request)}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Steps</p>
+                <p className="text-sm font-semibold">{request.steps}</p>
               </div>
             </div>
 

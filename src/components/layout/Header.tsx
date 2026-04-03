@@ -15,6 +15,14 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -23,15 +31,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
 
-const PAGE_LABELS: Record<Page, string> = {
-  home: "Home",
-  tasks: "My Tasks",
-  "group-tasks": "Group Tasks",
-  requests: "My Requests",
-  analytics: "Analytics",
-  heatmap: "Process Discovery",
+const PAGE_BREADCRUMBS: Record<Page, string[]> = {
+  home: ["Home"],
+  tasks: ["My Tasks"],
+  "group-tasks": ["Group Tasks"],
+  "requests-active": ["My Requests", "Active"],
+  "requests-completed": ["My Requests", "Completed"],
+  analytics: ["Analytics"],
+  heatmap: ["Process Discovery"],
 }
 
 const appItems = [
@@ -164,10 +173,22 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
         </DropdownMenu>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
-          <span className="font-medium text-foreground">{PAGE_LABELS[activePage]}</span>
-        </div>
+        <Breadcrumb>
+          <BreadcrumbList>
+            {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
+              <BreadcrumbItem key={i}>
+                {i < arr.length - 1 ? (
+                  <>
+                    <BreadcrumbLink>{crumb}</BreadcrumbLink>
+                    <BreadcrumbSeparator />
+                  </>
+                ) : (
+                  <BreadcrumbPage>{crumb}</BreadcrumbPage>
+                )}
+              </BreadcrumbItem>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {/* Spacer */}

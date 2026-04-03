@@ -23,14 +23,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+// Status is controlled via sidebar sub-menu
 import {
   Sheet,
   SheetContent,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { REQUESTS } from "@/data/requests"
-import type { Request, RequestStatus } from "@/data/requests"
+import type { Request } from "@/data/requests"
 import { processes } from "@/components/processes/ProcessList"
 import { RequestDetailPanel } from "@/components/requests/RequestDetailPanel"
 
@@ -148,12 +148,15 @@ function RequestCard({
   )
 }
 
-export function RequestsPage() {
+interface RequestsPageProps {
+  status?: "active" | "completed"
+}
+
+export function RequestsPage({ status = "active" }: RequestsPageProps) {
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null)
   const [search, setSearch] = useState("")
   const [processFilter, setProcessFilter] = useState<string[]>([])
   const [processSearch, setProcessSearch] = useState("")
-  const [statusTab, setStatusTab] = useState<"active" | "completed">("active")
   const [page, setPage] = useState(1)
 
   const filteredProcesses = processes.filter((p) =>
@@ -177,10 +180,10 @@ export function RequestsPage() {
       const matchProcess =
         processFilter.length === 0 || processFilter.includes(r.process)
       const matchStatus =
-        statusTab === "active" ? r.status === "Active" : r.status === "Completed"
+        status === "active" ? r.status === "Active" : r.status === "Completed"
       return matchSearch && matchProcess && matchStatus
     })
-  }, [search, processFilter, statusTab])
+  }, [search, processFilter, status])
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -188,29 +191,8 @@ export function RequestsPage() {
   return (
     <div className="p-4 md:p-6">
       <Card className="gap-0 py-0 overflow-hidden">
-        {/* Submenu tabs + Filters */}
-        <div className="flex flex-col gap-2 px-5 py-3 border-b border-border">
-          {/* Submenu: Active / Completed */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              size="sm"
-              value={statusTab}
-              onValueChange={(v) => {
-                if (v) {
-                  setStatusTab(v as "active" | "completed")
-                  setPage(1)
-                }
-              }}
-            >
-              <ToggleGroupItem value="active">Active</ToggleGroupItem>
-              <ToggleGroupItem value="completed">Completed</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-
-          {/* Filters row */}
-          <div className="flex items-center gap-2 flex-wrap">
+        {/* Filters */}
+        <div className="flex items-center gap-2 flex-wrap px-5 py-3 border-b border-border">
             {/* Search */}
             <div className="relative w-48">
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -275,11 +257,10 @@ export function RequestsPage() {
               </PopoverContent>
             </Popover>
 
-            {/* Count */}
-            <span className="ml-auto text-xs text-muted-foreground">
-              {filtered.length} request{filtered.length !== 1 ? "s" : ""}
-            </span>
-          </div>
+          {/* Count */}
+          <span className="ml-auto text-xs text-muted-foreground">
+            {filtered.length} request{filtered.length !== 1 ? "s" : ""}
+          </span>
         </div>
 
         {/* Request list */}

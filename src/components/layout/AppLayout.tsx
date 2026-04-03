@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
 
 interface AppLayoutProps {
   activePage: Page

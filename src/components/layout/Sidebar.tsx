@@ -8,8 +8,11 @@ import {
   BarChartIcon,
   MapsIcon,
   ArrowDown01Icon,
+  ArrowRight01Icon,
   Search01Icon,
   Rocket01Icon,
+  CheckmarkCircle02Icon,
+  TimeHalfPassIcon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -23,7 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import { ProcessList } from "@/components/processes/ProcessList"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
 
 interface SidebarProps {
   activePage: Page
@@ -31,30 +34,60 @@ interface SidebarProps {
   open?: boolean
 }
 
-const navItems: { id: Page; label: string; icon: typeof Home01Icon; badge?: string }[] = [
+interface NavChild {
+  id: Page
+  label: string
+  icon: typeof Home01Icon
+}
+
+interface NavItem {
+  id?: Page
+  label: string
+  icon: typeof Home01Icon
+  badge?: string
+  children?: NavChild[]
+}
+
+const navItems: NavItem[] = [
   { id: "home", label: "Home", icon: Home01Icon },
   { id: "tasks", label: "My Tasks", icon: Task01Icon, badge: "3" },
   { id: "group-tasks", label: "Group Tasks", icon: UserGroupIcon, badge: "8" },
-  { id: "requests", label: "My Requests", icon: InboxIcon },
+  {
+    label: "My Requests",
+    icon: InboxIcon,
+    children: [
+      { id: "requests-active", label: "Active", icon: TimeHalfPassIcon },
+      { id: "requests-completed", label: "Completed", icon: CheckmarkCircle02Icon },
+    ],
+  },
   { id: "analytics", label: "Analytics", icon: BarChartIcon },
   { id: "heatmap", label: "Process Discovery", icon: MapsIcon },
 ]
 
 const workspaces = [
-  { id: "ws1", name: "Lotus HQ", connected: true },
-  { id: "ws2", name: "Lotus APAC", connected: false },
-  { id: "ws3", name: "Lotus Europe", connected: false },
-  { id: "ws4", name: "Lotus Americas", connected: false },
+  { id: "ws1", name: "Lotus HQ", current: true, role: "owner" as const },
+  { id: "ws2", name: "Lotus APAC", current: false, role: "admin" as const },
+  { id: "ws3", name: "Lotus Europe", current: false, role: "member" as const },
+  { id: "ws4", name: "Lotus Americas", current: false, role: "member" as const },
 ]
 
 export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
   const [wsSearch, setWsSearch] = useState("")
   const [processSearch, setProcessSearch] = useState("")
   const [processDialogOpen, setProcessDialogOpen] = useState(false)
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(["My Requests"])
 
   const filteredWs = workspaces.filter((ws) =>
     ws.name.toLowerCase().includes(wsSearch.toLowerCase())
   )
+
+  const toggleMenu = (label: string) => {
+    setExpandedMenus((prev) =>
+      prev.includes(label) ? prev.filter((m) => m !== label) : [...prev, label]
+    )
+  }
+
+  const isRequestPage = activePage === "requests-active" || activePage === "requests-completed"
 
   return (
     <aside
@@ -72,12 +105,12 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold text-zinc-100">Lotus HQ</p>
-              <p className="truncate text-[10px] text-zinc-400">Enterprise</p>
+              <p className="truncate text-[10px] text-zinc-400">Member</p>
             </div>
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-400" />
           </button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-xs">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Switch Workspace</DialogTitle>
           </DialogHeader>
@@ -99,10 +132,13 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
                   {ws.name[0]}
                 </div>
-                <span className="flex-1 text-left font-medium">{ws.name}</span>
-                {ws.connected && (
+                <div className="flex-1 text-left min-w-0">
+                  <p className="font-medium truncate">{ws.name}</p>
+                  <p className="text-[10px] text-muted-foreground capitalize">{ws.role}</p>
+                </div>
+                {ws.current && (
                   <Badge variant="secondary" className="text-[10px]">
-                    Connected
+                    Current
                   </Badge>
                 )}
               </button>
@@ -156,11 +192,71 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
 
         <div className="px-2">
           {navItems.map((item) => {
+            // Item with children (expandable)
+            if (item.children) {
+              const expanded = expandedMenus.includes(item.label)
+              const isChildActive = item.children.some((c) => activePage === c.id)
+
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => toggleMenu(item.label)}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
+                      isChildActive
+                        ? "text-zinc-100 font-medium"
+                        : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                    )}
+                  >
+                    <HugeiconsIcon icon={item.icon} className="size-4 shrink-0" />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    <HugeiconsIcon
+                      icon={ArrowRight01Icon}
+                      className={cn(
+                        "size-3.5 shrink-0 text-zinc-500 transition-transform duration-200",
+                        expanded && "rotate-90"
+                      )}
+                    />
+                  </button>
+
+                  {/* Children */}
+                  <div
+                    className={cn(
+                      "overflow-hidden transition-all duration-200",
+                      expanded ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                    )}
+                  >
+                    <div className="ml-4 border-l border-zinc-700/60 pl-2 py-0.5">
+                      {item.children.map((child) => {
+                        const childActive = activePage === child.id
+                        return (
+                          <button
+                            key={child.id}
+                            onClick={() => onNavigate(child.id)}
+                            className={cn(
+                              "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-sm",
+                              childActive
+                                ? "bg-zinc-700/60 text-zinc-100 font-medium"
+                                : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                            )}
+                          >
+                            <HugeiconsIcon icon={child.icon} className="size-3.5 shrink-0" />
+                            <span className="flex-1 text-left">{child.label}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+
+            // Regular item (no children)
             const active = activePage === item.id
             return (
               <button
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
+                onClick={() => item.id && onNavigate(item.id)}
                 className={cn(
                   "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
                   active
