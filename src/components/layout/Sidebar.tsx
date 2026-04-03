@@ -7,8 +7,8 @@ import {
   BarChartIcon,
   MapsIcon,
   ArrowDown01Icon,
-  Tick02Icon,
   Search01Icon,
+  Rocket01Icon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { ProcessList } from "@/components/processes/ProcessList"
 
 type Page = "home" | "tasks" | "requests" | "analytics" | "heatmap"
 
@@ -46,6 +47,8 @@ const workspaces = [
 
 export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
   const [wsSearch, setWsSearch] = useState("")
+  const [processSearch, setProcessSearch] = useState("")
+  const [processDialogOpen, setProcessDialogOpen] = useState(false)
 
   const filteredWs = workspaces.filter((ws) =>
     ws.name.toLowerCase().includes(wsSearch.toLowerCase())
@@ -107,11 +110,49 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
       </Dialog>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-2">
+      <nav className="flex-1 overflow-y-auto py-3">
+        {/* Start a Process CTA */}
+        <div className="px-2 mb-2">
+          <Dialog open={processDialogOpen} onOpenChange={(open) => {
+            setProcessDialogOpen(open)
+            if (!open) setProcessSearch("")
+          }}>
+            <DialogTrigger asChild>
+              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-gradient-to-r from-fuchsia-500/20 to-amber-500/20 border border-fuchsia-500/30 hover:from-fuchsia-500/30 hover:to-amber-500/30 transition-all">
+                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-amber-400" />
+                <span className="text-sm font-semibold bg-gradient-to-r from-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
+                  Start a Process
+                </span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <div className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 via-pink-500 to-orange-400">
+                    <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-white" />
+                  </div>
+                  Start a Process
+                </DialogTitle>
+              </DialogHeader>
+              <div className="relative">
+                <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search processes..."
+                  className="pl-8"
+                  value={processSearch}
+                  onChange={(e) => setProcessSearch(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <ProcessList
+                search={processSearch}
+                onSelect={() => setProcessDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+
         <div className="px-2">
-          <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Main
-          </p>
           {navItems.map((item) => {
             const active = activePage === item.id
             return (
@@ -119,7 +160,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors",
+                  "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
                   active
                     ? "bg-zinc-700/60 text-zinc-100 font-medium"
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"

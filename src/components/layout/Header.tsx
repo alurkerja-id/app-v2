@@ -207,12 +207,16 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
         {/* User Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm">
+            <Button variant="ghost" size="sm" className="gap-2 px-2">
               <Avatar size="sm">
                 <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
                   AW
                 </AvatarFallback>
               </Avatar>
+              <div className="text-left hidden sm:block">
+                <p className="text-xs font-semibold leading-tight">Alice Wang</p>
+                <p className="text-[10px] text-muted-foreground leading-tight">alice@company.com</p>
+              </div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
