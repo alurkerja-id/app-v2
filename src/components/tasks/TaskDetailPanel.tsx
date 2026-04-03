@@ -81,17 +81,6 @@ export function TaskDetailPanel({ task, onClose }: TaskDetailPanelProps) {
         </Button>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-1 bg-muted">
-        <div
-          className={cn(
-            "h-full transition-all",
-            task.status === "Done" ? "bg-emerald-500" : "bg-blue-500"
-          )}
-          style={{ width: `${task.progress}%` }}
-        />
-      </div>
-
       {/* Tabs */}
       <Tabs defaultValue="form" className="flex flex-col flex-1 min-h-0">
         <div className="border-b border-border px-2 pt-2">

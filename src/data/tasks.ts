@@ -17,6 +17,7 @@ export interface Task {
   status: TaskStatus
   author: string
   authorEmail: string
+  createdDate: string
   dueDate: string
   progress: number
   comments: number
@@ -33,6 +34,7 @@ export const TASKS: Task[] = [
     status: "In Progress",
     author: "Alice Wang",
     authorEmail: "alice@company.com",
+    createdDate: "2026-03-28",
     dueDate: "2026-04-05",
     progress: 60,
     comments: 4,
@@ -59,6 +61,7 @@ export const TASKS: Task[] = [
     status: "Pending Review",
     author: "John Doe",
     authorEmail: "john@company.com",
+    createdDate: "2026-03-30",
     dueDate: "2026-04-10",
     progress: 80,
     comments: 2,
@@ -82,6 +85,7 @@ export const TASKS: Task[] = [
     status: "New",
     author: "Mike Johnson",
     authorEmail: "mike@company.com",
+    createdDate: "2026-04-01",
     dueDate: "2026-04-03",
     progress: 10,
     comments: 1,
@@ -104,6 +108,7 @@ export const TASKS: Task[] = [
     status: "Pending Review",
     author: "Emma Wilson",
     authorEmail: "emma@company.com",
+    createdDate: "2026-03-31",
     dueDate: "2026-04-15",
     progress: 50,
     comments: 0,
@@ -126,6 +131,7 @@ export const TASKS: Task[] = [
     status: "In Progress",
     author: "David Park",
     authorEmail: "david@company.com",
+    createdDate: "2026-03-25",
     dueDate: "2026-04-08",
     progress: 40,
     comments: 6,
@@ -150,6 +156,7 @@ export const TASKS: Task[] = [
     status: "Done",
     author: "Lisa Tan",
     authorEmail: "lisa@company.com",
+    createdDate: "2026-03-15",
     dueDate: "2026-03-28",
     progress: 100,
     comments: 3,
@@ -172,6 +179,7 @@ export const TASKS: Task[] = [
     status: "New",
     author: "Alice Wang",
     authorEmail: "alice@company.com",
+    createdDate: "2026-04-02",
     dueDate: "2026-04-12",
     progress: 5,
     comments: 0,
@@ -191,6 +199,7 @@ export const TASKS: Task[] = [
     status: "Done",
     author: "Raj Patel",
     authorEmail: "raj@company.com",
+    createdDate: "2026-03-20",
     dueDate: "2026-04-01",
     progress: 100,
     comments: 1,
@@ -210,6 +219,7 @@ export const TASKS: Task[] = [
     status: "In Progress",
     author: "Chen Wei",
     authorEmail: "chen@company.com",
+    createdDate: "2026-04-01",
     dueDate: "2026-04-02",
     progress: 70,
     comments: 5,
@@ -230,6 +240,7 @@ export const TASKS: Task[] = [
     status: "Pending Review",
     author: "Nina Okafor",
     authorEmail: "nina@company.com",
+    createdDate: "2026-03-29",
     dueDate: "2026-04-20",
     progress: 30,
     comments: 2,
@@ -252,6 +263,7 @@ export const TASKS: Task[] = [
     status: "New",
     author: "Sophie Martin",
     authorEmail: "sophie@company.com",
+    createdDate: "2026-04-01",
     dueDate: "2026-04-18",
     progress: 0,
     comments: 0,
@@ -270,6 +282,7 @@ export const TASKS: Task[] = [
     status: "In Progress",
     author: "Tom Brady",
     authorEmail: "tom@company.com",
+    createdDate: "2026-03-27",
     dueDate: "2026-04-25",
     progress: 55,
     comments: 3,
