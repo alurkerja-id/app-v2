@@ -24,7 +24,7 @@ import {
   SheetContent,
 } from "@/components/ui/sheet"
 import { TaskCard } from "@/components/tasks/TaskCard"
-import { TaskDetailPanel } from "@/components/tasks/TaskDetailPanel"
+import { TaskDetailPanel, type TaskMode } from "@/components/tasks/TaskDetailPanel"
 import { TASKS } from "@/data/tasks"
 import type { Task } from "@/data/tasks"
 import { processes } from "@/components/processes/ProcessList"
@@ -47,7 +47,11 @@ function getDueCategory(dueDate: string, status: string): DueFilter {
   return "all"
 }
 
-export function TasksPage() {
+interface TasksPageProps {
+  mode?: TaskMode
+}
+
+export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [search, setSearch] = useState("")
   const [processFilter, setProcessFilter] = useState<string[]>([])
@@ -257,11 +261,12 @@ export function TasksPage() {
           if (!open) setSelectedTask(null)
         }}
       >
-        <SheetContent side="right" showCloseButton={false} className="sm:max-w-2xl w-full p-0">
+        <SheetContent side="right" showCloseButton={false} className="sm:max-w-4xl! w-full p-0">
           {selectedTask && (
             <TaskDetailPanel
               task={selectedTask}
               onClose={() => setSelectedTask(null)}
+              mode={mode}
             />
           )}
         </SheetContent>

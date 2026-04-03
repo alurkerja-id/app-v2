@@ -72,13 +72,13 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
           <span className={cn("text-xs font-medium", PROCESS_TEXT_COLOR[task.process] ?? "text-muted-foreground")}>{task.process}</span>
         </p>
         {/* Row 2: metadata */}
-        <div className="flex items-center gap-3 mt-1">
+        <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">
           <span className="text-xs font-mono text-muted-foreground shrink-0">{task.id}</span>
           <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
             <span className="flex size-4 items-center justify-center rounded-full border border-current text-[7px] font-bold leading-none">
               {getInitials(task.author)}
             </span>
-            {task.author}
+            <span className="hidden sm:inline">{task.author}</span>
           </span>
           <span
             className={cn(

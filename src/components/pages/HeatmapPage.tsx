@@ -171,7 +171,7 @@ export function HeatmapPage() {
             </p>
           </div>
           {/* Heat scale legend */}
-          <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5">
             <span className="text-[10px] text-muted-foreground">Low</span>
             <div className="flex gap-0.5">
               {HEAT_COLORS.map((c, i) => (
@@ -254,6 +254,7 @@ export function HeatmapPage() {
         <div className="border-b border-border px-3 py-2">
           <h3 className="font-semibold font-heading">Activity Metrics</h3>
         </div>
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
@@ -333,6 +334,7 @@ export function HeatmapPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </div>
     </div>
   )

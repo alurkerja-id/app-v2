@@ -23,12 +23,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type Page = "home" | "tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
 
 const PAGE_LABELS: Record<Page, string> = {
   home: "Home",
   tasks: "My Tasks",
-  requests: "Requests",
+  "group-tasks": "Group Tasks",
+  requests: "My Requests",
   analytics: "Analytics",
   heatmap: "Process Discovery",
 }
@@ -131,10 +132,16 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-blue-200/50 dark:border-blue-800/50 hover:from-blue-500/20 hover:to-indigo-500/20"
+              className="gap-1.5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] border-gray-200/80 hover:shadow-[0_2px_6px_rgba(0,0,0,0.1),0_6px_12px_rgba(0,0,0,0.06)] hover:bg-white active:shadow-[0_0px_1px_rgba(0,0,0,0.1)] active:translate-y-px transition-all dark:bg-zinc-800 dark:border-zinc-700 dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] dark:hover:bg-zinc-750 dark:hover:shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
             >
-              <HugeiconsIcon icon={GridViewIcon} className="size-3.5 text-blue-500" />
-              <span className="font-semibold text-blue-600 dark:text-blue-400">App</span>
+              <div className="grid grid-cols-2 gap-px size-4">
+                <div className="rounded-tl-sm bg-violet-500 size-[7px]" />
+                <div className="rounded-tr-sm bg-blue-500 size-[7px]" />
+                <div className="rounded-bl-sm bg-emerald-500 size-[7px]" />
+                <div className="rounded-br-sm bg-orange-500 size-[7px]" />
+              </div>
+              <span className="font-semibold">App</span>
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3 text-muted-foreground rotate-90" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-72">

@@ -3,6 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Home01Icon,
   Task01Icon,
+  UserGroupIcon,
   InboxIcon,
   BarChartIcon,
   MapsIcon,
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/dialog"
 import { ProcessList } from "@/components/processes/ProcessList"
 
-type Page = "home" | "tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
 
 interface SidebarProps {
   activePage: Page
@@ -33,7 +34,8 @@ interface SidebarProps {
 const navItems: { id: Page; label: string; icon: typeof Home01Icon; badge?: string }[] = [
   { id: "home", label: "Home", icon: Home01Icon },
   { id: "tasks", label: "My Tasks", icon: Task01Icon, badge: "3" },
-  { id: "requests", label: "Requests", icon: InboxIcon },
+  { id: "group-tasks", label: "Group Tasks", icon: UserGroupIcon, badge: "8" },
+  { id: "requests", label: "My Requests", icon: InboxIcon },
   { id: "analytics", label: "Analytics", icon: BarChartIcon },
   { id: "heatmap", label: "Process Discovery", icon: MapsIcon },
 ]

@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 
-type Page = "home" | "tasks" | "requests" | "analytics" | "heatmap"
+type Page = "home" | "tasks" | "group-tasks" | "requests" | "analytics" | "heatmap"
 
 interface AppLayoutProps {
   activePage: Page
@@ -11,15 +11,30 @@ interface AppLayoutProps {
   children: React.ReactNode
 }
 
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== "undefined" && window.innerWidth >= 1024)
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)")
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mql.addEventListener("change", handler)
+    return () => mql.removeEventListener("change", handler)
+  }, [])
+  return isDesktop
+}
+
 export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const isDesktop = useIsDesktop()
+  const [sidebarOpen, setSidebarOpen] = useState(isDesktop)
 
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <Sidebar
         activePage={activePage}
-        onNavigate={onNavigate}
+        onNavigate={(page) => {
+          onNavigate(page)
+          if (!isDesktop) setSidebarOpen(false)
+        }}
         open={sidebarOpen}
       />
 
