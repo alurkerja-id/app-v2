@@ -366,22 +366,24 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
         <Card className="gap-0 py-0 overflow-hidden">
           {/* Toolbar: search + count + add */}
           <div className="flex items-center gap-2 flex-wrap px-5 py-2.5 border-b border-border">
-            <div className="relative w-48">
+            <span className="text-xs text-muted-foreground w-32">
+              {filtered.length} record{filtered.length !== 1 ? "s" : ""}
+            </span>
+            <div className="relative flex-1 max-w-xs mx-auto">
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={`Search ${schema.entity.toLowerCase()}...`}
-                className="pl-8 h-8 shadow-none border-0 bg-muted/40 focus-visible:ring-0"
+                className="pl-8 h-8 shadow-none border-0 bg-muted/40 focus-visible:ring-0 w-full"
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <span className="ml-auto text-xs text-muted-foreground">
-              {filtered.length} record{filtered.length !== 1 ? "s" : ""}
-            </span>
+            <div className="w-32 flex justify-end">
             <Button size="sm" onClick={openCreate} className="gap-1.5">
               <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
               Add {schema.singular}
             </Button>
+            </div>
           </div>
 
           {/* Table */}
@@ -395,32 +397,32 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-24">ID</TableHead>
+                  <TableRow className="h-8">
+                    <TableHead className="w-24 py-1.5 text-xs">ID</TableHead>
                     {tableFields.map((f) => (
-                      <TableHead key={f.key}>{f.label}</TableHead>
+                      <TableHead key={f.key} className="py-1.5 text-xs">{f.label}</TableHead>
                     ))}
-                    <TableHead className="w-24 text-right">Actions</TableHead>
+                    <TableHead className="w-20 py-1.5 text-right text-xs">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginated.map((record) => (
                     <TableRow
                       key={record.id}
-                      className="cursor-pointer hover:bg-muted/40"
+                      className="cursor-pointer hover:bg-muted/40 h-9"
                       onClick={() => openView(record)}
                     >
-                      <TableCell className="font-mono text-xs text-muted-foreground">{record.id}</TableCell>
+                      <TableCell className="py-1.5 font-mono text-xs text-muted-foreground">{record.id}</TableCell>
                       {tableFields.map((f) => (
-                        <TableCell key={f.key}>
+                        <TableCell key={f.key} className="py-1.5">
                           {f.key === "status" ? (
                             <StatusBadge value={String(record[f.key] ?? "")} />
                           ) : (
-                            <span className="text-sm">{record[f.key] != null ? String(record[f.key]) : "—"}</span>
+                            <span className="text-xs">{record[f.key] != null ? String(record[f.key]) : "—"}</span>
                           )}
                         </TableCell>
                       ))}
-                      <TableCell className="text-right">
+                      <TableCell className="py-1.5 text-right">
                         <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                           <Button
                             variant="ghost"
