@@ -3,10 +3,10 @@ import { AppLayout } from "@/components/layout/AppLayout"
 import { HomePage } from "@/components/pages/HomePage"
 import { TasksPage } from "@/components/pages/TasksPage"
 import { RequestsPage } from "@/components/pages/RequestsPage"
-import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
-import { HeatmapPage } from "@/components/pages/HeatmapPage"
-
-type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
+import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
+import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
+import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
+import type { Page } from "@/types/navigation"
 
 export default function App() {
   const [activePage, setActivePage] = useState<Page>("home")
@@ -23,10 +23,12 @@ export default function App() {
         return <RequestsPage status="active" />
       case "requests-completed":
         return <RequestsPage status="completed" />
-      case "analytics":
-        return <AnalyticsPage />
-      case "heatmap":
-        return <HeatmapPage />
+      case "md-departments":
+        return <DepartmentsPage />
+      case "md-positions":
+        return <PositionsPage />
+      case "md-locations":
+        return <LocationsPage />
     }
   }
 

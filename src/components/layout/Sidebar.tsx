@@ -5,8 +5,10 @@ import {
   Task01Icon,
   UserGroupIcon,
   InboxIcon,
-  BarChartIcon,
-  MapsIcon,
+  Database02Icon,
+  Building06Icon,
+  UserAccountIcon,
+  Location01Icon,
   ArrowDown01Icon,
   ArrowRight01Icon,
   Search01Icon,
@@ -14,6 +16,7 @@ import {
   CheckmarkCircle02Icon,
   TimeHalfPassIcon,
 } from "@hugeicons/core-free-icons"
+import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -25,8 +28,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ProcessList } from "@/components/processes/ProcessList"
-
-type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
 
 interface SidebarProps {
   activePage: Page
@@ -60,8 +61,15 @@ const navItems: NavItem[] = [
       { id: "requests-completed", label: "Completed", icon: CheckmarkCircle02Icon },
     ],
   },
-  { id: "analytics", label: "Analytics", icon: BarChartIcon },
-  { id: "heatmap", label: "Process Discovery", icon: MapsIcon },
+  {
+    label: "Master Data",
+    icon: Database02Icon,
+    children: [
+      { id: "md-departments", label: "Departments", icon: Building06Icon },
+      { id: "md-positions", label: "Positions", icon: UserAccountIcon },
+      { id: "md-locations", label: "Locations", icon: Location01Icon },
+    ],
+  },
 ]
 
 const workspaces = [
@@ -155,17 +163,17 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             if (!open) setProcessSearch("")
           }}>
             <DialogTrigger asChild>
-              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-gradient-to-r from-fuchsia-500/20 to-amber-500/20 border border-fuchsia-500/30 hover:from-fuchsia-500/30 hover:to-amber-500/30 transition-all">
-                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-amber-400" />
-                <span className="text-sm font-semibold bg-gradient-to-r from-fuchsia-400 to-amber-400 bg-clip-text text-transparent">
+              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 hover:from-blue-500/30 hover:to-indigo-500/30 transition-all">
+                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-sky-400" />
+                <span className="text-sm font-semibold bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
                   Start a Process
                 </span>
               </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 via-pink-500 to-orange-400">
+                  <div className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-500">
                     <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-white" />
                   </div>
                   Start a Process

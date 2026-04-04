@@ -10,6 +10,7 @@ import {
   Settings02Icon,
   Logout01Icon,
   ArrowRight01Icon,
+  Home01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -30,30 +31,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
+import type { Page } from "@/types/navigation"
 
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
-  home: ["Home"],
+  home: [],
   tasks: ["My Tasks"],
   "group-tasks": ["Group Tasks"],
   "requests-active": ["My Requests", "Active"],
   "requests-completed": ["My Requests", "Completed"],
-  analytics: ["Analytics"],
-  heatmap: ["Process Discovery"],
+  "md-departments": ["Master Data", "Departments"],
+  "md-positions": ["Master Data", "Positions"],
+  "md-locations": ["Master Data", "Locations"],
 }
 
 const appItems = [
-  {
-    icon: AiBeautifyIcon,
-    title: "Studio",
-    description: "Design & build processes",
-    gradient: "from-violet-500 to-purple-600",
-  },
   {
     icon: GridViewIcon,
     title: "App",
     description: "End-user task management",
     gradient: "from-blue-500 to-indigo-600",
+  },
+  {
+    icon: AiBeautifyIcon,
+    title: "Studio",
+    description: "Design & build processes",
+    gradient: "from-violet-500 to-purple-600",
   },
   {
     icon: CpuIcon,
@@ -117,9 +119,10 @@ const notifications = [
 interface HeaderProps {
   activePage: Page
   onMenuToggle: () => void
+  onNavigate: (page: Page) => void
 }
 
-export function Header({ activePage, onMenuToggle }: HeaderProps) {
+export function Header({ activePage, onMenuToggle, onNavigate }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-11 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur-sm">
       {/* Left: hamburger + app switcher + breadcrumb */}
@@ -140,7 +143,7 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] border-gray-200/80 hover:shadow-[0_2px_6px_rgba(0,0,0,0.1),0_6px_12px_rgba(0,0,0,0.06)] hover:bg-white active:shadow-[0_0px_1px_rgba(0,0,0,0.1)] active:translate-y-px transition-all dark:bg-zinc-800 dark:border-zinc-700 dark:shadow-[0_1px_3px_rgba(0,0,0,0.3),0_4px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] dark:hover:bg-zinc-750 dark:hover:shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+              className="gap-1.5 rounded-full mr-2 border-gray-300/60 bg-gradient-to-b from-white to-gray-50 shadow-[0_1px_2px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,1),inset_0_-1px_0_rgba(0,0,0,0.03)] hover:from-gray-50 hover:to-gray-100 hover:shadow-[0_1px_3px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1),inset_0_-1px_0_rgba(0,0,0,0.04)] active:from-gray-100 active:to-gray-50 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.08)] active:translate-y-px transition-all dark:border-zinc-600/50 dark:bg-gradient-to-b dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.15)] dark:hover:from-zinc-650 dark:hover:to-zinc-750 dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.15)]"
             >
               <div className="grid grid-cols-2 gap-px size-4">
                 <div className="rounded-tl-sm bg-violet-500 size-[7px]" />
@@ -149,7 +152,6 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
                 <div className="rounded-br-sm bg-orange-500 size-[7px]" />
               </div>
               <span className="font-semibold">App</span>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3 text-muted-foreground rotate-90" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-72">
@@ -172,22 +174,31 @@ export function Header({ activePage, onMenuToggle }: HeaderProps) {
         </DropdownMenu>
 
         {/* Breadcrumb */}
-        <Breadcrumb>
-          <BreadcrumbList>
-            {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
-              <BreadcrumbItem key={i}>
-                {i < arr.length - 1 ? (
-                  <>
-                    <BreadcrumbLink>{crumb}</BreadcrumbLink>
-                    <BreadcrumbSeparator />
-                  </>
-                ) : (
-                  <BreadcrumbPage>{crumb}</BreadcrumbPage>
-                )}
+        {activePage !== "home" && (
+          <Breadcrumb>
+            <BreadcrumbList>
+              {/* Home icon */}
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  className="flex items-center cursor-pointer"
+                  onClick={() => onNavigate("home")}
+                >
+                  <HugeiconsIcon icon={Home01Icon} className="size-3.5" />
+                </BreadcrumbLink>
               </BreadcrumbItem>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
+              {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
+                <BreadcrumbItem key={i}>
+                  <BreadcrumbSeparator />
+                  {i < arr.length - 1 ? (
+                    <BreadcrumbLink>{crumb}</BreadcrumbLink>
+                  ) : (
+                    <BreadcrumbPage>{crumb}</BreadcrumbPage>
+                  )}
+                </BreadcrumbItem>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
       </div>
 
       {/* Spacer */}

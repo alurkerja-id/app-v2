@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 
-type Page = "home" | "tasks" | "group-tasks" | "requests-active" | "requests-completed" | "analytics" | "heatmap"
+import type { Page } from "@/types/navigation"
 
 interface AppLayoutProps {
   activePage: Page
@@ -69,6 +69,7 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
         <Header
           activePage={activePage}
           onMenuToggle={() => setMobileSidebarOpen((v) => !v)}
+          onNavigate={onNavigate}
         />
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
