@@ -91,15 +91,12 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
           {/* Title row */}
           <div className="flex items-start justify-between gap-2 mb-3 sm:mb-4">
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/20 text-xs font-bold backdrop-blur-sm">
+              <div className="flex items-center gap-2.5">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-sm font-bold backdrop-blur-sm">
                   {theme.abbr}
                 </span>
-                <span className="text-sm font-mono text-white/60 shrink-0">{request.id}</span>
-                <span className="text-sm text-white/50 shrink-0 hidden sm:inline">·</span>
-                <span className="text-sm font-medium text-white/80 shrink-0 hidden sm:inline">{request.process}</span>
+                <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{request.process}</h2>
               </div>
-              <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{request.title}</h2>
             </div>
             <Button variant="ghost" size="icon-sm" onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/10 shrink-0">
               <HugeiconsIcon icon={Cancel01Icon} />

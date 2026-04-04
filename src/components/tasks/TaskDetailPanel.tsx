@@ -79,11 +79,12 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/20 text-xs font-bold backdrop-blur-sm">
                   {theme.abbr}
                 </span>
-                <span className="text-sm font-mono text-white/60 shrink-0">{task.id}</span>
-                <span className="text-sm text-white/50 shrink-0 hidden sm:inline">·</span>
-                <span className="text-sm font-medium text-white/80 shrink-0 hidden sm:inline">{task.process}</span>
+                <span className="text-sm font-medium text-white/80 shrink-0">{task.process}</span>
               </div>
-              <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
+                <span className="text-xs font-mono text-white/50 shrink-0">#{task.id}</span>
+              </div>
             </div>
             <Button variant="ghost" size="icon-sm" onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/10 shrink-0">
               <HugeiconsIcon icon={Cancel01Icon} />
