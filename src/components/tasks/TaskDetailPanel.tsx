@@ -71,29 +71,55 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
           />
         </div>
 
-        <div className="relative px-4 py-4 sm:px-6 sm:py-5">
-          {/* Title row: badge + id + title + process + close */}
-          <div className="flex items-start justify-between gap-2 mb-3 sm:mb-4">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/20 text-xs font-bold backdrop-blur-sm">
-                  {theme.abbr}
-                </span>
-                <span className="text-sm font-medium text-white/80 shrink-0">{task.process}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{task.title}</h2>
-                <span className="text-xs font-mono text-white/50 shrink-0">#{task.id}</span>
-              </div>
+        <div className="relative px-4 py-3 sm:px-6 sm:py-5">
+          {/* Top row: process badge + close */}
+          <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/20 text-xs font-bold backdrop-blur-sm">
+                {theme.abbr}
+              </span>
+              <span className="text-sm font-medium text-white/80 truncate">{task.process}</span>
             </div>
             <Button variant="ghost" size="icon-sm" onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/10 shrink-0">
               <HugeiconsIcon icon={Cancel01Icon} />
             </Button>
           </div>
 
-          {/* Metadata + Actions */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-6">
-            <div className="flex items-start gap-3 sm:gap-5 flex-1 min-w-0 flex-wrap">
+          {/* Title + ID */}
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-1 sm:line-clamp-2">{task.title}</h2>
+            <span className="text-xs font-mono text-white/50 shrink-0">#{task.id}</span>
+          </div>
+
+          {/* Mobile: Actions as separate row */}
+          <div className="flex sm:hidden items-center gap-2 flex-wrap">
+            {mode === "my-tasks" ? (
+              <>
+                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  Delegate
+                </Button>
+                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  Unclaim
+                </Button>
+                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                  Complete Task
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  Delegate
+                </Button>
+                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                  Claim
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* Desktop: Metadata + Actions side by side */}
+          <div className="hidden sm:flex sm:items-end sm:gap-6">
+            <div className="flex items-start gap-5 flex-1 min-w-0 flex-wrap">
               <div>
                 <p className="text-[11px] text-white/60 mb-0.5">Task Age</p>
                 <p className="text-sm font-semibold">{getTaskAge(task.createdDate)}</p>
@@ -151,7 +177,7 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
 
       {/* Tabs */}
       <Tabs defaultValue="form" className="flex flex-col flex-1 min-h-0">
-        <div className="px-4 pt-3 flex justify-center overflow-x-auto">
+        <div className="px-4 pt-3 overflow-x-auto flex justify-start sm:justify-center">
           <TabsList className="w-max">
             {[
               { value: "form", label: "Form", icon: FileEditIcon },
@@ -160,10 +186,9 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
               { value: "history", label: "History", icon: WorkHistoryIcon },
               { value: "discussion", label: "Discussion", icon: BubbleChatIcon },
             ].map(({ value, label, icon }) => (
-              <TabsTrigger key={value} value={value} className="gap-1.5">
+              <TabsTrigger key={value} value={value} className="gap-1.5 shrink-0">
                 <HugeiconsIcon icon={icon} className="size-3.5" />
-                <span className="hidden sm:inline">{label}</span>
-                <span className="sm:hidden">{label.slice(0, 4)}</span>
+                {label}
               </TabsTrigger>
             ))}
           </TabsList>

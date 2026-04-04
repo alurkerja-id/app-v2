@@ -87,68 +87,65 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
           />
         </div>
 
-        <div className="relative px-4 py-4 sm:px-6 sm:py-5">
-          {/* Title row */}
-          <div className="flex items-start justify-between gap-2 mb-3 sm:mb-4">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-sm font-bold backdrop-blur-sm">
-                  {theme.abbr}
-                </span>
-                <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug line-clamp-2">{request.process}</h2>
-              </div>
+        <div className="relative px-4 py-3 sm:px-6 sm:py-5">
+          {/* Title row: avatar + process name + close */}
+          <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-sm font-bold backdrop-blur-sm">
+                {theme.abbr}
+              </span>
+              <h2 className="text-base sm:text-lg font-semibold font-heading leading-snug truncate">{request.process}</h2>
             </div>
             <Button variant="ghost" size="icon-sm" onClick={onClose} className="text-white/80 hover:text-white hover:bg-white/10 shrink-0">
               <HugeiconsIcon icon={Cancel01Icon} />
             </Button>
           </div>
 
-          {/* Metadata + Status */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-6">
-            <div className="flex items-start gap-3 sm:gap-5 flex-1 min-w-0 flex-wrap">
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Requestor</p>
-                <p className="text-sm font-semibold flex items-center gap-1.5">
-                  <span className="flex size-5 items-center justify-center rounded-full bg-white/20 text-[9px] font-bold backdrop-blur-sm">
-                    {request.requester.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-                  </span>
-                  {request.requester}
-                </p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Requested at</p>
-                <p className="text-sm font-semibold">{formatDateTime(request.createdDate)}</p>
-              </div>
-              {request.completedDate ? (
-                <div>
-                  <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
-                  <p className="text-sm font-semibold">{formatDateTime(request.completedDate)}</p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
-                  <p className="text-sm font-semibold text-white/40">—</p>
-                </div>
-              )}
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Process Duration</p>
-                <p className="text-sm font-semibold">{getProcessDuration(request)}</p>
-              </div>
-              <div>
-                <p className="text-[11px] text-white/60 mb-0.5">Steps</p>
-                <p className="text-sm font-semibold">{request.steps}</p>
-              </div>
-            </div>
+          {/* Status badge (always visible) */}
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+            <Badge className={cn(
+              "text-sm font-medium px-3 py-1",
+              request.status === "Active"
+                ? "bg-white/20 text-white border-white/30"
+                : "bg-emerald-400/20 text-emerald-100 border-emerald-300/30"
+            )}>
+              {request.status === "Active" ? "In Progress" : "Completed"}
+            </Badge>
+          </div>
 
-            <div className="flex items-center gap-2 shrink-0">
-              <Badge className={cn(
-                "text-sm font-medium px-3 py-1",
-                request.status === "Active"
-                  ? "bg-white/20 text-white border-white/30"
-                  : "bg-emerald-400/20 text-emerald-100 border-emerald-300/30"
-              )}>
-                {request.status === "Active" ? "In Progress" : "Completed"}
-              </Badge>
+          {/* Metadata (hidden on mobile, visible on sm+) */}
+          <div className="hidden sm:flex items-start gap-5 flex-wrap">
+            <div>
+              <p className="text-[11px] text-white/60 mb-0.5">Requestor</p>
+              <p className="text-sm font-semibold flex items-center gap-1.5">
+                <span className="flex size-5 items-center justify-center rounded-full bg-white/20 text-[9px] font-bold backdrop-blur-sm">
+                  {request.requester.split(" ").map((w) => w[0]).join("").slice(0, 2)}
+                </span>
+                {request.requester}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/60 mb-0.5">Requested at</p>
+              <p className="text-sm font-semibold">{formatDateTime(request.createdDate)}</p>
+            </div>
+            {request.completedDate ? (
+              <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
+                <p className="text-sm font-semibold">{formatDateTime(request.completedDate)}</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Completed at</p>
+                <p className="text-sm font-semibold text-white/40">—</p>
+              </div>
+            )}
+            <div>
+              <p className="text-[11px] text-white/60 mb-0.5">Process Duration</p>
+              <p className="text-sm font-semibold">{getProcessDuration(request)}</p>
+            </div>
+            <div>
+              <p className="text-[11px] text-white/60 mb-0.5">Steps</p>
+              <p className="text-sm font-semibold">{request.steps}</p>
             </div>
           </div>
         </div>
@@ -156,7 +153,7 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
 
       {/* Tabs — no Form tab */}
       <Tabs defaultValue="details" className="flex flex-col flex-1 min-h-0">
-        <div className="px-4 pt-3 flex justify-center overflow-x-auto">
+        <div className="px-4 pt-3 overflow-x-auto flex justify-start sm:justify-center">
           <TabsList className="w-max">
             {[
               { value: "details", label: "Details", icon: CheckListIcon },
@@ -164,10 +161,9 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
               { value: "history", label: "History", icon: WorkHistoryIcon },
               { value: "discussion", label: "Discussion", icon: BubbleChatIcon },
             ].map(({ value, label, icon }) => (
-              <TabsTrigger key={value} value={value} className="gap-1.5">
+              <TabsTrigger key={value} value={value} className="gap-1.5 shrink-0">
                 <HugeiconsIcon icon={icon} className="size-3.5" />
-                <span className="hidden sm:inline">{label}</span>
-                <span className="sm:hidden">{label.slice(0, 4)}</span>
+                {label}
               </TabsTrigger>
             ))}
           </TabsList>

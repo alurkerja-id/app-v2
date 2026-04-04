@@ -191,20 +191,18 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
 
   return (
     <div className="p-4 md:p-6">
-      <div className="flex items-start gap-6 lg:items-stretch">
+      <div className="flex items-start gap-6">
         {/* ── Desktop Filter Sidebar ── */}
-        <div className="hidden w-56 shrink-0 lg:block">
-          <div className="h-full p-4">
-            <FilterPanelContent
-              search={search}
-              onSearchChange={handleSearchChange}
-              dueFilter={dueFilter}
-              onDueFilterChange={handleDueFilterChange}
-              processFilter={processFilter}
-              onToggleProcess={toggleProcess}
-              onClearProcesses={clearProcesses}
-            />
-          </div>
+        <div className="hidden w-56 shrink-0 lg:block sticky top-4 md:top-6">
+          <FilterPanelContent
+            search={search}
+            onSearchChange={handleSearchChange}
+            dueFilter={dueFilter}
+            onDueFilterChange={handleDueFilterChange}
+            processFilter={processFilter}
+            onToggleProcess={toggleProcess}
+            onClearProcesses={clearProcesses}
+          />
         </div>
 
         {/* ── Task List ── */}
@@ -360,7 +358,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
           if (!open) setSelectedTask(null)
         }}
       >
-        <SheetContent side="right" showCloseButton={false} className="sm:max-w-4xl! w-full p-0">
+        <SheetContent side="right" showCloseButton={false} className="w-full! sm:max-w-4xl! p-0">
           {selectedTask && (
             <TaskDetailPanel
               task={selectedTask}
