@@ -73,15 +73,16 @@ export function HomePage() {
   return (
     <div className="flex flex-col gap-8 px-4 py-10 md:px-6 md:py-12 max-w-4xl mx-auto w-full">
       {/* Welcome */}
-      <div className="text-center">
-        <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-          {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-0.5">
+            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+          </p>
+          <h1 className="text-xl font-semibold font-heading">Good morning, Alice.</h1>
+        </div>
+        <p className="text-sm text-muted-foreground italic text-right hidden sm:block">
+          "The secret of getting ahead is getting started." <span className="not-italic">— Mark Twain</span>
         </p>
-        <h1 className="text-2xl font-semibold font-heading mb-2">Good morning, Alice.</h1>
-        <p className="text-sm text-muted-foreground italic">
-          "The secret of getting ahead is getting started."
-        </p>
-        <p className="text-xs text-muted-foreground mt-1">— Mark Twain</p>
       </div>
 
       {/* Task Summary Banner */}
@@ -122,20 +123,20 @@ export function HomePage() {
                 {favoriteProcesses.map((proc) => (
                   <button
                     key={proc.id}
-                    className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted/50"
+                    className={cn("group flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-left transition-all duration-200 hover:translate-x-0.5", proc.bgHover)}
                   >
                     <div
                       className={cn(
-                        "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold",
+                        "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",
                         proc.gradient
                       )}
                     >
                       {proc.abbr}
                     </div>
-                    <span className="text-sm font-medium truncate flex-1">{proc.name}</span>
+                    <span className="text-sm font-medium truncate flex-1 transition-all duration-200 group-hover:translate-x-0.5">{proc.name}</span>
                     <HugeiconsIcon
                       icon={ArrowRight01Icon}
-                      className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                      className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
                     />
                   </button>
                 ))}
@@ -173,7 +174,7 @@ export function HomePage() {
                   return (
                     <div
                       key={proc.id}
-                      className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/50"
+                      className={cn("group flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-all duration-200 hover:translate-x-0.5", proc.bgHover)}
                     >
                       <button
                         onClick={(e) => {
@@ -181,10 +182,10 @@ export function HomePage() {
                           toggleFavorite(proc.id)
                         }}
                         className={cn(
-                          "shrink-0 transition-colors",
+                          "shrink-0 transition-all duration-200",
                           isFav
-                            ? "text-amber-500"
-                            : "text-muted-foreground/30 hover:text-amber-400"
+                            ? "text-amber-500 hover:scale-125 hover:rotate-12"
+                            : "text-muted-foreground/30 hover:text-amber-400 hover:scale-110"
                         )}
                         aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
                       >
@@ -197,16 +198,16 @@ export function HomePage() {
                       <button className="flex items-center gap-2.5 flex-1 min-w-0 text-left">
                         <div
                           className={cn(
-                            "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold",
+                            "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",
                             proc.gradient
                           )}
                         >
                           {proc.abbr}
                         </div>
-                        <span className="text-sm font-medium truncate flex-1">{proc.name}</span>
+                        <span className="text-sm font-medium truncate flex-1 transition-all duration-200 group-hover:translate-x-0.5">{proc.name}</span>
                         <HugeiconsIcon
                           icon={ArrowRight01Icon}
-                          className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                          className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
                         />
                       </button>
                     </div>
