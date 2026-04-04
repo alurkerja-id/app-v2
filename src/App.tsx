@@ -6,6 +6,8 @@ import { RequestsPage } from "@/components/pages/RequestsPage"
 import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
 import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
+import { PreferencesPage } from "@/components/pages/PreferencesPage"
+import { PreferencesProvider } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
 
 export default function App() {
@@ -29,12 +31,16 @@ export default function App() {
         return <PositionsPage />
       case "md-locations":
         return <LocationsPage />
+      case "preferences":
+        return <PreferencesPage />
     }
   }
 
   return (
-    <AppLayout activePage={activePage} onNavigate={setActivePage}>
-      {renderPage()}
-    </AppLayout>
+    <PreferencesProvider>
+      <AppLayout activePage={activePage} onNavigate={setActivePage}>
+        {renderPage()}
+      </AppLayout>
+    </PreferencesProvider>
   )
 }

@@ -1,8 +1,11 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
-
+import { usePreferences } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
+
+const PATTERN_COLOR_LIGHT = "#0000000b"
+const PATTERN_COLOR_DARK  = "#ffffff09"
 
 interface AppLayoutProps {
   activePage: Page
@@ -43,6 +46,17 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
   }, [mobileSidebarOpen])
 
   const sidebarOpen = isDesktop || mobileSidebarOpen
+  const { pattern } = usePreferences()
+  const isDark = document.documentElement.classList.contains("dark")
+  const patternStyle = useMemo(() => {
+    const base = pattern.getStyle(isDark ? PATTERN_COLOR_DARK : PATTERN_COLOR_LIGHT)
+    if (!base.backgroundImage) return base
+    return {
+      backgroundImage: `linear-gradient(to right, var(--background) 0px, transparent 260px), ${base.backgroundImage}`,
+      backgroundSize: `auto, ${base.backgroundSize}`,
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pattern])
   const mainRef = useRef<HTMLElement>(null)
   const [scrolled, setScrolled] = useState(false)
 
@@ -82,7 +96,7 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
           onNavigate={onNavigate}
           scrolled={scrolled}
         />
-        <main ref={mainRef} className="flex-1 overflow-auto">{children}</main>
+        <main ref={mainRef} className="flex-1 overflow-auto" style={patternStyle}>{children}</main>
       </div>
     </div>
   )

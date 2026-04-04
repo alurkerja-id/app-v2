@@ -163,9 +163,9 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             if (!open) setProcessSearch("")
           }}>
             <DialogTrigger asChild>
-              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-500/30 hover:from-blue-500/30 hover:to-indigo-500/30 transition-all">
-                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-sky-400" />
-                <span className="text-sm font-semibold bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-sidebar-primary/15 border border-sidebar-primary/30 hover:bg-sidebar-primary/25 transition-all">
+                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-sidebar-primary" />
+                <span className="text-sm font-semibold text-sidebar-primary">
                   Start a Process
                 </span>
               </button>
@@ -173,8 +173,8 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             <DialogContent className="sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-500">
-                    <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-white" />
+                  <div className="flex size-6 items-center justify-center rounded-md bg-sidebar-primary">
+                    <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-sidebar-primary-foreground" />
                   </div>
                   Start a Process
                 </DialogTitle>
@@ -274,7 +274,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 <HugeiconsIcon icon={item.icon} className="size-4 shrink-0" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && (
-                  <span className="flex size-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-sidebar-primary text-[10px] font-bold text-sidebar-primary-foreground">
                     {item.badge}
                   </span>
                 )}

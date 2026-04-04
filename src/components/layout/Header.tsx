@@ -43,6 +43,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-departments": ["Master Data", "Departments"],
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
+  "preferences": ["Preferences"],
 }
 
 const appItems = [
@@ -228,7 +229,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="flex items-center justify-between">
               Notifications
-              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+              <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
                 6
               </span>
             </DropdownMenuLabel>
@@ -247,7 +248,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center font-medium text-blue-600 dark:text-blue-400">
+            <DropdownMenuItem className="justify-center font-medium text-primary">
               See all notifications
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -285,7 +286,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               <HugeiconsIcon icon={UserIcon} className="size-3.5" />
               Profile Settings
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("preferences")}>
               <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
               Preferences
             </DropdownMenuItem>
