@@ -362,7 +362,10 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
   const panelKey = `${panelMode}-${panelRecord?.id ?? "new"}`
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-6 md:p-10">
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold font-heading">{schema.entity}</h1>
+      </div>
         <Card className="gap-0 py-0 overflow-hidden">
           {/* Toolbar: search + count + add */}
           <div className="flex items-center gap-2 flex-wrap px-5 py-2.5 border-b border-border">

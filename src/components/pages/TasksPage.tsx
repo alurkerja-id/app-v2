@@ -189,8 +189,16 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const activeFilterCount =
     (dueFilter !== "all" ? 1 : 0) + processFilter.length + (search ? 1 : 0)
 
+  const pageTitle = mode === "my-tasks" ? "My Tasks" : "Group Tasks"
+  const pageDescription = mode === "my-tasks"
+    ? "Tasks assigned to you across all processes"
+    : "Tasks shared with your team"
+
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-6 md:p-10">
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold font-heading">{pageTitle}</h1>
+      </div>
       <div className="flex items-start gap-6">
         {/* ── Desktop Filter Sidebar ── */}
         <div className="hidden w-56 shrink-0 lg:block sticky top-4 md:top-6">

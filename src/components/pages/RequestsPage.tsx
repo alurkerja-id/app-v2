@@ -261,8 +261,16 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
   const activeFilterCount =
     processFilter.length + (search ? 1 : 0)
 
+  const pageTitle = status === "completed" ? "Completed Requests" : "Active Requests"
+  const pageDescription = status === "completed"
+    ? "Requests you've submitted that are resolved or closed"
+    : "Requests you've submitted that are currently in progress"
+
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-6 md:p-10">
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold font-heading">{pageTitle}</h1>
+      </div>
       <div className="flex gap-6 items-start">
         {/* ── Desktop Filter Sidebar ── */}
         <div className="hidden lg:block w-56 shrink-0 sticky top-4 md:top-6">
