@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
 
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
@@ -120,11 +121,21 @@ interface HeaderProps {
   activePage: Page
   onMenuToggle: () => void
   onNavigate: (page: Page) => void
+  scrolled?: boolean
 }
 
-export function Header({ activePage, onMenuToggle, onNavigate }: HeaderProps) {
+export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-30 flex h-11 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur-sm">
+    <div className={cn(
+      "sticky top-0 z-30 transition-all duration-300",
+      scrolled ? "p-0" : "px-3 pt-2"
+    )}>
+    <header className={cn(
+      "flex h-11 items-center gap-2 px-3 transition-all duration-300",
+      scrolled
+        ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
+        : "rounded-2xl border border-border/40 bg-background/80 backdrop-blur-md dark:border-border/60 dark:bg-background/60 dark:backdrop-blur-xl"
+    )}>
       {/* Left: hamburger + app switcher + breadcrumb */}
       <div className="flex items-center gap-1.5">
         {/* Hamburger (mobile) */}
@@ -287,5 +298,6 @@ export function Header({ activePage, onMenuToggle, onNavigate }: HeaderProps) {
         </DropdownMenu>
       </div>
     </header>
+    </div>
   )
 }

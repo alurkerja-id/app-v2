@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
 
@@ -43,6 +43,16 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
   }, [mobileSidebarOpen])
 
   const sidebarOpen = isDesktop || mobileSidebarOpen
+  const mainRef = useRef<HTMLElement>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const el = mainRef.current
+    if (!el) return
+    const onScroll = () => setScrolled(el.scrollTop > 10)
+    el.addEventListener("scroll", onScroll, { passive: true })
+    return () => el.removeEventListener("scroll", onScroll)
+  }, [])
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -70,8 +80,9 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
           activePage={activePage}
           onMenuToggle={() => setMobileSidebarOpen((v) => !v)}
           onNavigate={onNavigate}
+          scrolled={scrolled}
         />
-        <main className="flex-1 overflow-auto">{children}</main>
+        <main ref={mainRef} className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
   )
