@@ -166,27 +166,40 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             if (!open) setProcessSearch("")
           }}>
             <DialogTrigger asChild>
-              {isDefaultAccent ? (
-                <button className="w-full rounded-full bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] p-px shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-all hover:shadow-md">
-                  <div className="flex items-center gap-2.5 rounded-full bg-zinc-900 px-3 py-2">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] text-white shadow-sm">
-                      <HugeiconsIcon icon={Rocket01Icon} className="size-4" />
-                    </div>
-                    <span className="text-sm font-semibold text-zinc-100">
-                      Start a Process
-                    </span>
-                  </div>
-                </button>
-              ) : (
-                <button className="flex w-full items-center gap-2.5 rounded-full border border-sidebar-primary/30 bg-sidebar-primary/15 px-3 py-2 transition-all hover:bg-sidebar-primary/25">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
+              <button
+                className={cn(
+                  "w-full rounded-full p-px duration-150",
+                  isDefaultAccent
+                    ? "bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-shadow hover:shadow-md"
+                    : "bg-sidebar-primary/15 ring-1 ring-inset ring-sidebar-primary/30 transition-colors hover:bg-sidebar-primary/25"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-full px-3 py-2",
+                    isDefaultAccent ? "bg-zinc-900" : "bg-transparent"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex size-7 shrink-0 items-center justify-center rounded-full shadow-sm",
+                      isDefaultAccent
+                        ? "bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] text-white"
+                        : "bg-sidebar-primary text-sidebar-primary-foreground"
+                    )}
+                  >
                     <HugeiconsIcon icon={Rocket01Icon} className="size-4" />
                   </div>
-                  <span className="text-sm font-semibold text-sidebar-primary">
+                  <span
+                    className={cn(
+                      "text-sm font-semibold",
+                      isDefaultAccent ? "text-zinc-100" : "text-sidebar-primary"
+                    )}
+                  >
                     Start a Process
                   </span>
-                </button>
-              )}
+                </div>
+              </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
               <DialogHeader>
@@ -292,7 +305,14 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
                 <HugeiconsIcon icon={item.icon} className="size-4 shrink-0" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && (
-                  <span className="flex size-4 items-center justify-center rounded-full bg-sidebar-primary text-[10px] font-bold text-sidebar-primary-foreground">
+                  <span
+                    className={cn(
+                      "flex size-4 items-center justify-center rounded-full text-[10px] font-bold",
+                      isDefaultAccent
+                        ? "bg-red-500 text-white"
+                        : "bg-sidebar-primary text-sidebar-primary-foreground"
+                    )}
+                  >
                     {item.badge}
                   </span>
                 )}
