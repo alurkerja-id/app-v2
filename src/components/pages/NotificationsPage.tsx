@@ -128,35 +128,52 @@ export function NotificationsPage() {
               {paginatedItems.map((item) => {
                 const meta = TYPE_META[item.type]
                 return (
-                  <TableRow key={item.id} className={cn(!item.read && "bg-primary/[0.03]")}>
+                  <TableRow
+                    key={item.id}
+                    className={cn(
+                      !item.read ? "bg-muted/20" : "bg-slate-100 dark:bg-slate-900/40"
+                    )}
+                  >
                     <TableCell className="pl-4 align-top sm:pl-6">
                       <div className="flex items-start gap-3">
-                        <div className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted", meta.tone)}>
+                        <div
+                          className={cn(
+                            "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted",
+                            item.read ? "text-muted-foreground" : meta.tone
+                          )}
+                        >
                           <HugeiconsIcon icon={meta.icon} className="size-4" />
                         </div>
                         <div className="min-w-0 space-y-1 whitespace-normal">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className={cn("font-medium leading-snug", !item.read && "text-foreground")}>
+                            <p className={cn("font-medium leading-snug", item.read ? "text-muted-foreground" : "text-foreground")}>
                               {item.title}
                             </p>
-                            <Badge className={meta.badgeClass}>{meta.label}</Badge>
+                            <Badge
+                              variant={item.read ? "outline" : undefined}
+                              className={item.read ? "border-border bg-transparent text-muted-foreground" : meta.badgeClass}
+                            >
+                              {meta.label}
+                            </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                          <p className="text-xs text-muted-foreground sm:hidden">
+                          <p className={cn("text-sm", item.read ? "text-muted-foreground/85" : "text-muted-foreground")}>
+                            {item.description}
+                          </p>
+                          <p className={cn("text-xs sm:hidden", item.read ? "text-muted-foreground/80" : "text-muted-foreground")}>
                             {formatTimestamp(item.timestamp)}
                           </p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="hidden align-top text-sm text-muted-foreground sm:table-cell">
+                    <TableCell className={cn("hidden align-top text-sm sm:table-cell", item.read ? "text-muted-foreground/80" : "text-muted-foreground")}>
                       {formatTimestamp(item.timestamp)}
                     </TableCell>
                     <TableCell className="align-top text-center">
                       <div className="flex justify-center pt-0.5">
                         <Switch
                           size="sm"
-                          checked={item.read}
-                          onCheckedChange={(checked) => toggleRead(item.id, checked)}
+                          checked={!item.read}
+                          onCheckedChange={(checked) => toggleRead(item.id, !checked)}
                           aria-label={item.read ? "Mark as unread" : "Mark as read"}
                         />
                       </div>
