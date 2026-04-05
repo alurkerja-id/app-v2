@@ -28,7 +28,6 @@ export function PreferencesPanel({ inDialog = false }: PreferencesPanelProps) {
     selected
       ? "border-primary shadow-md"
       : "border-border hover:border-foreground/30 hover:shadow-md"
-
   if (inDialog) {
     return (
       <div className="flex h-[min(82vh,760px)] flex-col">

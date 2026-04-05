@@ -16,6 +16,26 @@ export const COLOR_PRESETS: ColorPreset[] = [
     dark:  { primary: "oklch(0.922 0 0)",         foreground: "oklch(0.205 0 0)", ring: "oklch(0.6 0 0)"         },
   },
   {
+    id: "slate", name: "Slate", swatch: "#475569",
+    light: { primary: "oklch(0.392 0.049 252)",   foreground: "oklch(0.985 0 0)", ring: "oklch(0.52 0.04 252)"   },
+    dark:  { primary: "oklch(0.641 0.044 252)",   foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.04 252)"   },
+  },
+  {
+    id: "gray", name: "Gray", swatch: "#4b5563",
+    light: { primary: "oklch(0.372 0.014 285)",   foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0.01 285)"   },
+    dark:  { primary: "oklch(0.633 0.016 285)",   foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.01 285)"   },
+  },
+  {
+    id: "neutral", name: "Neutral", swatch: "#404040",
+    light: { primary: "oklch(0.371 0 0)",         foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0 0)"        },
+    dark:  { primary: "oklch(0.892 0 0)",         foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0 0)"        },
+  },
+  {
+    id: "stone", name: "Stone", swatch: "#57534e",
+    light: { primary: "oklch(0.374 0.013 67)",    foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0.01 67)"    },
+    dark:  { primary: "oklch(0.854 0.010 67)",    foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.01 67)"    },
+  },
+  {
     id: "red", name: "Red", swatch: "#dc2626",
     light: { primary: "oklch(0.497 0.228 27)",    foreground: "oklch(0.985 0 0)", ring: "oklch(0.58 0.19 27)"    },
     dark:  { primary: "oklch(0.785 0.170 22)",    foreground: "oklch(0.145 0 0)", ring: "oklch(0.68 0.15 22)"    },
@@ -99,26 +119,6 @@ export const COLOR_PRESETS: ColorPreset[] = [
     id: "rose", name: "Rose", swatch: "#e11d48",
     light: { primary: "oklch(0.47 0.215 16)",     foreground: "oklch(0.985 0 0)", ring: "oklch(0.56 0.18 16)"    },
     dark:  { primary: "oklch(0.793 0.172 10)",    foreground: "oklch(0.145 0 0)", ring: "oklch(0.65 0.15 12)"    },
-  },
-  {
-    id: "slate", name: "Slate", swatch: "#475569",
-    light: { primary: "oklch(0.392 0.049 252)",   foreground: "oklch(0.985 0 0)", ring: "oklch(0.52 0.04 252)"   },
-    dark:  { primary: "oklch(0.641 0.044 252)",   foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.04 252)"   },
-  },
-  {
-    id: "gray", name: "Gray", swatch: "#4b5563",
-    light: { primary: "oklch(0.372 0.014 285)",   foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0.01 285)"   },
-    dark:  { primary: "oklch(0.633 0.016 285)",   foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.01 285)"   },
-  },
-  {
-    id: "neutral", name: "Neutral", swatch: "#404040",
-    light: { primary: "oklch(0.371 0 0)",         foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0 0)"        },
-    dark:  { primary: "oklch(0.892 0 0)",         foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0 0)"        },
-  },
-  {
-    id: "stone", name: "Stone", swatch: "#57534e",
-    light: { primary: "oklch(0.374 0.013 67)",    foreground: "oklch(0.985 0 0)", ring: "oklch(0.50 0.01 67)"    },
-    dark:  { primary: "oklch(0.854 0.010 67)",    foreground: "oklch(0.145 0 0)", ring: "oklch(0.72 0.01 67)"    },
   },
 ]
 
