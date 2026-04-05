@@ -1,5 +1,6 @@
 export type Page =
   | "home"
+  | "profile"
   | "tasks"
   | "group-tasks"
   | "requests-active"

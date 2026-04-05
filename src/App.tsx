@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { HomePage } from "@/components/pages/HomePage"
+import { ProfilePage } from "@/components/pages/ProfilePage"
 import { TasksPage } from "@/components/pages/TasksPage"
 import { RequestsPage } from "@/components/pages/RequestsPage"
 import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
@@ -17,6 +18,8 @@ export default function App() {
     switch (activePage) {
       case "home":
         return <HomePage />
+      case "profile":
+        return <ProfilePage />
       case "tasks":
         return <TasksPage />
       case "group-tasks":

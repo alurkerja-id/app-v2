@@ -28,7 +28,7 @@ export function PreferencesPage() {
   return (
     <div className="p-6 md:p-10 max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-xl font-semibold font-heading">Preferences</h1>
+        <h1 className="text-xl font-semibold font-heading">My Preferences</h1>
       </div>
 
       <div className="flex flex-col gap-10">

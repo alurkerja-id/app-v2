@@ -35,6 +35,7 @@ import type { Page } from "@/types/navigation"
 
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   home: [],
+  profile: ["My Profile"],
   tasks: ["My Tasks"],
   "group-tasks": ["Group Tasks"],
   "requests-active": ["My Requests", "Active"],
@@ -42,7 +43,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-departments": ["Master Data", "Departments"],
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
-  "preferences": ["Preferences"],
+  "preferences": ["My Preferences"],
 }
 
 const appItems = [
@@ -296,13 +297,13 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
               <HugeiconsIcon icon={UserIcon} className="size-3.5" />
-              Profile Settings
+              My Profile
             </DropdownMenuItem>
             <DropdownMenuItem className="gap-2" onClick={() => onNavigate("preferences")}>
               <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
-              Preferences
+              My Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" className="gap-2">
