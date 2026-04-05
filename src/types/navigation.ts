@@ -1,4 +1,6 @@
 export type Page =
+  | "workspaces"
+  | "invitations"
   | "home"
   | "profile"
   | "notifications"

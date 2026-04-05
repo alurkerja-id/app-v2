@@ -73,11 +73,11 @@ const navItems: NavItem[] = [
   },
 ]
 
-const workspaces = [
-  { id: "ws1", name: "Lotus HQ", current: true, role: "owner" as const },
-  { id: "ws2", name: "Lotus APAC", current: false, role: "admin" as const },
-  { id: "ws3", name: "Lotus Europe", current: false, role: "member" as const },
-  { id: "ws4", name: "Lotus Americas", current: false, role: "member" as const },
+const quickWorkspaces = [
+  { id: "ws1", name: "AlurKerja HQ", current: true, role: "owner" as const },
+  { id: "ws2", name: "AlurKerja APAC", current: false, role: "admin" as const },
+  { id: "ws3", name: "AlurKerja Europe", current: false, role: "member" as const },
+  { id: "ws4", name: "AlurKerja Americas", current: false, role: "member" as const },
 ]
 
 export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
@@ -87,9 +87,9 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
   const [processSearch, setProcessSearch] = useState("")
   const [processDialogOpen, setProcessDialogOpen] = useState(false)
   const [expandedMenus, setExpandedMenus] = useState<string[]>(["My Requests"])
-
-  const filteredWs = workspaces.filter((ws) =>
-    ws.name.toLowerCase().includes(wsSearch.toLowerCase())
+  const currentWorkspace = quickWorkspaces.find((workspace) => workspace.current) ?? quickWorkspaces[0]
+  const filteredWs = quickWorkspaces.filter((workspace) =>
+    workspace.name.toLowerCase().includes(wsSearch.toLowerCase())
   )
 
   const toggleMenu = (label: string) => {
@@ -114,8 +114,8 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               L
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold text-zinc-100">Lotus HQ</p>
-              <p className="truncate text-[10px] text-zinc-400">Member</p>
+              <p className="truncate font-semibold text-zinc-100">{currentWorkspace.name}</p>
+              <p className="truncate text-[10px] text-zinc-400 capitalize">{currentWorkspace.role}</p>
             </div>
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-400" />
           </button>
