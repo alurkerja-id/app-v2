@@ -33,7 +33,7 @@ import { processes } from "@/components/processes/ProcessList"
 
 type DueFilter = "all" | "overdue" | "today" | "soon"
 
-const PAGE_SIZE = 8
+const PAGE_SIZE = 10
 
 function getDueCategory(dueDate: string, status: string): DueFilter {
   if (status === "Done") return "all"
@@ -71,6 +71,11 @@ function FilterPanelContent({
   onToggleProcess: (name: string) => void
   onClearProcesses: () => void
 }) {
+  const [processSearch, setProcessSearch] = useState("")
+  const filteredProcesses = processes.filter((p) =>
+    p.name.toLowerCase().includes(processSearch.toLowerCase())
+  )
+
   return (
     <div className="flex flex-col gap-5">
       {/* Search */}
@@ -120,19 +125,38 @@ function FilterPanelContent({
             </button>
           )}
         </div>
-        <div className="flex flex-col gap-0.5 max-h-64 overflow-y-auto">
-          {processes.map((p) => (
-            <label
-              key={p.id}
-              className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted/60 cursor-pointer transition-colors"
-            >
-              <Checkbox
-                checked={processFilter.includes(p.name)}
-                onCheckedChange={() => onToggleProcess(p.name)}
-              />
-              <span className="text-sm">{p.name}</span>
-            </label>
-          ))}
+        <div className="relative mb-2">
+          <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search process..."
+            className="h-8 pl-8"
+            value={processSearch}
+            onChange={(e) => setProcessSearch(e.target.value)}
+          />
+        </div>
+        <div className="relative overflow-hidden rounded-xl border border-border/70 bg-background/70">
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-background via-background/95 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-background via-background/95 to-transparent" />
+          <div className="h-72 overflow-y-auto p-1.5">
+            <div className="flex flex-col gap-0.5">
+            {filteredProcesses.length === 0 ? (
+              <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                No process found
+              </div>
+            ) : filteredProcesses.map((p) => (
+              <label
+                key={p.id}
+                className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted/60 cursor-pointer transition-colors"
+              >
+                <Checkbox
+                  checked={processFilter.includes(p.name)}
+                  onCheckedChange={() => onToggleProcess(p.name)}
+                />
+                <span className="text-sm">{p.name}</span>
+              </label>
+            ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -190,10 +214,6 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
     (dueFilter !== "all" ? 1 : 0) + processFilter.length + (search ? 1 : 0)
 
   const pageTitle = mode === "my-tasks" ? "My Tasks" : "Group Tasks"
-  const pageDescription = mode === "my-tasks"
-    ? "Tasks assigned to you across all processes"
-    : "Tasks shared with your team"
-
   return (
     <div className="p-6 md:p-10">
       <div className="mb-8">

@@ -61,7 +61,7 @@ export function ProcessList({ search = "", onSelect }: ProcessListProps) {
   }
 
   return (
-    <div className="overflow-y-auto max-h-[60vh] flex flex-col gap-0.5">
+    <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-0.5">
       {filtered.map((proc) => (
         <button
           key={proc.id}
