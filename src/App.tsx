@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { HomePage } from "@/components/pages/HomePage"
+import { NotificationsPage } from "@/components/pages/NotificationsPage"
 import { ProfilePage } from "@/components/pages/ProfilePage"
 import { TasksPage } from "@/components/pages/TasksPage"
 import { RequestsPage } from "@/components/pages/RequestsPage"
@@ -20,6 +21,8 @@ export default function App() {
         return <HomePage />
       case "profile":
         return <ProfilePage />
+      case "notifications":
+        return <NotificationsPage />
       case "tasks":
         return <TasksPage />
       case "group-tasks":

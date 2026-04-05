@@ -36,6 +36,7 @@ import type { Page } from "@/types/navigation"
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   home: [],
   profile: ["My Profile"],
+  notifications: ["My Notifications"],
   tasks: ["My Tasks"],
   "group-tasks": ["Group Tasks"],
   "requests-active": ["My Requests", "Active"],
@@ -228,15 +229,33 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
                 <HugeiconsIcon icon={Notification02Icon} />
                 <span
                   className={cn(
-                    "absolute right-1.5 top-1.5 size-1.5 rounded-full",
-                    isDefaultAccent ? "bg-red-500" : "bg-primary"
+                    "pointer-events-none absolute right-1 top-1 flex size-3 items-center justify-center",
                   )}
-                />
+                >
+                  <span
+                    className={cn(
+                      "absolute size-3 rounded-full",
+                      isDefaultAccent ? "bg-red-500/18" : "bg-primary/18"
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "absolute size-2.5 rounded-full animate-ping",
+                      isDefaultAccent ? "bg-red-500/65" : "bg-primary/65"
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "relative size-1.5 rounded-full",
+                      isDefaultAccent ? "bg-red-500" : "bg-primary"
+                    )}
+                  />
+                </span>
               </Button>
             </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="flex items-center justify-between">
-              Notifications
+              My Notifications
               <span
                 className={cn(
                   "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
@@ -263,7 +282,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center font-medium text-primary">
+            <DropdownMenuItem className="justify-center font-medium text-primary" onClick={() => onNavigate("notifications")}>
               See all notifications
             </DropdownMenuItem>
           </DropdownMenuContent>
