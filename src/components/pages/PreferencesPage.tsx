@@ -13,7 +13,11 @@ const THEME_OPTIONS: { id: Theme; label: string; icon: React.ComponentType }[] =
   { id: "dark",   label: "Dark",   icon: Moon01Icon   },
 ]
 
-export function PreferencesPage() {
+interface PreferencesPanelProps {
+  inDialog?: boolean
+}
+
+export function PreferencesPanel({ inDialog = false }: PreferencesPanelProps) {
   const { color, pattern, theme, setColorId, setPatternId, setTheme } = usePreferences()
 
   const isDark = document.documentElement.classList.contains("dark")
@@ -26,7 +30,7 @@ export function PreferencesPage() {
       : "border-border hover:border-foreground/30 hover:shadow-md"
 
   return (
-    <div className="p-6 md:p-10 max-w-2xl">
+    <div className={cn(inDialog ? "max-h-[min(82vh,760px)] overflow-y-auto p-6 sm:p-7" : "max-w-2xl p-6 md:p-10")}>
       <div className="mb-8">
         <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
           <HugeiconsIcon icon={Settings02Icon} className="size-5 text-muted-foreground" />
@@ -155,4 +159,8 @@ export function PreferencesPage() {
       </div>
     </div>
   )
+}
+
+export function PreferencesPage() {
+  return <PreferencesPanel />
 }

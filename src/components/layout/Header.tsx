@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Menu02Icon,
@@ -29,6 +30,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { PreferencesPanel } from "@/components/pages/PreferencesPage"
 import { usePreferences } from "@/contexts/PreferencesContext"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
@@ -44,7 +47,6 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-departments": ["Master Data", "Departments"],
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
-  "preferences": ["My Preferences"],
 }
 
 const appItems = [
@@ -129,18 +131,20 @@ interface HeaderProps {
 export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false }: HeaderProps) {
   const { color } = usePreferences()
   const isDefaultAccent = color.id === "zinc"
+  const [preferencesOpen, setPreferencesOpen] = useState(false)
 
   return (
-    <div className={cn(
-      "sticky top-0 z-30 transition-all duration-300",
-      scrolled ? "p-0" : "px-3 pt-2"
-    )}>
-    <header className={cn(
-      "flex h-11 items-center gap-2 px-3 transition-all duration-300",
-      scrolled
-        ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
-        : "rounded-full border border-border/50 bg-background/80 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl"
-    )}>
+    <>
+      <div className={cn(
+        "sticky top-0 z-30 transition-all duration-300",
+        scrolled ? "p-0" : "px-3 pt-2"
+      )}>
+      <header className={cn(
+        "flex h-11 items-center gap-2 px-3 transition-all duration-300",
+        scrolled
+          ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
+          : "rounded-full border border-border/50 bg-background/80 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl"
+      )}>
       {/* Left: hamburger + app switcher + breadcrumb */}
       <div className="flex items-center gap-1.5">
         {/* Hamburger (mobile) */}
@@ -320,7 +324,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               <HugeiconsIcon icon={UserIcon} className="size-3.5" />
               My Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("preferences")}>
+            <DropdownMenuItem className="gap-2" onClick={() => setPreferencesOpen(true)}>
               <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
               My Preferences
             </DropdownMenuItem>
@@ -332,7 +336,14 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </header>
-    </div>
+      </header>
+      </div>
+
+      <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
+        <DialogContent className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden p-0 sm:max-w-3xl">
+          <PreferencesPanel inDialog />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
