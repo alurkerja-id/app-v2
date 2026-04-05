@@ -122,19 +122,22 @@ function FilterPanelContent({
             </button>
           )}
         </div>
-        <div className="relative mb-2">
-          <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search process..."
-            className="h-8 pl-8"
-            value={processSearch}
-            onChange={(e) => setProcessSearch(e.target.value)}
-          />
-        </div>
         <div className="relative overflow-hidden rounded-xl border border-border/70 bg-background/70">
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-background via-background/95 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-background via-background/95 to-transparent" />
-          <div className="h-72 overflow-y-auto p-1.5">
+          <div className="border-b border-border/70 p-1.5">
+            <div className="relative">
+              <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search process..."
+                className="h-8 border-transparent bg-background pl-8"
+                value={processSearch}
+                onChange={(e) => setProcessSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-background via-background/95 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-background via-background/95 to-transparent" />
+            <div className="h-72 overflow-y-auto p-1.5">
             <div className="flex flex-col gap-0.5">
             {filteredProcesses.length === 0 ? (
               <div className="px-2 py-6 text-center text-sm text-muted-foreground">
@@ -152,6 +155,7 @@ function FilterPanelContent({
                 <span className="text-sm">{p.name}</span>
               </label>
             ))}
+            </div>
             </div>
           </div>
         </div>
