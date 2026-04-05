@@ -240,7 +240,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
         {/* ── Task List ── */}
         <Card className="gap-0 py-0 overflow-hidden flex-1 min-w-0">
           {/* Mobile filter bar */}
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border lg:hidden">
+          <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-b border-border lg:hidden">
             <Drawer open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
               <DrawerTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5">
@@ -329,11 +329,11 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border px-5 py-3">
+            <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-xs text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
-              <Pagination className="mx-0 w-auto justify-end">
+              <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious

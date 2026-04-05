@@ -368,11 +368,11 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
       </div>
         <Card className="gap-0 py-0 overflow-hidden">
           {/* Toolbar: search + count + add */}
-          <div className="flex items-center gap-2 flex-wrap px-5 py-2.5 border-b border-border">
-            <span className="text-xs text-muted-foreground w-32">
+          <div className="flex flex-col gap-2 px-4 py-3 border-b border-border sm:flex-row sm:flex-wrap sm:items-center sm:px-5 sm:py-2.5">
+            <span className="text-xs text-muted-foreground sm:w-32">
               {filtered.length} record{filtered.length !== 1 ? "s" : ""}
             </span>
-            <div className="relative flex-1 max-w-xs mx-auto">
+            <div className="relative w-full flex-1 sm:mx-auto sm:max-w-xs">
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={`Search ${schema.entity.toLowerCase()}...`}
@@ -381,8 +381,8 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <div className="w-32 flex justify-end">
-            <Button size="sm" onClick={openCreate} className="gap-1.5">
+            <div className="flex w-full justify-end sm:w-32">
+            <Button size="sm" onClick={openCreate} className="w-full gap-1.5 sm:w-auto">
               <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
               Add {schema.singular}
             </Button>
@@ -453,11 +453,11 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border px-5 py-3">
+            <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-xs text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
-              <Pagination className="mx-0 w-auto justify-end">
+              <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious

@@ -179,7 +179,7 @@ function RequestCard({
     <button
       onClick={() => onClick(request)}
       className={cn(
-        "flex items-center gap-3 px-5 py-3 text-left transition-colors group w-full",
+        "group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors sm:items-center sm:px-5",
         selected ? "bg-primary/5" : "hover:bg-muted/40"
       )}
     >
@@ -196,7 +196,7 @@ function RequestCard({
       {/* Content — 2 rows */}
       <div className="min-w-0 flex-1">
         {/* Row 1: title + process name */}
-        <p className="text-sm leading-snug truncate">
+        <p className="text-sm leading-snug whitespace-normal">
           <span className="font-medium">{request.title}</span>
           <span className="mx-1.5 text-muted-foreground">·</span>
           <span className={cn("text-xs font-medium", PROCESS_TEXT_COLOR[request.process] ?? "text-muted-foreground")}>{request.process}</span>
@@ -234,7 +234,7 @@ function RequestCard({
       {/* Arrow */}
       <HugeiconsIcon
         icon={ArrowRight01Icon}
-        className="size-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors"
+        className="hidden size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground sm:block"
       />
     </button>
   )
@@ -310,7 +310,7 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
         {/* ── Request List ── */}
         <Card className="gap-0 py-0 overflow-hidden flex-1 min-w-0">
           {/* Mobile filter bar */}
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border lg:hidden">
+          <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-b border-border lg:hidden">
             <Drawer open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
               <DrawerTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5">
@@ -391,11 +391,11 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border px-5 py-3">
+            <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-xs text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
-              <Pagination className="mx-0 w-auto justify-end">
+              <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious

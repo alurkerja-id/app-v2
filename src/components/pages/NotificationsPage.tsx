@@ -99,12 +99,12 @@ export function NotificationsPage() {
 
   return (
     <div className="p-6 md:p-10">
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl font-semibold font-heading">My Notifications</h1>
           <Badge variant="secondary">{unreadCount} unread</Badge>
         </div>
-        <Button type="button" onClick={markAllAsRead} disabled={unreadCount === 0}>
+        <Button type="button" onClick={markAllAsRead} disabled={unreadCount === 0} className="w-full sm:w-auto">
           Mark All As Read
         </Button>
       </div>
@@ -115,8 +115,8 @@ export function NotificationsPage() {
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead className="pl-6">Event</TableHead>
-                <TableHead className="w-40"></TableHead>
-                <TableHead className="w-28 text-center">Read</TableHead>
+                <TableHead className="hidden w-40 sm:table-cell"></TableHead>
+                <TableHead className="w-24 text-center sm:w-28">Read</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -124,12 +124,12 @@ export function NotificationsPage() {
                 const meta = TYPE_META[item.type]
                 return (
                   <TableRow key={item.id} className={cn(!item.read && "bg-primary/[0.03]")}>
-                    <TableCell className="pl-6 align-top">
+                    <TableCell className="pl-4 align-top sm:pl-6">
                       <div className="flex items-start gap-3">
                         <div className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted", meta.tone)}>
                           <HugeiconsIcon icon={meta.icon} className="size-4" />
                         </div>
-                        <div className="min-w-0 space-y-1">
+                        <div className="min-w-0 space-y-1 whitespace-normal">
                           <div className="flex flex-wrap items-center gap-2">
                             <p className={cn("font-medium leading-snug", !item.read && "text-foreground")}>
                               {item.title}
@@ -137,15 +137,19 @@ export function NotificationsPage() {
                             <Badge className={meta.badgeClass}>{meta.label}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">{item.description}</p>
+                          <p className="text-xs text-muted-foreground sm:hidden">
+                            {formatTimestamp(item.timestamp)}
+                          </p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">
+                    <TableCell className="hidden align-top text-sm text-muted-foreground sm:table-cell">
                       {formatTimestamp(item.timestamp)}
                     </TableCell>
                     <TableCell className="align-top text-center">
                       <div className="flex justify-center pt-0.5">
                         <Switch
+                          size="sm"
                           checked={item.read}
                           onCheckedChange={(checked) => toggleRead(item.id, checked)}
                           aria-label={item.read ? "Mark as unread" : "Mark as read"}
@@ -158,11 +162,11 @@ export function NotificationsPage() {
             </TableBody>
           </Table>
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border px-5 py-3">
+            <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-xs text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
-              <Pagination className="mx-0 w-auto justify-end">
+              <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious

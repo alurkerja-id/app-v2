@@ -49,7 +49,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
     <button
       onClick={() => onClick(task)}
       className={cn(
-        "flex items-center gap-3 px-5 py-3 text-left transition-colors group w-full",
+        "group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors sm:items-center sm:px-5",
         selected ? "bg-primary/5" : "hover:bg-muted/40"
       )}
     >
@@ -66,7 +66,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
       {/* Content — 2 rows */}
       <div className="min-w-0 flex-1">
         {/* Row 1: title + process name */}
-        <p className="text-sm leading-snug truncate">
+        <p className="text-sm leading-snug whitespace-normal">
           <span className="font-medium">{task.title}</span>
           <span className="mx-1.5 text-muted-foreground">·</span>
           <span className={cn("text-xs font-medium", PROCESS_TEXT_COLOR[task.process] ?? "text-muted-foreground")}>{task.process}</span>
@@ -103,7 +103,7 @@ export function TaskCard({ task, onClick, selected }: TaskCardProps) {
       {/* Arrow */}
       <HugeiconsIcon
         icon={ArrowRight01Icon}
-        className="size-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors"
+        className="hidden size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground sm:block"
       />
     </button>
   )
