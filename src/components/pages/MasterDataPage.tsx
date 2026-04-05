@@ -375,19 +375,20 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
 
   return (
     <div className="p-6 md:p-10">
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
           <HugeiconsIcon icon={titleIcon} className="size-5 text-muted-foreground" />
           {schema.entity}
         </h1>
+        <Button size="sm" onClick={openCreate} className="w-full gap-1.5 sm:w-auto">
+          <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
+          Add {schema.singular}
+        </Button>
       </div>
         <Card className="gap-0 py-0 overflow-hidden">
           {/* Toolbar: search + count + add */}
-          <div className="flex flex-col gap-2 px-4 py-3 border-b border-border sm:flex-row sm:flex-wrap sm:items-center sm:px-5 sm:py-2.5">
-            <span className="text-xs text-muted-foreground sm:w-32">
-              {filtered.length} record{filtered.length !== 1 ? "s" : ""}
-            </span>
-            <div className="relative w-full flex-1 sm:mx-auto sm:max-w-xs">
+          <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-5 sm:py-2.5">
+            <div className="relative w-full sm:max-w-xs">
               <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={`Search ${schema.entity.toLowerCase()}...`}
@@ -396,12 +397,9 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <div className="flex w-full justify-end sm:w-32">
-            <Button size="sm" onClick={openCreate} className="w-full gap-1.5 sm:w-auto">
-              <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
-              Add {schema.singular}
-            </Button>
-            </div>
+            <span className="text-xs text-muted-foreground sm:ml-auto">
+              {filtered.length} record{filtered.length !== 1 ? "s" : ""}
+            </span>
           </div>
 
           {/* Table */}

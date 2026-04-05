@@ -362,13 +362,13 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
               </div>
             )}
 
-            <span className="text-xs text-muted-foreground shrink-0">
+            <span className="ml-auto text-xs text-muted-foreground shrink-0">
               {filtered.length} request{filtered.length !== 1 ? "s" : ""}
             </span>
           </div>
 
           {/* Desktop count bar */}
-          <div className="hidden lg:flex items-center px-5 py-2.5 border-b border-border">
+          <div className="hidden lg:flex items-center justify-end px-5 py-2.5 border-b border-border">
             <span className="text-xs text-muted-foreground">
               {filtered.length} request{filtered.length !== 1 ? "s" : ""}
             </span>

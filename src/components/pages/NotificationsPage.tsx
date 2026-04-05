@@ -117,11 +117,11 @@ export function NotificationsPage() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="pl-6">
+                <TableHead className="pl-6"></TableHead>
+                <TableHead className="hidden w-40 sm:table-cell"></TableHead>
+                <TableHead className="w-24 text-center sm:w-28">
                   <Badge variant="secondary">{unreadCount} unread</Badge>
                 </TableHead>
-                <TableHead className="hidden w-40 sm:table-cell"></TableHead>
-                <TableHead className="w-24 text-center sm:w-28">Read</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
