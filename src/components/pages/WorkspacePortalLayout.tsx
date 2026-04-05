@@ -47,58 +47,25 @@ export function WorkspacePortalLayout({
   return (
     <div className="min-h-screen bg-background text-foreground" style={pageStyle}>
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-5 py-5 md:px-8 md:py-6">
-        <div className="sticky top-0 z-30 px-3 pt-2">
-          <header className="flex min-h-11 flex-wrap items-center gap-2 rounded-full border border-border/50 bg-background/80 px-3 py-2 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl sm:h-11 sm:flex-nowrap sm:py-0">
-            <button
-              type="button"
-              onClick={() => onNavigate("home")}
-              className="flex shrink-0 items-center gap-2.5 text-left"
-            >
-              <img
-                src="https://alurkerja.com/images/alurkerja-logo.png"
-                alt="AlurKerja"
-                className="h-4 w-auto object-contain"
-              />
-              <span className="font-semibold font-heading">AlurKerja</span>
-            </button>
-
-            <div className="order-3 flex w-full justify-center gap-1 pt-1 sm:order-2 sm:w-auto sm:flex-1 sm:pt-0">
-              <Button
-                variant={activeTab === "workspaces" ? "secondary" : "ghost"}
-                size="sm"
-                className="h-8 gap-2 px-2 text-xs sm:px-2.5 sm:text-sm"
-                onClick={() => onNavigate("workspaces")}
+        <div className="sticky top-0 z-30 px-1 pt-2 sm:px-3">
+          {/* Mobile: stacked card */}
+          <header className="flex flex-col gap-2 rounded-2xl border border-border/50 bg-background/80 px-3 py-2.5 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl sm:hidden">
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => onNavigate("home")}
+                className="flex shrink-0 items-center gap-2.5 text-left"
               >
-                <HugeiconsIcon icon={Building06Icon} className="size-4" />
-                My Workspaces
-                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>
-                  12
-                </span>
-              </Button>
-              <Button
-                variant={activeTab === "invitations" ? "secondary" : "ghost"}
-                size="sm"
-                className="h-8 gap-2 px-2 text-xs sm:px-2.5 sm:text-sm"
-                onClick={() => onNavigate("invitations")}
-              >
-                <HugeiconsIcon icon={Mail01Icon} className="size-4" />
-                My Invitations
-                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>
-                  2
-                </span>
-              </Button>
-            </div>
-
-            <div className="order-2 ml-auto flex shrink-0 items-center gap-1 sm:order-3">
+                <img src="https://alurkerja.com/images/alurkerja-logo.png" alt="AlurKerja" className="h-4 w-auto object-contain" />
+                <span className="font-semibold font-heading">AlurKerja</span>
+              </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-2 px-2">
                     <Avatar size="sm">
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
-                        AW
-                      </AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
                     </Avatar>
-                    <div className="hidden text-left sm:block">
+                    <div className="text-left">
                       <p className="text-xs font-semibold leading-tight">Alice Wang</p>
                       <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
                     </div>
@@ -107,9 +74,7 @@ export function WorkspacePortalLayout({
                 <DropdownMenuContent align="end" className="w-52">
                   <div className="flex items-center gap-2.5 px-2 py-2">
                     <Avatar size="sm">
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
-                        AW
-                      </AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <p className="truncate font-semibold">Alice Wang</p>
@@ -124,6 +89,73 @@ export function WorkspacePortalLayout({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <div className="flex gap-1">
+              <Button variant={activeTab === "workspaces" ? "secondary" : "ghost"} size="sm" className="h-8 flex-1 gap-1.5 text-xs" onClick={() => onNavigate("workspaces")}>
+                <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
+                Workspaces
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>12</span>
+              </Button>
+              <Button variant={activeTab === "invitations" ? "secondary" : "ghost"} size="sm" className="h-8 flex-1 gap-1.5 text-xs" onClick={() => onNavigate("invitations")}>
+                <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
+                Invitations
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>2</span>
+              </Button>
+            </div>
+          </header>
+
+          {/* Desktop: single-row pill */}
+          <header className="hidden h-11 items-center gap-2 rounded-full border border-border/50 bg-background/80 px-3 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl sm:flex">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="flex shrink-0 items-center gap-2.5 text-left"
+            >
+              <img src="https://alurkerja.com/images/alurkerja-logo.png" alt="AlurKerja" className="h-4 w-auto object-contain" />
+              <span className="font-semibold font-heading">AlurKerja</span>
+            </button>
+
+            <div className="flex flex-1 justify-center gap-1">
+              <Button variant={activeTab === "workspaces" ? "secondary" : "ghost"} size="sm" className="h-8 gap-2 px-2.5 text-sm" onClick={() => onNavigate("workspaces")}>
+                <HugeiconsIcon icon={Building06Icon} className="size-4" />
+                My Workspaces
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>12</span>
+              </Button>
+              <Button variant={activeTab === "invitations" ? "secondary" : "ghost"} size="sm" className="h-8 gap-2 px-2.5 text-sm" onClick={() => onNavigate("invitations")}>
+                <HugeiconsIcon icon={Mail01Icon} className="size-4" />
+                My Invitations
+                <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-bold", badgeClass)}>2</span>
+              </Button>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 px-2">
+                  <Avatar size="sm">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                  </Avatar>
+                  <div className="text-left">
+                    <p className="text-xs font-semibold leading-tight">Alice Wang</p>
+                    <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <div className="flex items-center gap-2.5 px-2 py-2">
+                  <Avatar size="sm">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">Alice Wang</p>
+                    <p className="truncate text-[10px] text-muted-foreground">alice@company.com</p>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" className="gap-2">
+                  <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </header>
         </div>
 
