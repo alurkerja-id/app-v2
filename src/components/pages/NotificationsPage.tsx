@@ -19,7 +19,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Switch } from "@/components/ui/switch"
 import {
   Table,
   TableBody,
@@ -119,7 +118,7 @@ export function NotificationsPage() {
               <TableRow className="hover:bg-transparent">
                 <TableHead className="pl-6"></TableHead>
                 <TableHead className="hidden w-40 sm:table-cell"></TableHead>
-                <TableHead className="w-24 text-center sm:w-28">
+                <TableHead className="w-20 text-center sm:w-24">
                   <Badge variant="secondary">{unreadCount} unread</Badge>
                 </TableHead>
               </TableRow>
@@ -131,7 +130,7 @@ export function NotificationsPage() {
                   <TableRow
                     key={item.id}
                     className={cn(
-                      !item.read ? "bg-muted/20" : "bg-slate-100 dark:bg-slate-900/40"
+                      !item.read ? "bg-muted/20" : "bg-zinc-100 dark:bg-zinc-900/40"
                     )}
                   >
                     <TableCell className="pl-4 align-top sm:pl-6">
@@ -170,12 +169,26 @@ export function NotificationsPage() {
                     </TableCell>
                     <TableCell className="align-top text-center">
                       <div className="flex justify-center pt-0.5">
-                        <Switch
-                          size="sm"
-                          checked={!item.read}
-                          onCheckedChange={(checked) => toggleRead(item.id, !checked)}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-xs"
+                          className={cn(
+                            "rounded-full",
+                            item.read ? "text-muted-foreground hover:text-foreground" : "text-primary hover:text-primary"
+                          )}
+                          onClick={() => toggleRead(item.id, !item.read)}
                           aria-label={item.read ? "Mark as unread" : "Mark as read"}
-                        />
+                        >
+                          <span
+                            className={cn(
+                              "block size-2.5 rounded-full border",
+                              item.read
+                                ? "border-current bg-transparent"
+                                : "border-current bg-current"
+                            )}
+                          />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
