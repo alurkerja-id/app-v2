@@ -137,7 +137,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
       "flex h-11 items-center gap-2 px-3 transition-all duration-300",
       scrolled
         ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
-        : "rounded-2xl border border-border/40 bg-background/80 backdrop-blur-md dark:border-border/60 dark:bg-background/60 dark:backdrop-blur-xl"
+        : "rounded-full border border-border/50 bg-background/80 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl"
     )}>
       {/* Left: hamburger + app switcher + breadcrumb */}
       <div className="flex items-center gap-1.5">
@@ -157,7 +157,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 rounded-full mr-2 border-gray-300/60 bg-gradient-to-b from-white to-gray-50 shadow-[0_1px_2px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,1),inset_0_-1px_0_rgba(0,0,0,0.03)] hover:from-gray-50 hover:to-gray-100 hover:shadow-[0_1px_3px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,1),inset_0_-1px_0_rgba(0,0,0,0.04)] active:from-gray-100 active:to-gray-50 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.08)] active:translate-y-px transition-all dark:border-zinc-600/50 dark:bg-gradient-to-b dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.15)] dark:hover:from-zinc-650 dark:hover:to-zinc-750 dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.15)]"
+              className="mr-2 gap-1.5 rounded-full border-border/50 bg-gradient-to-b from-white to-zinc-50 shadow-[0_1px_2px_rgba(15,23,42,0.05),inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(15,23,42,0.03)] transition-[background-image,border-color,box-shadow,transform] hover:border-border/60 hover:from-zinc-50 hover:to-zinc-100 hover:shadow-[0_1px_3px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(15,23,42,0.04)] active:from-zinc-100 active:to-zinc-50 active:shadow-[inset_0_1px_2px_rgba(15,23,42,0.08)] active:translate-y-px dark:border-border/65 dark:bg-gradient-to-b dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.15)] dark:hover:border-border/75 dark:hover:from-zinc-650 dark:hover:to-zinc-750 dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.15)]"
             >
               <div className="grid grid-cols-2 gap-px size-4">
                 <div className="rounded-tl-sm bg-violet-500 size-[7px]" />
