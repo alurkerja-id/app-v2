@@ -167,17 +167,17 @@ export function NotificationsPage() {
             </TableBody>
           </Table>
           {totalPages > 1 && (
-            <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <p className="text-xs text-muted-foreground">
+            <div className="flex flex-col gap-2 border-t border-border px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+              <p className="text-[11px] text-muted-foreground">
                 Page {page} of {totalPages}
               </p>
               <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
-                <PaginationContent>
+                <PaginationContent className="gap-0.5">
                   <PaginationItem>
                     <PaginationPrevious
                       text=""
-                      size="icon-sm"
-                      className="pl-0!"
+                      size="icon-xs"
+                      className="pl-0! text-[11px]"
                       href="#"
                       onClick={(e) => {
                         e.preventDefault()
@@ -189,7 +189,8 @@ export function NotificationsPage() {
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((currentPage) => (
                     <PaginationItem key={currentPage}>
                       <PaginationLink
-                        size="icon-sm"
+                        size="icon-xs"
+                        className="text-[11px]"
                         href="#"
                         isActive={currentPage === page}
                         onClick={(e) => {
@@ -204,8 +205,8 @@ export function NotificationsPage() {
                   <PaginationItem>
                     <PaginationNext
                       text=""
-                      size="icon-sm"
-                      className="pr-0!"
+                      size="icon-xs"
+                      className="pr-0! text-[11px]"
                       href="#"
                       onClick={(e) => {
                         e.preventDefault()
