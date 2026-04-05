@@ -43,7 +43,10 @@ export function ProfilePage() {
   return (
     <div className="max-w-4xl p-6 md:p-10">
       <div className="mb-8">
-        <h1 className="text-xl font-semibold font-heading">My Profile</h1>
+        <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
+          <HugeiconsIcon icon={UserIcon} className="size-5 text-muted-foreground" />
+          My Profile
+        </h1>
       </div>
 
       <div className="flex flex-col gap-6">

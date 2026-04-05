@@ -4,6 +4,7 @@ import {
   Alert01Icon,
   CheckmarkCircle02Icon,
   InboxIcon,
+  Notification02Icon,
   Task01Icon,
   TimeHalfPassIcon,
 } from "@hugeicons/core-free-icons"
@@ -101,8 +102,10 @@ export function NotificationsPage() {
     <div className="p-6 md:p-10">
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-semibold font-heading">My Notifications</h1>
-          <Badge variant="secondary">{unreadCount} unread</Badge>
+          <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
+            <HugeiconsIcon icon={Notification02Icon} className="size-5 text-muted-foreground" />
+            My Notifications
+          </h1>
         </div>
         <Button type="button" onClick={markAllAsRead} disabled={unreadCount === 0} className="w-full sm:w-auto">
           Mark All As Read
@@ -114,7 +117,9 @@ export function NotificationsPage() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="pl-6">Event</TableHead>
+                <TableHead className="pl-6">
+                  <Badge variant="secondary">{unreadCount} unread</Badge>
+                </TableHead>
                 <TableHead className="hidden w-40 sm:table-cell"></TableHead>
                 <TableHead className="w-24 text-center sm:w-28">Read</TableHead>
               </TableRow>

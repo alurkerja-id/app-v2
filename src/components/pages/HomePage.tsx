@@ -78,7 +78,7 @@ export function HomePage() {
           <p className="text-xs text-muted-foreground uppercase tracking-widest mb-0.5">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
-          <h1 className="text-xl font-semibold font-heading">Good morning, Alice.</h1>
+          <h1 className="text-xl font-normal font-heading">Good morning, Alice.</h1>
         </div>
         <p className="text-sm text-muted-foreground italic text-right hidden sm:block">
           "The secret of getting ahead is getting started." <span className="not-italic">— Mark Twain</span>

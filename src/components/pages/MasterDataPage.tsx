@@ -7,6 +7,10 @@ import {
   Delete02Icon,
   Cancel01Icon,
   ArrowLeft01Icon,
+  Database02Icon,
+  Building06Icon,
+  UserAccountIcon,
+  Location01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -360,11 +364,22 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
 
   // Key for remounting RecordPanel when record/mode changes
   const panelKey = `${panelMode}-${panelRecord?.id ?? "new"}`
+  const titleIcon =
+    schema.entity === "Departments"
+      ? Building06Icon
+      : schema.entity === "Positions"
+        ? UserAccountIcon
+        : schema.entity === "Locations"
+          ? Location01Icon
+          : Database02Icon
 
   return (
     <div className="p-6 md:p-10">
       <div className="mb-8">
-        <h1 className="text-xl font-semibold font-heading">{schema.entity}</h1>
+        <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
+          <HugeiconsIcon icon={titleIcon} className="size-5 text-muted-foreground" />
+          {schema.entity}
+        </h1>
       </div>
         <Card className="gap-0 py-0 overflow-hidden">
           {/* Toolbar: search + count + add */}

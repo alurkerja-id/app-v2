@@ -5,6 +5,8 @@ import {
   ArrowRight01Icon,
   Calendar01Icon,
   FilterIcon,
+  InboxIcon,
+  CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -293,7 +295,10 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
   return (
     <div className="p-6 md:p-10">
       <div className="mb-8">
-        <h1 className="text-xl font-semibold font-heading">{pageTitle}</h1>
+        <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
+          <HugeiconsIcon icon={status === "completed" ? CheckmarkCircle02Icon : InboxIcon} className="size-5 text-muted-foreground" />
+          {pageTitle}
+        </h1>
       </div>
       <div className="flex gap-6 items-start">
         {/* ── Desktop Filter Sidebar ── */}

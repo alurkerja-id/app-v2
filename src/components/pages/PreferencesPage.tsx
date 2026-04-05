@@ -1,5 +1,5 @@
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon, Sun01Icon, Moon01Icon, ComputerDesk01Icon } from "@hugeicons/core-free-icons"
+import { Tick02Icon, Sun01Icon, Moon01Icon, ComputerDesk01Icon, Settings02Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { usePreferences, type Theme } from "@/contexts/PreferencesContext"
 import { COLOR_PRESETS, PATTERN_PRESETS } from "@/data/preferences"
@@ -28,7 +28,10 @@ export function PreferencesPage() {
   return (
     <div className="p-6 md:p-10 max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-xl font-semibold font-heading">My Preferences</h1>
+        <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
+          <HugeiconsIcon icon={Settings02Icon} className="size-5 text-muted-foreground" />
+          My Preferences
+        </h1>
       </div>
 
       <div className="flex flex-col gap-10">
