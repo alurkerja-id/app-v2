@@ -340,7 +340,10 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
       </div>
 
       <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-        <DialogContent className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden p-0 sm:max-w-3xl">
+        <DialogContent
+          className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden p-0 sm:max-w-3xl"
+          overlayClassName="supports-backdrop-filter:backdrop-blur-none backdrop-blur-none"
+        >
           <PreferencesPanel inDialog />
         </DialogContent>
       </Dialog>
