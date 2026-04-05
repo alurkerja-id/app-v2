@@ -5,7 +5,7 @@ import { usePreferences } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
 
 const PATTERN_COLOR_LIGHT = "#0000000b"
-const PATTERN_COLOR_DARK  = "#ffffff09"
+const PATTERN_COLOR_DARK  = "#ffffff16"
 
 interface AppLayoutProps {
   activePage: Page
@@ -51,12 +51,19 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
   const patternStyle = useMemo(() => {
     const base = pattern.getStyle(isDark ? PATTERN_COLOR_DARK : PATTERN_COLOR_LIGHT)
     if (!base.backgroundImage) return base
+
+    const patternRepeat = typeof base.backgroundRepeat === "string" ? base.backgroundRepeat : "repeat"
+    const patternPosition = typeof base.backgroundPosition === "string" ? base.backgroundPosition : "0 0"
+    const patternSize = typeof base.backgroundSize === "string" ? base.backgroundSize : "auto"
+
     return {
+      ...base,
       backgroundImage: `linear-gradient(to right, var(--background) 0px, transparent 260px), ${base.backgroundImage}`,
-      backgroundSize: `auto, ${base.backgroundSize}`,
+      backgroundPosition: `0 0, ${patternPosition}`,
+      backgroundRepeat: `no-repeat, ${patternRepeat}`,
+      backgroundSize: `100% 100%, ${patternSize}`,
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pattern])
+  }, [isDark, pattern])
   const mainRef = useRef<HTMLElement>(null)
   const [scrolled, setScrolled] = useState(false)
 

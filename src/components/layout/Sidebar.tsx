@@ -28,6 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ProcessList } from "@/components/processes/ProcessList"
+import { usePreferences } from "@/contexts/PreferencesContext"
 
 interface SidebarProps {
   activePage: Page
@@ -80,6 +81,8 @@ const workspaces = [
 ]
 
 export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
+  const { color } = usePreferences()
+  const isDefaultAccent = color.id === "zinc"
   const [wsSearch, setWsSearch] = useState("")
   const [processSearch, setProcessSearch] = useState("")
   const [processDialogOpen, setProcessDialogOpen] = useState(false)
@@ -163,12 +166,27 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
             if (!open) setProcessSearch("")
           }}>
             <DialogTrigger asChild>
-              <button className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 bg-sidebar-primary/15 border border-sidebar-primary/30 hover:bg-sidebar-primary/25 transition-all">
-                <HugeiconsIcon icon={Rocket01Icon} className="size-5 shrink-0 text-sidebar-primary" />
-                <span className="text-sm font-semibold text-sidebar-primary">
-                  Start a Process
-                </span>
-              </button>
+              {isDefaultAccent ? (
+                <button className="w-full rounded-full bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] p-px shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-all hover:shadow-md">
+                  <div className="flex items-center gap-2.5 rounded-full bg-zinc-900 px-3 py-2">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#8b5cf6_0%,#3b82f6_33%,#10b981_66%,#f59e0b_100%)] text-white shadow-sm">
+                      <HugeiconsIcon icon={Rocket01Icon} className="size-4" />
+                    </div>
+                    <span className="text-sm font-semibold text-zinc-100">
+                      Start a Process
+                    </span>
+                  </div>
+                </button>
+              ) : (
+                <button className="flex w-full items-center gap-2.5 rounded-full border border-sidebar-primary/30 bg-sidebar-primary/15 px-3 py-2 transition-all hover:bg-sidebar-primary/25">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
+                    <HugeiconsIcon icon={Rocket01Icon} className="size-4" />
+                  </div>
+                  <span className="text-sm font-semibold text-sidebar-primary">
+                    Start a Process
+                  </span>
+                </button>
+              )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
               <DialogHeader>

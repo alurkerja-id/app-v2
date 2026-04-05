@@ -5,7 +5,7 @@ import { usePreferences, type Theme } from "@/contexts/PreferencesContext"
 import { COLOR_PRESETS, PATTERN_PRESETS } from "@/data/preferences"
 
 const PATTERN_COLOR_LIGHT = "#00000014"
-const PATTERN_COLOR_DARK  = "#ffffff0f"
+const PATTERN_COLOR_DARK  = "#ffffff1c"
 
 const THEME_OPTIONS: { id: Theme; label: string; icon: React.ComponentType }[] = [
   { id: "system", label: "System", icon: ComputerDesk01Icon },
@@ -18,6 +18,12 @@ export function PreferencesPage() {
 
   const isDark = document.documentElement.classList.contains("dark")
   const patternColor = isDark ? PATTERN_COLOR_DARK : PATTERN_COLOR_LIGHT
+  const optionCardClass =
+    "rounded-xl border-2 bg-background shadow-sm transition-all duration-150"
+  const optionCardStateClass = (selected: boolean) =>
+    selected
+      ? "border-primary shadow-md"
+      : "border-border hover:border-foreground/30 hover:shadow-md"
 
   return (
     <div className="p-6 md:p-10 max-w-2xl">
@@ -39,10 +45,9 @@ export function PreferencesPage() {
                 key={opt.id}
                 onClick={() => setTheme(opt.id)}
                 className={cn(
-                  "flex flex-col items-center gap-2 rounded-xl border-2 px-8 py-4 transition-all duration-150",
-                  theme === opt.id
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border hover:border-foreground/30 hover:bg-muted/40"
+                  optionCardClass,
+                  optionCardStateClass(theme === opt.id),
+                  "flex flex-col items-center gap-2 px-8 py-4"
                 )}
               >
                 <HugeiconsIcon
@@ -118,10 +123,9 @@ export function PreferencesPage() {
                 >
                   <div
                     className={cn(
-                      "relative w-full aspect-[4/3] rounded-xl border-2 overflow-hidden transition-all duration-150 bg-background",
-                      pattern.id === preset.id
-                        ? "border-primary shadow-md scale-105"
-                        : "border-border hover:border-foreground/30 hover:scale-[1.03]"
+                      optionCardClass,
+                      optionCardStateClass(pattern.id === preset.id),
+                      "relative w-full aspect-[4/3] overflow-hidden"
                     )}
                     style={previewStyle}
                   >

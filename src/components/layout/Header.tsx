@@ -9,7 +9,6 @@ import {
   UserIcon,
   Settings02Icon,
   Logout01Icon,
-  ArrowRight01Icon,
   Home01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -30,7 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
+import { usePreferences } from "@/contexts/PreferencesContext"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
 
@@ -126,6 +125,9 @@ interface HeaderProps {
 }
 
 export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false }: HeaderProps) {
+  const { color } = usePreferences()
+  const isDefaultAccent = color.id === "zinc"
+
   return (
     <div className={cn(
       "sticky top-0 z-30 transition-all duration-300",
@@ -219,17 +221,29 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
       {/* Right: Notification + User */}
       <div className="flex items-center gap-1">
         {/* Notification Bell */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" className="relative">
-              <HugeiconsIcon icon={Notification02Icon} />
-              <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-red-500" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-sm" className="relative">
+                <HugeiconsIcon icon={Notification02Icon} />
+                <span
+                  className={cn(
+                    "absolute right-1.5 top-1.5 size-1.5 rounded-full",
+                    isDefaultAccent ? "bg-red-500" : "bg-primary"
+                  )}
+                />
+              </Button>
+            </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="flex items-center justify-between">
               Notifications
-              <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+              <span
+                className={cn(
+                  "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
+                  isDefaultAccent
+                    ? "bg-red-500 text-white"
+                    : "bg-primary text-primary-foreground"
+                )}
+              >
                 6
               </span>
             </DropdownMenuLabel>

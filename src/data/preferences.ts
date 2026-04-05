@@ -129,11 +129,15 @@ export interface PatternPreset {
   getStyle: (color: string) => CSSProperties
 }
 
+const PATTERN_SCALE = 1.125
+
 function svgUri(content: string, w: number, h: number, color: string): CSSProperties {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">${content.replaceAll("C", color)}</svg>`
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${content.replaceAll("C", color)}</svg>`
   return {
     backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(svg)}")`,
-    backgroundSize: `${w * 2}px ${h * 2}px`,
+    backgroundPosition: "0 0",
+    backgroundRepeat: "repeat",
+    backgroundSize: `${w * PATTERN_SCALE}px ${h * PATTERN_SCALE}px`,
   }
 }
 
@@ -141,34 +145,6 @@ export const PATTERN_PRESETS: PatternPreset[] = [
   {
     id: "none", name: "None",
     getStyle: () => ({}),
-  },
-  {
-    id: "jigsaw", name: "Jigsaw",
-    getStyle: (c) => svgUri(
-      `<path d="M7 3a2 2 0 0 1-4 0H0v4h1a2 2 0 0 1 0 4H0v4h3a2 2 0 0 1 4 0h4V7H9a2 2 0 0 1 0-4h2V0H7v3zm10 0a2 2 0 0 1-4 0h-1v4h1a2 2 0 0 1 0 4h-1v4h4a2 2 0 0 1 4 0h3v-4h-1a2 2 0 0 1 0-4h1V0h-4v3z" fill="C" fill-rule="evenodd"/>`,
-      20, 20, c
-    ),
-  },
-  {
-    id: "texture", name: "Texture",
-    getStyle: (c) => svgUri(
-      `<rect x="0" y="0" width="1.5" height="1.5" fill="C"/>
-       <rect x="3.5" y="0.5" width="1" height="1" fill="C"/>
-       <rect x="1" y="3.5" width="1.5" height="1.5" fill="C"/>
-       <rect x="4.5" y="3" width="1" height="1" fill="C"/>
-       <rect x="0" y="5.5" width="1" height="1" fill="C"/>
-       <rect x="5" y="5.5" width="1" height="1" fill="C"/>`,
-      7, 7, c
-    ),
-  },
-  {
-    id: "topography", name: "Topography",
-    getStyle: (c) => svgUri(
-      `<path d="M0 18 q6-14 12-5 q6 12 12-3 q6-14 12 8" fill="none" stroke="C" stroke-width="0.6"/>
-       <path d="M0 8 q8-10 14 2 q6 14 10-5 q6-12 12 6" fill="none" stroke="C" stroke-width="0.6"/>
-       <path d="M0 28 q6-8 12 3 q6 14 12-8 q6-14 12 4" fill="none" stroke="C" stroke-width="0.6"/>`,
-      36, 36, c
-    ),
   },
   {
     id: "hideout", name: "Hideout",
@@ -229,49 +205,6 @@ export const PATTERN_PRESETS: PatternPreset[] = [
     ),
   },
   {
-    id: "falling-triangles", name: "Falling Triangles",
-    getStyle: (c) => svgUri(
-      `<path d="M9 2 L16 14 L2 14 Z" fill="C"/>
-       <path d="M29 18 L36 30 L22 30 Z" fill="C"/>
-       <path d="M-1 18 L6 30 L-8 30 Z" fill="C"/>`,
-      36, 32, c
-    ),
-  },
-  {
-    id: "i-like-food", name: "I Like Food",
-    getStyle: (c) => svgUri(
-      `<path d="M10 2 L3 18 L17 18 Z" fill="none" stroke="C" stroke-width="0.8"/>
-       <circle cx="10" cy="12" r="1.2" fill="C"/>
-       <circle cx="7" cy="16" r="1.2" fill="C"/>
-       <circle cx="13" cy="16" r="1.2" fill="C"/>
-       <line x1="22" y1="2" x2="22" y2="9" stroke="C" stroke-width="0.8"/>
-       <path d="M19 2 q3 4 6 0" fill="none" stroke="C" stroke-width="0.8"/>
-       <line x1="25" y1="9" x2="25" y2="18" stroke="C" stroke-width="0.6"/>`,
-      30, 20, c
-    ),
-  },
-  {
-    id: "random-shapes", name: "Random Shapes",
-    getStyle: (c) => svgUri(
-      `<rect x="2" y="2" width="7" height="7" fill="none" stroke="C" stroke-width="0.6" rx="1"/>
-       <circle cx="32" cy="8" r="5" fill="none" stroke="C" stroke-width="0.6"/>
-       <path d="M18 32 L28 18 L38 32 Z" fill="none" stroke="C" stroke-width="0.6"/>
-       <circle cx="8" cy="30" r="2.5" fill="C"/>
-       <rect x="28" y="28" width="6" height="6" fill="C" rx="1"/>`,
-      40, 40, c
-    ),
-  },
-  {
-    id: "overlapping-circles", name: "Overlapping Circles",
-    getStyle: (c) => svgUri(
-      `<circle cx="10" cy="0" r="10" fill="none" stroke="C" stroke-width="0.8"/>
-       <circle cx="10" cy="20" r="10" fill="none" stroke="C" stroke-width="0.8"/>
-       <circle cx="0" cy="10" r="10" fill="none" stroke="C" stroke-width="0.8"/>
-       <circle cx="20" cy="10" r="10" fill="none" stroke="C" stroke-width="0.8"/>`,
-      20, 20, c
-    ),
-  },
-  {
     id: "wiggle", name: "Wiggle",
     getStyle: (c) => svgUri(
       `<path d="M0 9 q3-5 6 0 q3 5 6 0 q3-5 6 0 q3 5 6 0 q3-5 6 0 q3 5 6 0 q3-5 6 0 q3 5 6 0" fill="none" stroke="C" stroke-width="1"/>
@@ -301,14 +234,6 @@ export const PATTERN_PRESETS: PatternPreset[] = [
        <circle cx="30" cy="7" r="3.5" fill="none" stroke="C" stroke-width="0.6"/>
        <circle cx="18" cy="30" r="3.5" fill="none" stroke="C" stroke-width="0.6"/>`,
       36, 36, c
-    ),
-  },
-  {
-    id: "stripes", name: "Stripes",
-    getStyle: (c) => svgUri(
-      `<path d="M0 0 L5 0 L0 5 Z M5 10 L10 10 L10 5 Z" fill="C"/>
-       <path d="M0 5 L0 10 L5 10 Z M5 0 L10 0 L10 5 Z" fill="C"/>`,
-      10, 10, c
     ),
   },
   {
