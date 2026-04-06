@@ -6,6 +6,8 @@ import {
   CpuIcon,
   Building06Icon,
   Globe02Icon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
@@ -39,6 +41,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     [isDark, pattern]
   )
 
+  const [featuresOpen, setFeaturesOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [emailError, setEmailError] = useState("")
@@ -91,10 +94,67 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
       {/* Content */}
       <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
-        <div className="flex w-full max-w-4xl flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
+        <div className="flex w-full max-w-4xl flex-col gap-6 lg:flex-row lg:items-center lg:gap-16">
 
-          {/* Left — Login Card */}
-          <div className="flex flex-1 justify-center">
+          {/* Welcome — appears ABOVE login on mobile (order-1), RIGHT on desktop (order-2) */}
+          <div className="flex flex-1 justify-center order-1 lg:order-2 lg:justify-start">
+            <div className="w-full max-w-sm space-y-5 lg:space-y-7">
+              {/* Heading + description — always visible */}
+              <div className="space-y-2 text-center lg:text-left">
+                <h1 className="font-heading text-2xl font-semibold leading-tight lg:text-3xl">Welcome Back</h1>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  AlurKerja is one stop platform for SOP Management and Business Process Automation.
+                </p>
+              </div>
+
+              {/* Mobile expand toggle */}
+              <button
+                type="button"
+                onClick={() => setFeaturesOpen(!featuresOpen)}
+                className="flex w-full items-center justify-center gap-1.5 text-xs font-medium transition-colors lg:hidden"
+                style={{ color: AK_BLUE }}
+              >
+                {featuresOpen ? "Hide" : "See"} key features
+                <HugeiconsIcon icon={featuresOpen ? ArrowUp01Icon : ArrowDown01Icon} className="size-3.5" />
+              </button>
+
+              {/* Features + CTA — always visible on desktop, collapsible on mobile */}
+              <div className={cn(
+                "space-y-5 overflow-hidden transition-all duration-300 ease-in-out",
+                "lg:max-h-none lg:opacity-100",
+                featuresOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 lg:max-h-none lg:opacity-100"
+              )}>
+                <div className="space-y-4">
+                  {FEATURES.map((feature) => (
+                    <div key={feature.label} className="flex items-center gap-4">
+                      <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm", feature.gradient)}>
+                        <HugeiconsIcon icon={feature.icon} className="size-[15px]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium">{feature.label}</p>
+                        <p className="text-xs text-muted-foreground">{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="https://alurkerja.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-medium transition-colors"
+                  style={{ color: AK_BLUE }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = AK_BLUE_DARK)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = AK_BLUE)}
+                >
+                  Learn more about AlurKerja →
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Login Card — appears BELOW welcome on mobile (order-2), LEFT on desktop (order-1) */}
+          <div className="flex flex-1 justify-center order-2 lg:order-1">
             <div className="w-full max-w-sm">
               <div className="overflow-hidden rounded-4xl border border-border/70 bg-background/65 shadow-[0_10px_35px_rgba(15,23,42,0.07)] ring-1 ring-white/30 backdrop-blur-xl dark:bg-card/55 dark:ring-white/8">
                 <div className="px-7 py-8">
@@ -163,44 +223,6 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
               <p className="mt-5 text-center text-xs text-muted-foreground">
                 &copy; {new Date().getFullYear()} AlurKerja. All rights reserved.
               </p>
-            </div>
-          </div>
-
-          {/* Right — Welcome + Features (visible on all sizes, stacked below on mobile) */}
-          <div className="flex flex-1 justify-center lg:justify-start">
-            <div className="w-full max-w-sm space-y-7">
-              <div className="space-y-2 text-center lg:text-left">
-                <h1 className="font-heading text-3xl font-semibold leading-tight">Welcome Back</h1>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  AlurKerja is one stop platform for SOP Management and Business Process Automation.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {FEATURES.map((feature) => (
-                  <div key={feature.label} className="flex items-center gap-4">
-                    <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm", feature.gradient)}>
-                      <HugeiconsIcon icon={feature.icon} className="size-[15px]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium">{feature.label}</p>
-                      <p className="text-xs text-muted-foreground">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="https://alurkerja.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-medium transition-colors"
-                style={{ color: AK_BLUE }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = AK_BLUE_DARK)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = AK_BLUE)}
-              >
-                Learn more about AlurKerja →
-              </a>
             </div>
           </div>
 

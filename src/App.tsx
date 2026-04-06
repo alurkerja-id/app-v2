@@ -15,10 +15,10 @@ import { PreferencesProvider } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
 
 const PAGE_PATHS: Record<Page, string> = {
-  login: "/login",
+  login: "/",
   workspaces: "/workspaces",
   invitations: "/invitations",
-  home: "/",
+  home: "/home",
   profile: "/profile",
   notifications: "/notifications",
   tasks: "/tasks",
