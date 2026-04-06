@@ -15,6 +15,10 @@ import {
   Rocket01Icon,
   CheckmarkCircle02Icon,
   TimeHalfPassIcon,
+  GridViewIcon,
+  AiBeautifyIcon,
+  CpuIcon,
+  Globe02Icon,
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
@@ -27,6 +31,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { ProcessList } from "@/components/processes/ProcessList"
 import { usePreferences } from "@/contexts/PreferencesContext"
 
@@ -73,6 +82,33 @@ const navItems: NavItem[] = [
   },
 ]
 
+const appItems = [
+  {
+    icon: GridViewIcon,
+    title: "App",
+    description: "End-user task management",
+    gradient: "from-blue-500 to-indigo-600",
+  },
+  {
+    icon: AiBeautifyIcon,
+    title: "Studio",
+    description: "Design & build processes",
+    gradient: "from-violet-500 to-purple-600",
+  },
+  {
+    icon: CpuIcon,
+    title: "Simulation Engine",
+    description: "Model & test workflows",
+    gradient: "from-emerald-500 to-teal-600",
+  },
+  {
+    icon: Globe02Icon,
+    title: "Microsite",
+    description: "Publish branded web pages",
+    gradient: "from-orange-500 to-amber-600",
+  },
+]
+
 const quickWorkspaces = [
   { id: "ws1", name: "AlurKerja HQ", current: true, role: "owner" as const },
   { id: "ws2", name: "AlurKerja APAC", current: false, role: "admin" as const },
@@ -106,10 +142,10 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
       )}
       aria-hidden={!open}
     >
-      {/* Workspace Switcher */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <button className="flex items-center gap-2.5 px-3 py-3.5 hover:bg-zinc-800 transition-colors text-left w-full border-b border-zinc-800">
+      {/* Workspace & App Switcher */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <button className="flex items-center gap-2.5 px-3 py-3 hover:bg-zinc-800 transition-colors text-left w-full border-b border-zinc-800">
             <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white select-none">
               L
             </div>
@@ -117,45 +153,73 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               <p className="truncate font-semibold text-zinc-100">{currentWorkspace.name}</p>
               <p className="truncate text-[10px] text-zinc-400 capitalize">{currentWorkspace.role}</p>
             </div>
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-400" />
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-zinc-500" />
           </button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Switch Workspace</DialogTitle>
-          </DialogHeader>
-          <div className="relative">
-            <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search workspaces..."
-              className="pl-8"
-              value={wsSearch}
-              onChange={(e) => setWsSearch(e.target.value)}
-            />
+        </PopoverTrigger>
+        <PopoverContent align="start" side="bottom" className="w-72 p-0 rounded-xl gap-0">
+          {/* Current Workspace */}
+          <div className="px-4 pt-4 pb-3">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
+                L
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold truncate">{currentWorkspace.name}</p>
+                <p className="text-[10px] text-muted-foreground capitalize">{currentWorkspace.role}</p>
+              </div>
+            </div>
+            {/* Horizontal App List */}
+            <div className="grid grid-cols-2 gap-1.5">
+              {appItems.map((app) => (
+                <button
+                  key={app.title}
+                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent transition-colors text-left"
+                >
+                  <div
+                    className={`flex size-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br ${app.gradient} text-white`}
+                  >
+                    <HugeiconsIcon icon={app.icon} className="size-3" />
+                  </div>
+                  <span className="text-sm truncate">{app.title}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-0.5">
-            {filteredWs.map((ws) => (
-              <button
-                key={ws.id}
-                className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-accent transition-colors"
-              >
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
-                  {ws.name[0]}
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="font-medium truncate">{ws.name}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{ws.role}</p>
-                </div>
-                {ws.current && (
-                  <Badge variant="secondary" className="text-[10px]">
-                    Current
-                  </Badge>
-                )}
-              </button>
-            ))}
+
+          {/* Separator */}
+          <div className="border-t mx-4 my-1" />
+
+          {/* Other Workspaces */}
+          <div className="px-4 pt-3 pb-4">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Other Workspaces</p>
+            <div className="relative mb-2">
+              <HugeiconsIcon icon={Search01Icon} className="absolute left-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                className="pl-7 h-7 text-xs"
+                value={wsSearch}
+                onChange={(e) => setWsSearch(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto">
+              {filteredWs.filter((ws) => !ws.current).map((ws) => (
+                <button
+                  key={ws.id}
+                  className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-accent transition-colors"
+                >
+                  <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-[10px] font-bold text-white">
+                    {ws.name[0]}
+                  </div>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-sm font-medium truncate">{ws.name}</p>
+                    <p className="text-[10px] text-muted-foreground capitalize">{ws.role}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </PopoverContent>
+      </Popover>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3">

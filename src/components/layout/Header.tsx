@@ -2,15 +2,10 @@ import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Menu02Icon,
-  GridViewIcon,
-  AiBeautifyIcon,
-  CpuIcon,
-  Globe02Icon,
   Notification02Icon,
   UserIcon,
   Settings02Icon,
   Logout01Icon,
-  Home01Icon,
   ArrowDown01Icon,
   LayoutGridIcon,
   UserAdd01Icon,
@@ -54,33 +49,6 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
 }
-
-const appItems = [
-  {
-    icon: GridViewIcon,
-    title: "App",
-    description: "End-user task management",
-    gradient: "from-blue-500 to-indigo-600",
-  },
-  {
-    icon: AiBeautifyIcon,
-    title: "Studio",
-    description: "Design & build processes",
-    gradient: "from-violet-500 to-purple-600",
-  },
-  {
-    icon: CpuIcon,
-    title: "Simulation Engine",
-    description: "Model & test workflows",
-    gradient: "from-emerald-500 to-teal-600",
-  },
-  {
-    icon: Globe02Icon,
-    title: "Microsite",
-    description: "Publish branded web pages",
-    gradient: "from-orange-500 to-amber-600",
-  },
-]
 
 const notifications = [
   {
@@ -163,68 +131,36 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
           <HugeiconsIcon icon={Menu02Icon} />
         </Button>
 
-        {/* App Switcher */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mr-2 gap-1.5 rounded-full border-border/50 bg-gradient-to-b from-white to-zinc-50 shadow-[0_1px_2px_rgba(15,23,42,0.05),inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(15,23,42,0.03)] transition-[background-image,border-color,box-shadow,transform] hover:border-border/60 hover:from-zinc-50 hover:to-zinc-100 hover:shadow-[0_1px_3px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(15,23,42,0.04)] active:from-zinc-100 active:to-zinc-50 active:shadow-[inset_0_1px_2px_rgba(15,23,42,0.08)] active:translate-y-px dark:border-border/65 dark:bg-gradient-to-b dark:from-zinc-700 dark:to-zinc-800 dark:shadow-[0_1px_2px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.15)] dark:hover:border-border/75 dark:hover:from-zinc-650 dark:hover:to-zinc-750 dark:hover:shadow-[0_1px_3px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.15)]"
-            >
-              <div className="grid grid-cols-2 gap-px size-4">
-                <div className="rounded-tl-sm bg-violet-500 size-[7px]" />
-                <div className="rounded-tr-sm bg-blue-500 size-[7px]" />
-                <div className="rounded-bl-sm bg-emerald-500 size-[7px]" />
-                <div className="rounded-br-sm bg-orange-500 size-[7px]" />
-              </div>
-              <span className="font-semibold">App</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-72">
-            <DropdownMenuLabel>Switch App</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {appItems.map((app) => (
-                <DropdownMenuItem key={app.title} className="gap-3 py-2">
-                  <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${app.gradient} text-white`}
-                  >
-                    <HugeiconsIcon icon={app.icon} className="size-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium">{app.title}</p>
-                    <p className="truncate text-muted-foreground">{app.description}</p>
-                  </div>
-                </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         {/* Breadcrumb */}
-        {activePage !== "home" && (
-          <Breadcrumb>
-            <BreadcrumbList>
-              {/* Home icon */}
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  className="flex items-center cursor-pointer"
-                  onClick={() => onNavigate("home")}
-                >
-                  <HugeiconsIcon icon={Home01Icon} className="size-3.5" />
-                </BreadcrumbLink>
+        <Breadcrumb>
+          <BreadcrumbList>
+            {/* App icon as first breadcrumb item */}
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                className="flex items-center gap-1.5 cursor-pointer"
+                onClick={() => onNavigate("home")}
+              >
+                <div className="grid grid-cols-2 gap-px size-3.5 shrink-0">
+                  <div className="rounded-tl-[1px] bg-blue-500 size-[6px]" />
+                  <div className="rounded-tr-[1px] bg-violet-500 size-[6px]" />
+                  <div className="rounded-bl-[1px] bg-emerald-500 size-[6px]" />
+                  <div className="rounded-br-[1px] bg-orange-500 size-[6px]" />
+                </div>
+                <span className="font-semibold text-foreground leading-none">App</span>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
+              <BreadcrumbItem key={i}>
+                <BreadcrumbSeparator />
+                {i < arr.length - 1 ? (
+                  <BreadcrumbLink>{crumb}</BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage>{crumb}</BreadcrumbPage>
+                )}
               </BreadcrumbItem>
-              {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
-                <BreadcrumbItem key={i}>
-                  <BreadcrumbSeparator />
-                  {i < arr.length - 1 ? (
-                    <BreadcrumbLink>{crumb}</BreadcrumbLink>
-                  ) : (
-                    <BreadcrumbPage>{crumb}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
-        )}
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {/* Spacer */}
