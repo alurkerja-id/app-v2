@@ -1,4 +1,4 @@
-import { HugeiconsIcon } from "@hugeicons/react"
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { Tick02Icon, Sun01Icon, Moon01Icon, ComputerDesk01Icon, Settings02Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { usePreferences, type Theme } from "@/contexts/PreferencesContext"
@@ -7,7 +7,7 @@ import { COLOR_PRESETS, PATTERN_PRESETS } from "@/data/preferences"
 const PATTERN_COLOR_LIGHT = "#00000014"
 const PATTERN_COLOR_DARK  = "#ffffff1c"
 
-const THEME_OPTIONS: { id: Theme; label: string; icon: React.ComponentType }[] = [
+const THEME_OPTIONS: { id: Theme; label: string; icon: IconSvgElement }[] = [
   { id: "system", label: "System", icon: ComputerDesk01Icon },
   { id: "light",  label: "Light",  icon: Sun01Icon    },
   { id: "dark",   label: "Dark",   icon: Moon01Icon   },

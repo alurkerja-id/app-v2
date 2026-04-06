@@ -2,7 +2,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowRight01Icon,
   CheckmarkCircle02Icon,
-  UserIcon,
   Mail01Icon,
   Cancel01Icon,
 } from "@hugeicons/core-free-icons"

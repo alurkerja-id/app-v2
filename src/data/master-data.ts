@@ -1,4 +1,4 @@
-import type { IconSvgObject } from "@hugeicons/react"
+import type { IconSvgElement } from "@hugeicons/react"
 import { Building06Icon, UserAccountIcon, Location01Icon } from "@hugeicons/core-free-icons"
 
 export type FieldType = "text" | "number" | "email" | "select" | "date" | "boolean"
@@ -18,7 +18,7 @@ export interface FieldDefinition {
 export interface MasterDataSchema {
   entity: string
   singular: string
-  icon: IconSvgObject
+  icon: IconSvgElement
   fields: FieldDefinition[]
 }
 

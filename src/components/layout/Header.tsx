@@ -37,6 +37,9 @@ import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
 
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
+  login: [],
+  workspaces: [],
+  invitations: [],
   home: [],
   profile: ["My Profile"],
   notifications: ["My Notifications"],
@@ -329,7 +332,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
               My Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" className="gap-2">
+            <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
               <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
               Log Out
             </DropdownMenuItem>

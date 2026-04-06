@@ -82,7 +82,7 @@ export function WorkspacePortalLayout({
                     </div>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem variant="destructive" className="gap-2">
+                  <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
                     <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
                     Logout
                   </DropdownMenuItem>
@@ -150,7 +150,7 @@ export function WorkspacePortalLayout({
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive" className="gap-2">
+                <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
                   <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
                   Logout
                 </DropdownMenuItem>

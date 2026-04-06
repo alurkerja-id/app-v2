@@ -6,7 +6,6 @@ import {
   File01Icon,
   Download01Icon,
 } from "@hugeicons/core-free-icons"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Table,

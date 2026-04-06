@@ -1,7 +1,6 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Search01Icon } from "@hugeicons/core-free-icons"
-import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 export const processes = [

@@ -6,6 +6,7 @@ import { ProfilePage } from "@/components/pages/ProfilePage"
 import { TasksPage } from "@/components/pages/TasksPage"
 import { RequestsPage } from "@/components/pages/RequestsPage"
 import { InvitationsPage } from "@/components/pages/InvitationsPage"
+import { LoginPage } from "@/components/pages/LoginPage"
 import { WorkspacesPage } from "@/components/pages/WorkspacesPage"
 import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
 import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
@@ -14,6 +15,7 @@ import { PreferencesProvider } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
 
 const PAGE_PATHS: Record<Page, string> = {
+  login: "/login",
   workspaces: "/workspaces",
   invitations: "/invitations",
   home: "/",
@@ -57,6 +59,8 @@ export default function App() {
 
   const renderPage = () => {
     switch (activePage) {
+      case "login":
+        return <LoginPage onNavigate={navigate} />
       case "workspaces":
         return <WorkspacesPage onNavigate={navigate} />
       case "invitations":
@@ -86,7 +90,7 @@ export default function App() {
 
   return (
     <PreferencesProvider>
-      {activePage === "workspaces" || activePage === "invitations" ? (
+      {activePage === "login" || activePage === "workspaces" || activePage === "invitations" ? (
         renderPage()
       ) : (
         <AppLayout activePage={activePage} onNavigate={navigate}>
