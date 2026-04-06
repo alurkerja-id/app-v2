@@ -97,15 +97,51 @@ const TYPE_CONFIG: Record<string, { icon: typeof PlayIcon; color: string; iconCo
   "User Task": { icon: UserIcon, color: "border-indigo-500/30 bg-indigo-500/10", iconColor: "text-indigo-500", bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" },
 }
 
+function getPendingDuration(startDate: string): string {
+  const start = new Date(startDate)
+  const diff = Date.now() - start.getTime()
+  const minutes = Math.floor(diff / 60000)
+  if (minutes < 60) return `${minutes}m`
+  const hours = Math.floor(minutes / 60)
+  const remainMinutes = minutes % 60
+  if (hours < 24) return remainMinutes > 0 ? `${hours}h ${remainMinutes}m` : `${hours}h`
+  const days = Math.floor(hours / 24)
+  const remainHours = hours % 24
+  return remainHours > 0 ? `${days}d ${remainHours}h` : `${days}d`
+}
+
 export function HistoryTab() {
-  const [expanded, setExpanded] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState<Set<number>>(new Set())
 
   function toggle(no: number) {
-    setExpanded(prev => prev === no ? null : no)
+    setExpanded(prev => {
+      const next = new Set(prev)
+      if (next.has(no)) next.delete(no)
+      else next.add(no)
+      return next
+    })
+  }
+
+  const allExpanded = expanded.size === ACTIVITIES.length
+
+  function toggleAll() {
+    if (allExpanded) {
+      setExpanded(new Set())
+    } else {
+      setExpanded(new Set(ACTIVITIES.map(a => a.no)))
+    }
   }
 
   return (
     <div className="px-4 py-3">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={toggleAll}
+          className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {allExpanded ? "Collapse All" : "Expand All"}
+        </button>
+      </div>
       <div className="relative">
         {/* Timeline line */}
         <div className="absolute left-3.5 top-2 bottom-2 w-px bg-border" />
@@ -114,7 +150,7 @@ export function HistoryTab() {
           {ACTIVITIES.map((a, i) => {
             const config = TYPE_CONFIG[a.type]
             const isLast = i === ACTIVITIES.length - 1
-            const isExpanded = expanded === a.no
+            const isExpanded = expanded.has(a.no)
 
             return (
               <div
@@ -158,7 +194,11 @@ export function HistoryTab() {
                               : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                           )}
                         >
-                          {a.status}
+                          {a.status === "Completed" && a.duration !== "-"
+                            ? `Completed in ${a.duration}`
+                            : a.status === "In Progress"
+                            ? `Pending for ${getPendingDuration(a.startDate)}`
+                            : a.status}
                         </Badge>
                         <HugeiconsIcon
                           icon={ArrowDown01Icon}
@@ -184,9 +224,6 @@ export function HistoryTab() {
                       </div>
                       <div className="flex items-center gap-1.5 sm:ml-auto shrink-0">
                         <span className="text-[11px] text-muted-foreground">{a.startDate}</span>
-                        {a.duration !== "-" && (a.type === "User Task" || a.type === "Service Task") && (
-                          <span className="text-[11px] font-mono text-muted-foreground">{a.duration}</span>
-                        )}
                       </div>
                     </div>
                   </button>

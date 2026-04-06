@@ -8,6 +8,7 @@ import {
   Logout01Icon,
   ArrowDown01Icon,
   LayoutGridIcon,
+  GridViewIcon,
   UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -19,6 +20,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb"
 import {
   DropdownMenu,
@@ -132,25 +134,47 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
         </Button>
 
         {/* Breadcrumb */}
-        <Breadcrumb>
-          <BreadcrumbList>
-            {/* App icon as first breadcrumb item */}
-            <BreadcrumbItem>
+        <Breadcrumb className="min-w-0">
+          <BreadcrumbList className="flex-nowrap">
+            {/* App icon — always visible */}
+            <BreadcrumbItem className="shrink-0">
               <BreadcrumbLink
                 className="flex items-center gap-1.5 cursor-pointer"
                 onClick={() => onNavigate("home")}
               >
-                <div className="grid grid-cols-2 gap-px size-3.5 shrink-0">
-                  <div className="rounded-tl-[1px] bg-blue-500 size-[6px]" />
-                  <div className="rounded-tr-[1px] bg-violet-500 size-[6px]" />
-                  <div className="rounded-bl-[1px] bg-emerald-500 size-[6px]" />
-                  <div className="rounded-br-[1px] bg-orange-500 size-[6px]" />
+                <div className="flex size-5 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                  <HugeiconsIcon icon={GridViewIcon} className="size-3" />
                 </div>
-                <span className="font-semibold text-foreground leading-none">App</span>
+                <span className="hidden sm:inline font-semibold text-foreground leading-none">App</span>
               </BreadcrumbLink>
             </BreadcrumbItem>
+
+            {/* Mobile ellipsis — shown only when more than 1 crumb */}
+            {PAGE_BREADCRUMBS[activePage].length > 1 && (
+              <BreadcrumbItem className="inline-flex sm:hidden shrink-0">
+                <BreadcrumbSeparator />
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center">
+                    <BreadcrumbEllipsis />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {PAGE_BREADCRUMBS[activePage].slice(0, -1).map((crumb, i) => (
+                      <DropdownMenuItem key={i}>{crumb}</DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </BreadcrumbItem>
+            )}
+
+            {/* Crumb items — middle items hidden on mobile, last item always visible */}
             {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
-              <BreadcrumbItem key={i}>
+              <BreadcrumbItem
+                key={i}
+                className={cn(
+                  "shrink-0",
+                  arr.length > 1 && i < arr.length - 1 && "hidden sm:inline-flex"
+                )}
+              >
                 <BreadcrumbSeparator />
                 {i < arr.length - 1 ? (
                   <BreadcrumbLink>{crumb}</BreadcrumbLink>

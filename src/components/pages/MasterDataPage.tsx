@@ -375,14 +375,14 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
 
   return (
     <div className="p-6 md:p-10">
-      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 flex items-center justify-between gap-3">
         <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
           <HugeiconsIcon icon={titleIcon} className="size-5 text-muted-foreground" />
           {schema.entity}
         </h1>
-        <Button size="sm" onClick={openCreate} className="w-full gap-1.5 sm:w-auto">
+        <Button size="sm" onClick={openCreate} className="gap-1.5 sm:w-auto">
           <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
-          Add {schema.singular}
+          <span className="hidden sm:inline">Add {schema.singular}</span>
         </Button>
       </div>
         <Card className="gap-0 py-0 overflow-hidden">
@@ -397,12 +397,12 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <span className="text-xs text-muted-foreground sm:ml-auto">
+            <span className="text-xs text-muted-foreground text-center sm:text-left sm:ml-auto">
               {filtered.length} record{filtered.length !== 1 ? "s" : ""}
             </span>
           </div>
 
-          {/* Table */}
+          {/* Table — single component, responsive via CSS */}
           {paginated.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
@@ -410,64 +410,78 @@ export function MasterDataPage({ schema, data, onDataChange }: MasterDataPagePro
               <p className="text-sm text-muted-foreground">Adjust your search or add a new {schema.singular.toLowerCase()}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="h-8">
-                    <TableHead className="w-24 py-1.5 text-xs">ID</TableHead>
-                    {tableFields.map((f) => (
-                      <TableHead key={f.key} className="py-1.5 text-xs">{f.label}</TableHead>
-                    ))}
-                    <TableHead className="w-20 py-1.5 text-right text-xs">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((record) => (
-                    <TableRow
-                      key={record.id}
-                      className="cursor-pointer hover:bg-muted/40 h-9"
-                      onClick={() => openView(record)}
-                    >
-                      <TableCell className="py-1.5 font-mono text-xs text-muted-foreground">{record.id}</TableCell>
-                      {tableFields.map((f) => (
-                        <TableCell key={f.key} className="py-1.5">
-                          {f.key === "status" ? (
-                            <StatusBadge value={String(record[f.key] ?? "")} />
-                          ) : (
-                            <span className="text-xs">{record[f.key] != null ? String(record[f.key]) : "—"}</span>
-                          )}
-                        </TableCell>
-                      ))}
-                      <TableCell className="py-1.5 text-right">
-                        <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => openEdit(record)}
-                          >
-                            <HugeiconsIcon icon={PencilEdit02Icon} className="size-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="text-destructive hover:text-destructive"
-                            onClick={() => handleDelete(record)}
-                          >
-                            <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+            <Table>
+              <TableHeader className="hidden sm:[display:table-header-group]">
+                <TableRow className="h-8">
+                  <TableHead className="w-24 py-1.5 text-xs">ID</TableHead>
+                  {tableFields.map((f) => (
+                    <TableHead key={f.key} className="py-1.5 text-xs">{f.label}</TableHead>
                   ))}
-                </TableBody>
-              </Table>
-            </div>
+                  <TableHead className="w-20 py-1.5 text-right text-xs">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginated.map((record) => (
+                  <TableRow
+                    key={record.id}
+                    className="block sm:[display:table-row] cursor-pointer hover:bg-muted/40 sm:h-9 py-2.5 sm:py-0 px-4 sm:px-0"
+                    onClick={() => openView(record)}
+                  >
+                    <TableCell className="flex items-center justify-between sm:[display:table-cell] p-0 pb-1 sm:p-3 sm:py-1.5">
+                      <span className="font-mono text-xs text-muted-foreground">{record.id}</span>
+                      <div className="flex items-center gap-1 sm:hidden" onClick={(e) => e.stopPropagation()}>
+                        <Button variant="ghost" size="icon-sm" onClick={() => openEdit(record)}>
+                          <HugeiconsIcon icon={PencilEdit02Icon} className="size-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(record)}
+                        >
+                          <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                    {tableFields.map((f) => (
+                      <TableCell key={f.key} className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5 whitespace-normal sm:whitespace-nowrap">
+                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">{f.label}</span>
+                        {f.key === "status" ? (
+                          <StatusBadge value={String(record[f.key] ?? "")} />
+                        ) : (
+                          <span className="text-xs">{record[f.key] != null ? String(record[f.key]) : "—"}</span>
+                        )}
+                      </TableCell>
+                    ))}
+                    <TableCell className="hidden sm:[display:table-cell] p-3 py-1.5 text-right">
+                      <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => openEdit(record)}
+                        >
+                          <HugeiconsIcon icon={PencilEdit02Icon} className="size-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(record)}
+                        >
+                          <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex flex-col gap-2 border-t border-border px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground text-center sm:text-left">
                 Page {page} of {totalPages}
               </p>
               <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">

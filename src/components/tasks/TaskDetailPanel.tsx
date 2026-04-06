@@ -129,6 +129,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                 <p className="text-sm font-semibold">{task.priority}</p>
               </div>
               <div>
+                <p className="text-[11px] text-white/60 mb-0.5">Created Date</p>
+                <p className="text-sm font-semibold">{task.createdDate}</p>
+              </div>
+              <div>
                 <p className="text-[11px] text-white/60 mb-0.5">Due Date</p>
                 <p className="text-sm font-semibold">{task.dueDate}</p>
               </div>
