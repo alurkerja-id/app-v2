@@ -5,24 +5,9 @@ import {
   Settings01Icon,
   GitBranchIcon,
   UserIcon,
-  Calendar01Icon,
-  Clock01Icon,
+  ArrowDown01Icon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 
 interface ActivityFormField {
@@ -113,7 +98,11 @@ const TYPE_CONFIG: Record<string, { icon: typeof PlayIcon; color: string; iconCo
 }
 
 export function HistoryTab() {
-  const [selected, setSelected] = useState<HistoryActivity | null>(null)
+  const [expanded, setExpanded] = useState<number | null>(null)
+
+  function toggle(no: number) {
+    setExpanded(prev => prev === no ? null : no)
+  }
 
   return (
     <div className="px-4 py-3">
@@ -125,57 +114,110 @@ export function HistoryTab() {
           {ACTIVITIES.map((a, i) => {
             const config = TYPE_CONFIG[a.type]
             const isLast = i === ACTIVITIES.length - 1
+            const isExpanded = expanded === a.no
 
             return (
               <div
                 key={a.no}
-                className={cn(
-                  "relative flex gap-3 cursor-pointer group",
-                  !isLast && "pb-3"
-                )}
-                onClick={() => setSelected(selected?.no === a.no ? null : a)}
+                className={cn("relative flex gap-3", !isLast && "pb-3")}
               >
                 {/* Icon node */}
-                <div className="relative z-10 flex flex-col items-center">
+                <div className="relative z-10 flex flex-col items-center pt-2.5">
                   <div
                     className={cn(
-                      "flex size-7 shrink-0 items-center justify-center rounded-full border transition-transform group-hover:scale-110",
-                      config.color
+                      "flex size-7 shrink-0 items-center justify-center rounded-full border transition-transform",
+                      config.color,
+                      isExpanded && "scale-110"
                     )}
                   >
                     <HugeiconsIcon icon={config.icon} className={cn("size-3.5", config.iconColor)} />
                   </div>
                 </div>
 
-                {/* Card content */}
-                <div
-                  className={cn(
-                    "flex-1 rounded-lg border border-border bg-card px-3 py-2.5 transition-all group-hover:shadow-sm group-hover:border-primary/20",
-                    selected?.no === a.no && "ring-1 ring-primary/20"
-                  )}
-                >
-                  {/* Header row */}
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium leading-snug truncate">{a.name}</p>
+                {/* Card + accordion */}
+                <div className="flex-1 min-w-0">
+                  {/* Card header — clickable */}
+                  <button
+                    className={cn(
+                      "w-full text-left rounded-2xl border border-border bg-card px-3 py-2.5 transition-all hover:shadow-sm hover:bg-muted/40",
+                      isExpanded && "rounded-b-none border-b-transparent shadow-sm"
+                    )}
+                    onClick={() => toggle(a.no)}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium leading-snug truncate">{a.name}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Badge
+                          variant="secondary"
+                          className={cn(
+                            "font-normal text-[10px] px-1.5 py-0",
+                            a.status === "In Progress"
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          )}
+                        >
+                          {a.status}
+                        </Badge>
+                        <HugeiconsIcon
+                          icon={ArrowDown01Icon}
+                          className={cn(
+                            "size-3.5 text-muted-foreground/50 transition-transform duration-200",
+                            isExpanded && "rotate-180"
+                          )}
+                        />
+                      </div>
                     </div>
-                    <Badge variant="secondary" className={cn("shrink-0 font-normal text-[10px] px-1.5 py-0", a.status === "In Progress" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400")}>
-                      {a.status}
-                    </Badge>
-                  </div>
 
-                  {/* Footer metadata */}
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <Badge variant="secondary" className={cn("font-normal text-[10px] px-1.5 py-0", config.bg)}>
-                      {a.type}
-                    </Badge>
-                    {a.assignee !== "-" && (
-                      <span className="text-[11px] text-muted-foreground truncate">{a.assignee}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-y-1 sm:gap-x-2 mt-1">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Badge variant="secondary" className={cn("font-normal text-[10px] px-1.5 py-0 shrink-0", config.bg)}>
+                          {a.type}
+                        </Badge>
+                        {a.assignee !== "-" && (
+                          <span className="flex items-center gap-1 text-[11px] text-muted-foreground min-w-0 truncate">
+                            <HugeiconsIcon icon={UserIcon} className="size-3 shrink-0" />
+                            {a.assignee}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 sm:ml-auto shrink-0">
+                        <span className="text-[11px] text-muted-foreground">{a.startDate}</span>
+                        {a.duration !== "-" && (a.type === "User Task" || a.type === "Service Task") && (
+                          <span className="text-[11px] font-mono text-muted-foreground">{a.duration}</span>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Accordion content */}
+                  <div
+                    className={cn(
+                      "overflow-hidden transition-all duration-200 ease-in-out",
+                      isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                     )}
-                    <span className="text-[11px] text-muted-foreground ml-auto shrink-0">{a.startDate}</span>
-                    {a.duration !== "-" && (a.type === "User Task" || a.type === "Service Task") && (
-                      <span className="text-[11px] font-mono text-muted-foreground shrink-0">{a.duration}</span>
-                    )}
+                  >
+                    <div className="rounded-b-2xl border border-t-0 border-border bg-muted/30 px-3 pt-2.5 pb-3">
+                      {/* Form fields */}
+                      {a.formFields && a.formFields.length > 0 && (
+                        <div className="flex flex-col gap-0">
+                          <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider mb-2">
+                            Input Variables
+                          </p>
+                          {a.formFields.map((f) => (
+                            <div key={f.label} className="flex items-start gap-2 py-1.5 border-b border-border/50 last:border-0">
+                              <span className="text-[11px] text-muted-foreground w-24 shrink-0 pt-px leading-relaxed">
+                                {f.label}
+                              </span>
+                              <span className="text-[11px] font-medium text-foreground flex-1 min-w-0 leading-relaxed break-words">
+                                {f.value}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -183,58 +225,6 @@ export function HistoryTab() {
           })}
         </div>
       </div>
-
-      {/* Detail dialog without overlay */}
-      <Dialog open={!!selected} onOpenChange={(open) => { if (!open) setSelected(null) }}>
-        <DialogContent className="sm:max-w-md" showOverlay={false}>
-          <DialogHeader>
-            <DialogTitle>{selected?.name}</DialogTitle>
-          </DialogHeader>
-          {selected?.formFields && (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Field</TableHead>
-                  <TableHead>Value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selected.formFields.map((f) => (
-                  <TableRow key={f.label}>
-                    <TableCell className="font-medium text-muted-foreground">{f.label}</TableCell>
-                    <TableCell>{f.value}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-          <div className="flex items-center gap-5 text-xs pt-3 border-t border-border">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Assignee</span>
-              <span className="flex items-center gap-1.5 font-medium text-foreground">
-                <HugeiconsIcon icon={UserIcon} className="size-3 text-muted-foreground/60" />
-                {selected?.assignee}
-              </span>
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Assigned At</span>
-              <span className="flex items-center gap-1.5 text-muted-foreground">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3 text-muted-foreground/60" />
-                {selected?.startDate}
-              </span>
-            </div>
-            {selected?.endDate !== "-" && (
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Completed At</span>
-                <span className="flex items-center gap-1.5 text-muted-foreground">
-                  <HugeiconsIcon icon={Calendar01Icon} className="size-3 text-muted-foreground/60" />
-                  {selected?.endDate}
-                </span>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
