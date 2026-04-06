@@ -11,6 +11,9 @@ import {
   Settings02Icon,
   Logout01Icon,
   Home01Icon,
+  ArrowDown01Icon,
+  LayoutGridIcon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -308,6 +311,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
                 <p className="text-xs font-semibold leading-tight">Alice Wang</p>
                 <p className="text-[10px] text-muted-foreground leading-tight">alice@company.com</p>
               </div>
+              <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground hidden sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
@@ -330,6 +334,15 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
             <DropdownMenuItem className="gap-2" onClick={() => setPreferencesOpen(true)}>
               <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
               My Preferences
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
+              <HugeiconsIcon icon={LayoutGridIcon} className="size-3.5" />
+              My Workspaces
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
+              <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
+              My Invitations
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>

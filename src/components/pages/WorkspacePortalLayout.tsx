@@ -4,6 +4,7 @@ import {
   Building06Icon,
   Logout01Icon,
   Mail01Icon,
+  ArrowDown01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,7 @@ export function WorkspacePortalLayout({
                       <p className="text-xs font-semibold leading-tight">Alice Wang</p>
                       <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
                     </div>
+                    <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
@@ -137,6 +139,7 @@ export function WorkspacePortalLayout({
                     <p className="text-xs font-semibold leading-tight">Alice Wang</p>
                     <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
                   </div>
+                  <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
