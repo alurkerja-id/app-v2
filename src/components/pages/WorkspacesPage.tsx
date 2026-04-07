@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   AiBeautifyIcon,
@@ -17,21 +18,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { WORKSPACES, type Workspace } from "@/data/workspaces"
 import { WorkspacePortalLayout } from "@/components/pages/WorkspacePortalLayout"
 import type { Page } from "@/types/navigation"
+import { toast } from "sonner"
 
 interface WorkspacesPageProps {
   onNavigate: (page: Page) => void
 }
 
 const APP_OPTIONS = [
-  { id: "app", label: "App", description: "End-user workflow inbox", icon: GridViewIcon, gradient: "from-blue-500 to-indigo-600" },
-  { id: "studio", label: "Studio", description: "Build and manage processes", icon: AiBeautifyIcon, gradient: "from-violet-500 to-purple-600" },
-  { id: "simulation", label: "Simulation", description: "Run scenario testing", icon: CpuIcon, gradient: "from-emerald-500 to-teal-600" },
-  { id: "company-profile", label: "Company Profile", description: "Manage workspace profile", icon: Building06Icon, gradient: "from-cyan-500 to-sky-600" },
-  { id: "microsite", label: "Microsite", description: "Publish external forms", icon: Globe02Icon, gradient: "from-orange-500 to-amber-600" },
+  { id: "app", label: "App", description: "Tasklists for internal team", icon: GridViewIcon, gradient: "from-blue-500 to-indigo-600" },
+  { id: "studio", label: "Studio", description: "Design & build processes", icon: AiBeautifyIcon, gradient: "from-violet-500 to-purple-600" },
+  { id: "simulation", label: "Simulation", description: "Run several workflow scenarios", icon: CpuIcon, gradient: "from-emerald-500 to-teal-600" },
+  { id: "company-profile", label: "Company Profile", description: "Manage company information", icon: Building06Icon, gradient: "from-cyan-500 to-sky-600" },
+  { id: "microsite", label: "Microsite", description: "Company information for public", icon: Globe02Icon, gradient: "from-orange-500 to-amber-600" },
 ] as const
 
 type AppOption = (typeof APP_OPTIONS)[number]
@@ -53,9 +66,21 @@ function resolveDefaultApp(workspace: Workspace): AppOption {
 }
 
 export function WorkspacesPage({ onNavigate }: WorkspacesPageProps) {
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [wsName, setWsName] = useState("")
+  const [wsDescription, setWsDescription] = useState("")
+
   const openWorkspace = (workspace: Workspace, app: AppOption) => {
     window.localStorage.setItem(`workspace-default-app:${workspace.id}`, app.id)
     onNavigate("home")
+  }
+
+  const handleCreate = () => {
+    if (!wsName.trim()) return
+    toast.success(`Workspace "${wsName}" created successfully`)
+    setWsName("")
+    setWsDescription("")
+    setCreateDialogOpen(false)
   }
 
   return (
@@ -65,15 +90,15 @@ export function WorkspacesPage({ onNavigate }: WorkspacesPageProps) {
           <div>
             <h1 className="flex items-center gap-2 text-xl font-normal font-heading">
               <HugeiconsIcon icon={Building06Icon} className="size-5 text-muted-foreground" />
-              My Workspaces (12)
+              My Workspaces ({WORKSPACES.length})
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Choose workspace you've joined.
             </p>
           </div>
-          <Button size="sm" className="gap-1.5 self-start rounded-full">
+          <Button size="sm" className="gap-1.5 self-start rounded-full" onClick={() => setCreateDialogOpen(true)}>
             <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-            create new one
+            Create New Workspace
           </Button>
         </div>
 
@@ -162,6 +187,48 @@ export function WorkspacesPage({ onNavigate }: WorkspacesPageProps) {
           ))}
         </div>
       </div>
+
+      {/* Create Workspace Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Workspace</DialogTitle>
+            <DialogDescription>
+              Set up a new workspace for your team or organization.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="ws-name">Workspace Name <span className="text-destructive">*</span></Label>
+              <Input
+                id="ws-name"
+                placeholder="e.g. My Company"
+                value={wsName}
+                onChange={(e) => setWsName(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="ws-desc">Description</Label>
+              <Textarea
+                id="ws-desc"
+                placeholder="Brief description of this workspace..."
+                value={wsDescription}
+                onChange={(e) => setWsDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={!wsName.trim()}>
+              Create Workspace
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </WorkspacePortalLayout>
   )
 }

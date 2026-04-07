@@ -85,7 +85,7 @@ const appItems = [
   {
     icon: GridViewIcon,
     title: "App",
-    description: "End-user task management",
+    description: "Tasklists for internal team",
     gradient: "from-blue-500 to-indigo-600",
   },
   {
@@ -96,49 +96,28 @@ const appItems = [
   },
   {
     icon: CpuIcon,
-    title: "Simulation Engine",
-    description: "Model & test workflows",
+    title: "Simulation",
+    description: "Run several workflow scenarios",
     gradient: "from-emerald-500 to-teal-600",
+  },
+  {
+    icon: Building06Icon,
+    title: "Company Profile",
+    description: "Manage company information",
+    gradient: "from-cyan-500 to-sky-600",
   },
   {
     icon: Globe02Icon,
     title: "Microsite",
-    description: "Publish branded web pages",
+    description: "Company information for public",
     gradient: "from-orange-500 to-amber-600",
   },
 ]
 
 const quickWorkspaces = [
-  { id: "ws1",  name: "AlurKerja International Headquarters Indonesia", current: true, role: "owner" as const },
-  { id: "ws2",  name: "AlurKerja APAC", current: false, role: "admin" as const },
-  { id: "ws3",  name: "AlurKerja Europe", current: false, role: "member" as const },
-  { id: "ws4",  name: "AlurKerja Americas", current: false, role: "member" as const },
-  { id: "ws5",  name: "AlurKerja Japan", current: false, role: "member" as const },
-  { id: "ws6",  name: "AlurKerja Middle East & North Africa", current: false, role: "admin" as const },
-  { id: "ws7",  name: "AlurKerja Australia & New Zealand", current: false, role: "member" as const },
-  { id: "ws8",  name: "AlurKerja South Korea", current: false, role: "member" as const },
-  { id: "ws9",  name: "AlurKerja India", current: false, role: "admin" as const },
-  { id: "ws10", name: "AlurKerja China", current: false, role: "member" as const },
-  { id: "ws11", name: "AlurKerja UK & Ireland", current: false, role: "member" as const },
-  { id: "ws12", name: "AlurKerja Germany", current: false, role: "admin" as const },
-  { id: "ws13", name: "AlurKerja France", current: false, role: "member" as const },
-  { id: "ws14", name: "AlurKerja Nordics", current: false, role: "member" as const },
-  { id: "ws15", name: "AlurKerja Benelux", current: false, role: "member" as const },
-  { id: "ws16", name: "AlurKerja Iberia", current: false, role: "member" as const },
-  { id: "ws17", name: "AlurKerja Eastern Europe", current: false, role: "admin" as const },
-  { id: "ws18", name: "AlurKerja Brazil", current: false, role: "member" as const },
-  { id: "ws19", name: "AlurKerja Mexico & Central America", current: false, role: "member" as const },
-  { id: "ws20", name: "AlurKerja Canada", current: false, role: "admin" as const },
-  { id: "ws21", name: "AlurKerja Southeast Asia", current: false, role: "member" as const },
-  { id: "ws22", name: "AlurKerja Sub-Saharan Africa", current: false, role: "member" as const },
-  { id: "ws23", name: "AlurKerja Caribbean", current: false, role: "member" as const },
-  { id: "ws24", name: "AlurKerja South America Southern Cone", current: false, role: "member" as const },
-  { id: "ws25", name: "AlurKerja Central Asia & Caucasus", current: false, role: "member" as const },
-  { id: "ws26", name: "AlurKerja Mediterranean", current: false, role: "admin" as const },
-  { id: "ws27", name: "AlurKerja Oceania & Pacific Islands", current: false, role: "member" as const },
-  { id: "ws28", name: "AlurKerja Baltics", current: false, role: "member" as const },
-  { id: "ws29", name: "AlurKerja Greater China & Taiwan", current: false, role: "admin" as const },
-  { id: "ws30", name: "AlurKerja Sandbox Development", current: false, role: "member" as const },
+  { id: "ws1", name: "Javan Cipta Solusi", current: true, role: "owner" as const },
+  { id: "ws2", name: "Kodigi", current: false, role: "admin" as const },
+  { id: "ws3", name: "SyarQ", current: false, role: "member" as const },
 ]
 
 export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
@@ -172,7 +151,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
         <PopoverTrigger asChild>
           <button className="flex items-center gap-2.5 px-3 py-3 hover:bg-zinc-800 transition-colors text-left w-full border-b border-zinc-800">
             <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white select-none">
-              L
+              {currentWorkspace.name[0]}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold text-zinc-100">{currentWorkspace.name}</p>

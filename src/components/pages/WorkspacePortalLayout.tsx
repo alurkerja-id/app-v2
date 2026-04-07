@@ -5,6 +5,10 @@ import {
   Logout01Icon,
   Mail01Icon,
   ArrowDown01Icon,
+  UserIcon,
+  Settings02Icon,
+  LayoutGridIcon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -84,9 +88,27 @@ export function WorkspacePortalLayout({
                     </div>
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
+                    <HugeiconsIcon icon={UserIcon} className="size-3.5" />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2" onClick={() => {}}>
+                    <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
+                    My Preferences
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
+                    <HugeiconsIcon icon={LayoutGridIcon} className="size-3.5" />
+                    My Workspaces
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
+                    <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
+                    My Invitations
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
                     <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
-                    Logout
+                    Log Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -153,9 +175,27 @@ export function WorkspacePortalLayout({
                   </div>
                 </div>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
+                  <HugeiconsIcon icon={UserIcon} className="size-3.5" />
+                  My Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2" onClick={() => {}}>
+                  <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
+                  My Preferences
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
+                  <HugeiconsIcon icon={LayoutGridIcon} className="size-3.5" />
+                  My Workspaces
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
+                  <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
+                  My Invitations
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
                   <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
-                  Logout
+                  Log Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
