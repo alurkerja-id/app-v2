@@ -66,7 +66,7 @@ export function WorkspacePortalLayout({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-2 px-2">
                     <Avatar size="sm">
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                      <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
                     </Avatar>
                     <div className="text-left">
                       <p className="text-xs font-semibold leading-tight">Alice Wang</p>
@@ -78,7 +78,7 @@ export function WorkspacePortalLayout({
                 <DropdownMenuContent align="end" className="w-52">
                   <div className="flex items-center gap-2.5 px-2 py-2">
                     <Avatar size="sm">
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                      <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <p className="truncate font-semibold">Alice Wang</p>
@@ -153,7 +153,7 @@ export function WorkspacePortalLayout({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2 px-2">
                   <Avatar size="sm">
-                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                    <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
                   </Avatar>
                   <div className="text-left">
                     <p className="text-xs font-semibold leading-tight">Alice Wang</p>
@@ -165,7 +165,7 @@ export function WorkspacePortalLayout({
               <DropdownMenuContent align="end" className="w-52">
                 <div className="flex items-center gap-2.5 px-2 py-2">
                   <Avatar size="sm">
-                    <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">AW</AvatarFallback>
+                    <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
                     <p className="truncate font-semibold">Alice Wang</p>

@@ -115,7 +115,7 @@ export function DiscussionTab() {
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6">
         <div className="flex items-start gap-2.5 px-4 pt-3.5 pb-1">
           <Avatar size="sm" className="shrink-0 mt-3">
-            <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
+            <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">
               AW
             </AvatarFallback>
           </Avatar>

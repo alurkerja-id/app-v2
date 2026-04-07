@@ -265,7 +265,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2 px-2">
               <Avatar size="sm">
-                <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
+                <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">
                   AW
                 </AvatarFallback>
               </Avatar>
@@ -279,7 +279,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
           <DropdownMenuContent align="end" className="w-52">
             <div className="flex items-center gap-2.5 px-2 py-2">
               <Avatar size="sm">
-                <AvatarFallback className="bg-gradient-to-br from-violet-500 to-purple-600 text-white text-[10px]">
+                <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">
                   AW
                 </AvatarFallback>
               </Avatar>

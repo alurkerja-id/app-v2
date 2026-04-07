@@ -11,7 +11,21 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(sed -i '' 's/rx=\"\"6\"\"/rx=\"\"0\"\"/g' /Users/uyab/Code/lotus/app-v2/src/components/tasks/tabs/DiagramTab.tsx)",
-      "Bash(sed -i '' 's/rx={6}/rx={0}/g' /Users/uyab/Code/lotus/app-v2/src/components/pages/HeatmapPage.tsx)"
+      "Bash(sed -i '' 's/rx={6}/rx={0}/g' /Users/uyab/Code/lotus/app-v2/src/components/pages/HeatmapPage.tsx)",
+      "Bash(npm install:*)",
+      "Bash(/Users/uyab/.nvm/versions/node/v22.14.0/bin/npm install:*)",
+      "Bash(/Users/uyab/.nvm/versions/node/v22.14.0/bin/node /Users/uyab/.nvm/versions/node/v22.14.0/bin/npm install react-dropzone @tiptap/react @tiptap/starter-kit @tiptap/extension-underline @tiptap/extension-link)",
+      "Bash(/Users/uyab/.nvm/versions/node/v22.14.0/bin/node -e \"const icons = require\\(''/Users/uyab/Code/app-v2/node_modules/@hugeicons/core-free-icons''\\); const names = Object.keys\\(icons\\); [''TextStrikethroughIcon'',''ListIcon'',''OrderedListIcon'',''ImageIcon'',''FileTextIcon'',''UploadSquare02Icon'',''Cancel01Icon''].forEach\\(n => console.log\\(n, names.includes\\(n\\)\\)\\)\")",
+      "Bash(/Users/uyab/.nvm/versions/node/v22.14.0/bin/node -e \"const icons = require\\(''/Users/uyab/Code/app-v2/node_modules/@hugeicons/core-free-icons''\\); const names = Object.keys\\(icons\\); [''Strikethrough'',''List'',''Ordered'',''Image'',''File'',''Upload'',''Cancel'',''Remove'',''Close''].forEach\\(k => { const matches = names.filter\\(n => n.toLowerCase\\(\\).includes\\(k.toLowerCase\\(\\)\\)\\).slice\\(0,3\\); console.log\\(k+'':'', matches.join\\('', ''\\)\\); }\\)\")",
+      "Bash(/Users/uyab/.nvm/versions/node/v22.14.0/bin/node -e \":*)",
+      "Bash(grep -o [A-Za-z0-9]*Icon /Users/uyab/Code/app-v2/node_modules/@hugeicons/core-free-icons/dist/cjs/index.js)",
+      "Bash(ls /Users/uyab/Code/app-v2/bun.lock* /Users/uyab/Code/app-v2/package-lock* /Users/uyab/Code/app-v2/pnpm-lock* /Users/uyab/Code/app-v2/yarn.lock)",
+      "Bash(ls /Users/uyab/Code/app-v2/*.lock*)",
+      "Bash(export PATH=\"$HOME/.bun/bin:$HOME/.nvm/versions/node/*/bin:$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:$PATH\")",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); const names = Object.keys\\(m\\).filter\\(k => /link/i.test\\(k\\) && k.endsWith\\(''Icon''\\)\\); console.log\\(names.join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); const names = Object.keys\\(m\\).filter\\(k => /[Ll]ink/.test\\(k\\)\\); console.log\\(names.slice\\(0,30\\).join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); Object.keys\\(m\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''link''\\)\\).forEach\\(k => console.log\\(k\\)\\)\")"
     ]
   }
 }

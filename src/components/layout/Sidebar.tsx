@@ -290,7 +290,7 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               </div>
               <ProcessList
                 search={processSearch}
-                onSelect={() => setProcessDialogOpen(false)}
+                onSelect={() => { setProcessDialogOpen(false); onNavigate("start") }}
               />
             </DialogContent>
           </Dialog>
