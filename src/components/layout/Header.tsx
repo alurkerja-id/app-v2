@@ -269,9 +269,9 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
                   AW
                 </AvatarFallback>
               </Avatar>
-              <div className="text-left hidden sm:block">
-                <p className="text-xs font-semibold leading-tight">Alice Wang</p>
-                <p className="text-[10px] text-muted-foreground leading-tight">alice@company.com</p>
+              <div className="text-left hidden sm:block max-w-[160px]">
+                <p className="text-xs font-semibold leading-tight truncate">Alice Wonderland McPherson</p>
+                <p className="text-[10px] text-muted-foreground leading-tight truncate">alice.wonderland.mcpherson@internationalcorporation.com</p>
               </div>
               <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground hidden sm:block" />
             </Button>
@@ -284,8 +284,8 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="truncate font-semibold">Alice Wang</p>
-                <p className="truncate text-[10px] text-muted-foreground">alice@company.com</p>
+                <p className="truncate font-semibold">Alice Wonderland McPherson</p>
+                <p className="truncate text-[10px] text-muted-foreground">alice.wonderland.mcpherson@internationalcorporation.com</p>
               </div>
             </div>
             <DropdownMenuSeparator />
