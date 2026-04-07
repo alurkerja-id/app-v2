@@ -25,7 +25,14 @@
       "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
       "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); const names = Object.keys\\(m\\).filter\\(k => /link/i.test\\(k\\) && k.endsWith\\(''Icon''\\)\\); console.log\\(names.join\\(''\\\\n''\\)\\)\")",
       "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); const names = Object.keys\\(m\\).filter\\(k => /[Ll]ink/.test\\(k\\)\\); console.log\\(names.slice\\(0,30\\).join\\(''\\\\n''\\)\\)\")",
-      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); Object.keys\\(m\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''link''\\)\\).forEach\\(k => console.log\\(k\\)\\)\")"
+      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); Object.keys\\(m\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''link''\\)\\).forEach\\(k => console.log\\(k\\)\\)\")",
+      "Bash(npm uninstall:*)",
+      "Bash(bun remove:*)",
+      "Bash(/usr/local/bin/npm uninstall:*)",
+      "Bash(/opt/homebrew/bin/npm uninstall:*)",
+      "Bash(~/.nvm/versions/node/v22.14.0/bin/npm uninstall:*)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(find /Users/uyab/Code/app-v2/src -name *mobile* -o -name *responsive*)"
     ]
   }
 }
