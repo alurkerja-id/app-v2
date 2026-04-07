@@ -7,8 +7,6 @@ import {
   ArrowDown01Icon,
   UserIcon,
   Settings02Icon,
-  LayoutGridIcon,
-  UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -98,11 +96,11 @@ export function WorkspacePortalLayout({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
-                    <HugeiconsIcon icon={LayoutGridIcon} className="size-3.5" />
+                    <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
                     My Workspaces
                   </DropdownMenuItem>
                   <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
-                    <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
+                    <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
                     My Invitations
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -185,11 +183,11 @@ export function WorkspacePortalLayout({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
-                  <HugeiconsIcon icon={LayoutGridIcon} className="size-3.5" />
+                  <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
                   My Workspaces
                 </DropdownMenuItem>
                 <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
-                  <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5" />
+                  <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
                   My Invitations
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
