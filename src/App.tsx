@@ -98,7 +98,7 @@ export default function App() {
           {renderPage()}
         </AppLayout>
       )}
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-center" />
     </PreferencesProvider>
   )
 }

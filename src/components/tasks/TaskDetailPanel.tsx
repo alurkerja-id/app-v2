@@ -7,6 +7,7 @@ import {
   Flowchart01Icon,
   WorkHistoryIcon,
   BubbleChatIcon,
+  Loading03Icon,
 } from "@hugeicons/core-free-icons"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -56,15 +57,15 @@ interface TaskDetailPanelProps {
 }
 
 const PROCESS_THEME: Record<string, { gradient: string; accent: string; abbr: string; btnText: string }> = {
-  "Employee Onboarding": { gradient: "from-blue-600 to-indigo-700", accent: "bg-blue-400/20", abbr: "EO", btnText: "text-indigo-700 dark:text-indigo-300" },
-  "Expense Reimbursement": { gradient: "from-emerald-600 to-teal-700", accent: "bg-emerald-400/20", abbr: "ER", btnText: "text-teal-700 dark:text-teal-300" },
-  "IT Support Ticket": { gradient: "from-amber-500 to-orange-600", accent: "bg-amber-400/20", abbr: "IT", btnText: "text-orange-600 dark:text-orange-300" },
-  "Leave Request": { gradient: "from-violet-600 to-purple-700", accent: "bg-violet-400/20", abbr: "LR", btnText: "text-purple-700 dark:text-purple-300" },
-  "Procurement Request": { gradient: "from-rose-600 to-pink-700", accent: "bg-rose-400/20", abbr: "PR", btnText: "text-pink-700 dark:text-pink-300" },
-  "Travel Request": { gradient: "from-cyan-600 to-sky-700", accent: "bg-cyan-400/20", abbr: "TR", btnText: "text-sky-700 dark:text-sky-300" },
+  "Employee Onboarding": { gradient: "from-blue-600 to-indigo-700", accent: "bg-blue-400/20", abbr: "EO", btnText: "text-indigo-700" },
+  "Expense Reimbursement": { gradient: "from-emerald-600 to-teal-700", accent: "bg-emerald-400/20", abbr: "ER", btnText: "text-teal-700" },
+  "IT Support Ticket": { gradient: "from-amber-500 to-orange-600", accent: "bg-amber-400/20", abbr: "IT", btnText: "text-orange-600" },
+  "Leave Request": { gradient: "from-violet-600 to-purple-700", accent: "bg-violet-400/20", abbr: "LR", btnText: "text-purple-700" },
+  "Procurement Request": { gradient: "from-rose-600 to-pink-700", accent: "bg-rose-400/20", abbr: "PR", btnText: "text-pink-700" },
+  "Travel Request": { gradient: "from-cyan-600 to-sky-700", accent: "bg-cyan-400/20", abbr: "TR", btnText: "text-sky-700" },
 }
 
-const DEFAULT_THEME = { gradient: "from-zinc-600 to-zinc-700", accent: "bg-zinc-400/20", abbr: "??", btnText: "text-zinc-700 dark:text-zinc-300" }
+const DEFAULT_THEME = { gradient: "from-zinc-600 to-zinc-700", accent: "bg-zinc-400/20", abbr: "??", btnText: "text-zinc-700" }
 
 function getTaskAge(createdDate: string) {
   const now = new Date()
@@ -98,6 +99,7 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
   const [unclaimOpen, setUnclaimOpen] = useState(false)
   const [delegateTo, setDelegateTo] = useState<string | null>(null)
   const [delegateReason, setDelegateReason] = useState("")
+  const [isCompleting, setIsCompleting] = useState(false)
 
   const handleDelegate = () => {
     setDelegateTo(null)
@@ -124,7 +126,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
     })
   }
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    setIsCompleting(true)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    setIsCompleting(false)
     toast.success("Task completed", {
       description: `"${task.title}" has been marked as completed.`,
     })
@@ -180,8 +185,15 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                 <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   Unclaim
                 </Button>
-                <Button size="sm" onClick={handleComplete} className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
-                  Complete Task
+                <Button size="sm" onClick={handleComplete} disabled={isCompleting} className={cn("relative bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
+                  <span className={cn("bg-gradient-to-br bg-clip-text text-transparent transition-opacity", isCompleting ? "opacity-0" : "opacity-100", theme.gradient)}>
+                    Complete Task
+                  </span>
+                  {isCompleting && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin" />
+                    </div>
+                  )}
                 </Button>
               </>
             ) : (
@@ -189,8 +201,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                 <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   Delegate
                 </Button>
-                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
-                  Claim
+                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
+                  <span className={cn("bg-gradient-to-br bg-clip-text text-transparent", theme.gradient)}>
+                    Claim
+                  </span>
                 </Button>
               </>
             )}
@@ -239,8 +253,15 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                   <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Unclaim
                   </Button>
-                  <Button size="sm" onClick={handleComplete} className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
-                    Complete Task
+                  <Button size="sm" onClick={handleComplete} disabled={isCompleting} className={cn("relative bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
+                    <span className={cn("bg-gradient-to-br bg-clip-text text-transparent transition-opacity", isCompleting ? "opacity-0" : "opacity-100", theme.gradient)}>
+                      Complete Task
+                    </span>
+                    {isCompleting && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin" />
+                      </div>
+                    )}
                   </Button>
                 </>
               ) : (
@@ -248,8 +269,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                   <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Delegate
                   </Button>
-                  <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
-                    Claim
+                  <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
+                    <span className={cn("bg-gradient-to-br bg-clip-text text-transparent", theme.gradient)}>
+                      Claim
+                    </span>
                   </Button>
                 </>
               )}
