@@ -130,7 +130,7 @@ export function StartProcessPage() {
         <div className="flex min-h-[520px] md:min-h-[580px]">
           {/* Left: Vertical toggle rail */}
           <TooltipProvider>
-            <div className="flex flex-col items-center gap-1 border-r border-border bg-muted/30 p-1.5 pt-4">
+            <div className="flex flex-col items-center gap-1 border-r border-border bg-muted/30 p-1.5 pt-8">
               {toggleItems.map(({ value, label, icon, hiddenOnMobile }) => (
                 <Tooltip key={value}>
                   <TooltipTrigger asChild>
