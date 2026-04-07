@@ -19,6 +19,7 @@ import {
   AiBeautifyIcon,
   CpuIcon,
   Globe02Icon,
+  Database01Icon,
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
@@ -35,13 +36,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ProcessList } from "@/components/processes/ProcessList"
+import { ProcessList, processes } from "@/components/processes/ProcessList"
 import { usePreferences } from "@/contexts/PreferencesContext"
 
 interface SidebarProps {
   activePage: Page
   onNavigate: (page: Page) => void
   open?: boolean
+  activeProcessId?: string
+  onNavigateProcess?: (processId: string) => void
 }
 
 interface NavChild {
@@ -120,7 +123,7 @@ const quickWorkspaces = [
   { id: "ws3", name: "SyarQ", current: false, role: "member" as const },
 ]
 
-export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
+export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, onNavigateProcess }: SidebarProps) {
   const { color } = usePreferences()
   const isDefaultAccent = color.id === "zinc"
   const [wsSearch, setWsSearch] = useState("")
@@ -387,6 +390,71 @@ export function Sidebar({ activePage, onNavigate, open = true }: SidebarProps) {
               </button>
             )
           })}
+
+          {/* Business Processes */}
+          {(() => {
+            const expanded = expandedMenus.includes("Business Processes")
+            const isChildActive = activePage === "business-processes"
+
+            return (
+              <div>
+                <button
+                  onClick={() => toggleMenu("Business Processes")}
+                  className={cn(
+                    "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
+                    isChildActive
+                      ? "text-zinc-100 font-medium"
+                      : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                  )}
+                >
+                  <HugeiconsIcon icon={Database01Icon} className="size-4 shrink-0" />
+                  <span className="flex-1 text-left">Business Processes</span>
+                  <HugeiconsIcon
+                    icon={ArrowRight01Icon}
+                    className={cn(
+                      "size-3.5 shrink-0 text-zinc-500 transition-transform duration-200",
+                      expanded && "rotate-90"
+                    )}
+                  />
+                </button>
+
+                <div
+                  className={cn(
+                    "overflow-hidden transition-all duration-200",
+                    expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+                  )}
+                >
+                  <div className="ml-4 border-l border-zinc-700/60 pl-2 py-0.5">
+                    {processes.map((proc) => {
+                      const childActive = activePage === "business-processes" && activeProcessId === proc.id
+                      return (
+                        <button
+                          key={proc.id}
+                          onClick={() => onNavigateProcess?.(proc.id)}
+                          className={cn(
+                            "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-sm",
+                            childActive
+                              ? "bg-zinc-700/60 text-zinc-100 font-medium"
+                              : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "flex size-4 shrink-0 items-center justify-center rounded bg-gradient-to-br text-white text-[7px] font-bold",
+                              proc.gradient
+                            )}
+                          >
+                            {proc.abbr}
+                          </div>
+                          <span className="flex-1 text-left truncate">{proc.name}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       </nav>
     </aside>

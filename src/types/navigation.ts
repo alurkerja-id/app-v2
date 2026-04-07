@@ -13,3 +13,4 @@ export type Page =
   | "md-positions"
   | "md-locations"
   | "start"
+  | "business-processes"

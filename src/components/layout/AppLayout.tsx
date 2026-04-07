@@ -11,6 +11,8 @@ interface AppLayoutProps {
   activePage: Page
   onNavigate: (page: Page) => void
   children: React.ReactNode
+  activeProcessId?: string
+  onNavigateProcess?: (processId: string) => void
 }
 
 function useIsDesktop() {
@@ -24,7 +26,7 @@ function useIsDesktop() {
   return isDesktop
 }
 
-export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) {
+export function AppLayout({ activePage, onNavigate, children, activeProcessId, onNavigateProcess }: AppLayoutProps) {
   const isDesktop = useIsDesktop()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
@@ -85,6 +87,11 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
           if (!isDesktop) setMobileSidebarOpen(false)
         }}
         open={sidebarOpen}
+        activeProcessId={activeProcessId}
+        onNavigateProcess={(processId) => {
+          onNavigateProcess?.(processId)
+          if (!isDesktop) setMobileSidebarOpen(false)
+        }}
       />
 
       {/* Mobile overlay */}
@@ -102,6 +109,7 @@ export function AppLayout({ activePage, onNavigate, children }: AppLayoutProps) 
           onMenuToggle={() => setMobileSidebarOpen((v) => !v)}
           onNavigate={onNavigate}
           scrolled={scrolled}
+          activeProcessId={activeProcessId}
         />
         <main ref={mainRef} className="flex-1 overflow-auto" style={patternStyle}>{children}</main>
       </div>

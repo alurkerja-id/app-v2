@@ -35,6 +35,7 @@ import { PreferencesPanel } from "@/components/pages/PreferencesPage"
 import { usePreferences } from "@/contexts/PreferencesContext"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
+import { processes } from "@/components/processes/ProcessList"
 
 const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   login: [],
@@ -51,6 +52,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
   start: ["Start Process", "Formulation"],
+  "business-processes": ["Business Processes"],
 }
 
 const notifications = [
@@ -103,12 +105,21 @@ interface HeaderProps {
   onMenuToggle: () => void
   onNavigate: (page: Page) => void
   scrolled?: boolean
+  activeProcessId?: string
 }
 
-export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false }: HeaderProps) {
+export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false, activeProcessId }: HeaderProps) {
   const { color } = usePreferences()
   const isDefaultAccent = color.id === "zinc"
   const [preferencesOpen, setPreferencesOpen] = useState(false)
+
+  const breadcrumbs = (() => {
+    if (activePage === "business-processes" && activeProcessId) {
+      const proc = processes.find((p) => p.id === activeProcessId)
+      return ["Business Processes", proc?.name ?? activeProcessId]
+    }
+    return PAGE_BREADCRUMBS[activePage]
+  })()
 
   return (
     <>
@@ -151,7 +162,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
             </BreadcrumbItem>
 
             {/* Mobile ellipsis — shown only when more than 1 crumb */}
-            {PAGE_BREADCRUMBS[activePage].length > 1 && (
+            {breadcrumbs.length > 1 && (
               <BreadcrumbItem className="inline-flex sm:hidden shrink-0">
                 <BreadcrumbSeparator />
                 <DropdownMenu>
@@ -159,7 +170,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
                     <BreadcrumbEllipsis />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
-                    {PAGE_BREADCRUMBS[activePage].slice(0, -1).map((crumb, i) => (
+                    {breadcrumbs.slice(0, -1).map((crumb, i) => (
                       <DropdownMenuItem key={i}>{crumb}</DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -168,7 +179,7 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
             )}
 
             {/* Crumb items — middle items hidden on mobile, last item always visible */}
-            {PAGE_BREADCRUMBS[activePage]?.map((crumb, i, arr) => (
+            {breadcrumbs?.map((crumb, i, arr) => (
               <Fragment key={i}>
                 <BreadcrumbSeparator className={cn(arr.length > 1 && i < arr.length - 1 && "hidden sm:block")} />
                 <BreadcrumbItem

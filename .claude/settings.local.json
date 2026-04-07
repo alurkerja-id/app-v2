@@ -32,7 +32,13 @@
       "Bash(/opt/homebrew/bin/npm uninstall:*)",
       "Bash(~/.nvm/versions/node/v22.14.0/bin/npm uninstall:*)",
       "Bash(source ~/.nvm/nvm.sh)",
-      "Bash(find /Users/uyab/Code/app-v2/src -name *mobile* -o -name *responsive*)"
+      "Bash(find /Users/uyab/Code/app-v2/src -name *mobile* -o -name *responsive*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \"const icons = require\\(''''@hugeicons/core-free-icons''''\\); const matches = Object.keys\\(icons\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''''workflow''''\\) || k.toLowerCase\\(\\).includes\\(''''process''''\\) || k.toLowerCase\\(\\).includes\\(''''flow''''\\)\\); console.log\\(matches.join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const icons = Object.keys\\(require\\(''@hugeicons/core-free-icons''\\)\\); console.log\\(icons.filter\\(k => /workflow|flow|process|diagram|hierarchy/i.test\\(k\\)\\).join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const icons = Object.keys\\(require\\(''@hugeicons/core-free-icons''\\)\\); console.log\\(icons.filter\\(k => /Flowchart|Flow|Chart|Structure|Branch|Git/i.test\\(k\\)\\).join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"const m = require\\(''@hugeicons/core-free-icons''\\); const keys = Object.keys\\(m\\).slice\\(0,20\\); console.log\\(keys.join\\(''\\\\n''\\)\\)\")",
+      "Bash(node -e \"import\\(''@hugeicons/core-free-icons''\\).then\\(m => { const keys = Object.keys\\(m\\).filter\\(k => /Flow|Struct|Route|Branch|Hierarchy|Network|Org|Git/i.test\\(k\\)\\); console.log\\(keys.join\\(''\\\\n''\\) || ''none''\\); }\\).catch\\(e => console.log\\(e.message\\)\\)\")"
     ]
   }
 }
