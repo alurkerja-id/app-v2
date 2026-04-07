@@ -123,6 +123,7 @@ export function HomePage() {
                 {favoriteProcesses.map((proc) => (
                   <button
                     key={proc.id}
+                    onClick={() => { window.history.pushState({}, "", "/start"); window.dispatchEvent(new PopStateEvent("popstate")); }}
                     className={cn("group flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-left transition-all duration-200 hover:translate-x-0.5", proc.bgHover)}
                   >
                     <div
@@ -195,7 +196,10 @@ export function HomePage() {
                           fill={isFav ? "currentColor" : "none"}
                         />
                       </button>
-                      <button className="flex items-center gap-2.5 flex-1 min-w-0 text-left">
+                      <button 
+                        onClick={() => { window.history.pushState({}, "", "/start"); window.dispatchEvent(new PopStateEvent("popstate")); }}
+                        className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
+                      >
                         <div
                           className={cn(
                             "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",

@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:alurkerja="http://alurkerja.id/schema/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:userAssignment="https://alurkerja.com/userAssignment" xmlns:email="https://email.com" xmlns:notification="https://notification.com" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0wher6e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+  <bpmn:collaboration id="Collaboration_15bfjvo">
+    <bpmn:participant id="Participant_0rokkce" name="ASIANET" processRef="Contract-Lifecycle-Management-d98CS" />
+    <bpmn:participant id="Participant_0sxgbv7" name="Vendor" processRef="externalParty" />
+    <bpmn:messageFlow id="Flow_1r657ix" sourceRef="Event_08tbepz" targetRef="Event_0ljk7le" />
+    <bpmn:messageFlow id="Flow_12utpmt" sourceRef="Event_16k4dq7" targetRef="Event_0ah30p3" />
+    <bpmn:messageFlow id="Flow_0zv07ob" sourceRef="Event_1os3cea" targetRef="Event_1kr65bf" />
+    <bpmn:messageFlow id="Flow_16n0h3w" sourceRef="Event_03vtcca" targetRef="Event_1kr65bf" />
+  </bpmn:collaboration>
+  <bpmn:process id="Contract-Lifecycle-Management-d98CS" name="Contract Lifecycle Management" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_13ny4xq">
+      <bpmn:lane id="Lane_0n02vgf" name="Team Approval">
+        <bpmn:flowNodeRef>Review_Contract</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_08tbepz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1kr65bf</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1oiatoq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_17ihl0u</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_16k4dq7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1h0c06u</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1k662qq" name="Legal (Counsel)">
+        <bpmn:flowNodeRef>Activity_1wwntyt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0qtkj7h</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="Flow_1y3uwjy" name="No" sourceRef="Gateway_1h0c06u" targetRef="Activity_1wwntyt" />
+    <bpmn:sequenceFlow id="Flow_1kq93ta" name="Yes" sourceRef="Gateway_1h0c06u" targetRef="Event_08tbepz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${reviewDecision1=="Approve"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0brt17u" name="No" sourceRef="Gateway_1oiatoq" targetRef="Activity_1wwntyt" />
+    <bpmn:sequenceFlow id="Flow_07251p8" name="Yes" sourceRef="Gateway_1oiatoq" targetRef="Activity_17ihl0u">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${negotiationStatus == "AgreementReached"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1wwntyt" name="Draft Initial Contract" camunda:assignee="${initiator}" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Initial Contract Draft Form&#34;,&#34;description&#34;:&#34;&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Request ID&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;reqID==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;logic&#34;:{&#34;expression&#34;:&#34;title==\&#34;\&#34;&#34;},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Type&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;contractFormType&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;logic&#34;:{&#34;expression&#34;:&#34;contractFormType==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Value&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;value&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_NUMBER&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{},&#34;separator&#34;:{&#34;currency&#34;:&#34;Rp&#34;,&#34;separator&#34;:{&#34;type&#34;:&#34;separator_thousand&#34;,&#34;thousand&#34;:&#34;,&#34;,&#34;decimal&#34;:&#34;&#34;}},&#34;logic&#34;:{&#34;expression&#34;:&#34;value==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Scope of Work&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;scope&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;logic&#34;:{&#34;expression&#34;:&#34;&#34;},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Effective Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;effectiveDate&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Termination Clause&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;terminationClause&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Draft Version&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;draftVersion&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Draft Preparation Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;draftPreparationDate&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Draft Prepared By&#34;},&#34;name&#34;:&#34;draftPreparedBy&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;AdamYogi&#34;,&#34;label&#34;:&#34;Adam Yogi&#34;},{&#34;key&#34;:&#34;ZuhriyatulLubna&#34;,&#34;label&#34;:&#34;Zuhriyatul Lubna&#34;},{&#34;key&#34;:&#34;Safitri&#34;,&#34;label&#34;:&#34;Safitri&#34;},{&#34;key&#34;:&#34;HanifNanda&#34;,&#34;label&#34;:&#34;Hanif Nanda&#34;},{&#34;key&#34;:&#34;RemaSekar&#34;,&#34;label&#34;:&#34;Rema Sekar&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;ui_type&#34;:&#34;INPUT_FILE_UPLOAD&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;Draft Contract Document&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;draftDocument&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;multiple_file&#34;:false,&#34;max_file_size&#34;:&#34;50&#34;,&#34;extensions&#34;:&#34;jpg,png,pdf,docx,xlsx&#34;,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Notes&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;notes&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y3uwjy</bpmn:incoming>
+      <bpmn:incoming>Flow_0brt17u</bpmn:incoming>
+      <bpmn:incoming>Flow_0qn8xd0</bpmn:incoming>
+      <bpmn:outgoing>Flow_06dcw0q</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1g2nkyp" sourceRef="StartEvent_1" targetRef="Activity_0qtkj7h">
+      <bpmn:extensionElements>
+        <email:emails>
+          <email:email recipient="legal@yopmail.com" emailConfig="Sendriaa" subject="New Contract" messageType="write" message="Dear Legal Team,&#10;&#10;A new contract request has been submitted through the Contract Lifecycle Management system. Below are the details of the request:&#10;&#10;Contract Request Information&#10;&#10;Request ID: ${reqID}&#10;Contract Title: ${title}&#10;Requester Name: ${reqName}&#10;Position/Role: ${role}&#10;Requester Phone Number: ${number}&#10;&#10;Best Regrads" name="Email_0hq163u" value="" />
+        </email:emails>
+        <notification:notifications />
+        <camunda:executionListener expression="${emailContext.getInstance(&#34;262&#34;, &#34;Sendriaa&#34;).setExecution(execution).putAllProcessVariables().setTo(&#34;legal@yopmail.com&#34;).setSubject(&#34;New Contract&#34;).setText(&#34;Dear Legal Team,&#10;&#10;A new contract request has been submitted through the Contract Lifecycle Management system. Below are the details of the request:&#10;&#10;Contract Request Information&#10;&#10;Request ID: ${reqID}&#10;Contract Title: ${title}&#10;Requester Name: ${reqName}&#10;Position/Role: ${role}&#10;Requester Phone Number: ${number}&#10;&#10;Best Regrads&#34;).send()}" event="take" emailRef="Email_0hq163u" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_179s9vf" sourceRef="Review_Contract" targetRef="Gateway_1h0c06u" />
+    <bpmn:sequenceFlow id="Flow_06dcw0q" sourceRef="Activity_1wwntyt" targetRef="Review_Contract">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">def reviewers = []
+
+if (execution.getVariable("ProcurementReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("procurement@yopmail.com")
+}
+if (execution.getVariable("FinanceReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("finance@yopmail.com")
+}
+if (execution.getVariable("TaxReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("tax@yopmail.com")
+}
+if (execution.getVariable("ComplianceReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("compliance@yopmail.com")
+}
+
+execution.setVariable("reviewers", reviewers)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1p6exhp" sourceRef="Event_08tbepz" targetRef="Event_1kr65bf" />
+    <bpmn:sequenceFlow id="Flow_11gk0xc" sourceRef="Event_1kr65bf" targetRef="Gateway_1oiatoq" />
+    <bpmn:userTask id="Review_Contract" name="Review Contract" camunda:assignee="${reviewer}" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Contract Review Form&#34;,&#34;description&#34;:&#34;Business Owner Contract Review&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Contract ID&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;reqID==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;title==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Type&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;contractFormType&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;logic&#34;:{&#34;expression&#34;:&#34;contractFormType==\&#34;\&#34;&#34;}},{&#34;ui_type&#34;:&#34;INPUT_FILE_UPLOAD&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;Draft Contract Document &#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;draftDocument&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;multiple_file&#34;:false,&#34;max_file_size&#34;:&#34;50&#34;,&#34;extensions&#34;:&#34;jpg,png,pdf,docx,xlsx&#34;,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;draftDocument==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Scope of Work Confirmation&#34;},&#34;name&#34;:&#34;scopeWorkConfirmation&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Appropriate&#34;,&#34;label&#34;:&#34;Appropriate&#34;},{&#34;key&#34;:&#34;Need Revision&#34;,&#34;label&#34;:&#34;Need Revision&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Commercial Terms Confirmation&#34;},&#34;name&#34;:&#34;commercialTermsConfirmation&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Appropriate&#34;,&#34;label&#34;:&#34;Appropriate&#34;},{&#34;key&#34;:&#34;Need Revision&#34;,&#34;label&#34;:&#34;Need Revision&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Operational Feasibility&#34;},&#34;name&#34;:&#34;operationalFeasibility&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Yes&#34;,&#34;label&#34;:&#34;Yes&#34;},{&#34;key&#34;:&#34;No&#34;,&#34;label&#34;:&#34;No&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Review Decision&#34;},&#34;name&#34;:&#34;reviewDecision1&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Approve&#34;,&#34;label&#34;:&#34;Approve&#34;},{&#34;key&#34;:&#34;Request Revision&#34;,&#34;label&#34;:&#34;Request Revision&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Review Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reviewDate&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+        <camunda:taskListener event="create" id="">
+          <camunda:script scriptFormat="groovy">def assignee = task.getAssignee()
+def sig = task.getVariable("signature")
+
+if (assignee &amp;&amp; sig) {
+    def safeKey = "sig_" + assignee.toString().replaceAll("[^a-zA-Z0-9]", "_")
+    task.setVariable(safeKey, sig.toString())
+}</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06dcw0q</bpmn:incoming>
+      <bpmn:outgoing>Flow_179s9vf</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="reviewers" camunda:elementVariable="reviewer">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${reviewDecision1 == "Request Revision"}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Event_08tbepz" name="Sent Draft Contract">
+      <bpmn:incoming>Flow_1kq93ta</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p6exhp</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0gbrqt2" messageRef="Message_3hndr7h" camunda:expression="${execution.getProcessEngineServices()   .getRuntimeService()   .createMessageCorrelation(&#34;draftContract2&#34;).tenantId(execution.getTenantId()).setVariable(&#34;initiator&#34;, initiator) .setVariable(&#34;reqID&#34;, reqID) .setVariable(&#34;title&#34;, title) .setVariable(&#34;reqName&#34;, reqName) .setVariable(&#34;contractClassification&#34;, contractClassification) .processInstanceBusinessKey(execution.getProcessBusinessKey())   .correlate() }" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="Event_1kr65bf" name="Feedback Received">
+      <bpmn:incoming>Flow_1p6exhp</bpmn:incoming>
+      <bpmn:outgoing>Flow_11gk0xc</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1n48sr8" messageRef="Message_2gdsgn2" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1yosc6j" sourceRef="Activity_17ihl0u" targetRef="Event_16k4dq7" />
+    <bpmn:exclusiveGateway id="Gateway_1oiatoq" name="Agreement reached?" default="Flow_0brt17u">
+      <bpmn:incoming>Flow_11gk0xc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0brt17u</bpmn:outgoing>
+      <bpmn:outgoing>Flow_07251p8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_17ihl0u" name="Internal Signing" camunda:assignee="${reviewer}" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Final Contract Approval&#34;,&#34;description&#34;:&#34;&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Contract ID&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;reqID==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;title==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;External Party Name&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;externalPartyName&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;externalPartyName==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Value&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;value&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;value==\&#34;\&#34;&#34;}},{&#34;ui_type&#34;:&#34;EXTERNAL_MICRO_FRONTEND_FORM&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;E-Sign&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;external_micro_frontend_form_390&#34;,&#34;url&#34;:&#34;https://onprem.merapi.alurkerja.com/api/v1/integration/addons/signaturepdf/views/remoteEntry.js &#34;,&#34;component_scope&#34;:&#34;signaturepdf&#34;,&#34;component_name&#34;:&#34;signature_pad_view&#34;,&#34;height&#34;:&#34;&#34;,&#34;width&#34;:&#34;&#34;,&#34;disabled&#34;:false,&#34;edit_tabs&#34;:{&#34;mfeConfig&#34;:{&#34;additional_mfe_config&#34;:{}}}},{&#34;label&#34;:{&#34;en&#34;:&#34;Approval Comments&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;approvalComments&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+        <camunda:taskListener event="complete" id="">
+          <camunda:script scriptFormat="groovy">def assignee = task.getAssignee()
+def sig = task.getVariable("signature")
+
+if (assignee &amp;&amp; sig) {
+    def safeKey = "sig_" + assignee.toString().replaceAll("[^a-zA-Z0-9]", "_")
+    task.setVariable(safeKey, sig.toString())
+}</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07251p8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yosc6j</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="reviewers" camunda:elementVariable="reviewer" />
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_16k4dq7" name="Signed-ready Draft Sent">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="groovy">def allVariables = execution.getVariables()
+
+execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation("signedContract").setVariables(allVariables).processInstanceBusinessKey(execution.getProcessBusinessKey()).correlate()</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1yosc6j</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0ws675w" messageRef="Message_18joo80" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qn8xd0" sourceRef="Activity_0qtkj7h" targetRef="Activity_1wwntyt">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">def reviewers = []
+
+if (execution.getVariable("ProcurementReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("procurement@yopmail.com")
+}
+if (execution.getVariable("FinanceReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("finance@yopmail.com")
+}
+if (execution.getVariable("TaxReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("tax@yopmail.com")
+}
+if (execution.getVariable("ComplianceReviewRequired")?.toLowerCase() == "yes") {
+    reviewers.add("compliance@yopmail.com")
+}
+
+execution.setVariable("reviewers", reviewers)</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_1h0c06u" name="Approval for internal review?" default="Flow_1y3uwjy">
+      <bpmn:incoming>Flow_179s9vf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1y3uwjy</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kq93ta</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_0qtkj7h" name="Assess Contract Classification" camunda:assignee="${initiator}" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Contract Classification Assessment Form&#34;,&#34;description&#34;:&#34;&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Request ID&#34;,&#34;id&#34;:&#34;Contract Request ID&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;ui_type&#34;:&#34;EXPRESSION_INPUT&#34;,&#34;formula&#34;:&#34;&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;reqID == \&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;Contract Title&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;title==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Legal Counsel Name&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;LegalCounselName&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Assessment Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;AssessmentDate&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Contract Classification&#34;},&#34;name&#34;:&#34;contractClassification&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;New Contract&#34;,&#34;label&#34;:&#34;New Contract&#34;},{&#34;key&#34;:&#34;Amandment&#34;,&#34;label&#34;:&#34;Amandment&#34;},{&#34;key&#34;:&#34;Termination&#34;,&#34;label&#34;:&#34;Termination&#34;},{&#34;key&#34;:&#34;Addendum&#34;,&#34;label&#34;:&#34;Addendum&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Contract Draft Category&#34;},&#34;name&#34;:&#34;ContractDraftCategory&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Simple with Precedent&#34;,&#34;label&#34;:&#34;Simple with Precedent&#34;},{&#34;key&#34;:&#34;Simple without Precedent&#34;,&#34;label&#34;:&#34;Simple without Precedent&#34;},{&#34;key&#34;:&#34;Complex with Precedent&#34;,&#34;label&#34;:&#34;Complex with Precedent&#34;},{&#34;key&#34;:&#34;Complex without Precedent&#34;,&#34;label&#34;:&#34;Complex without Precedent&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Contract Template Source&#34;},&#34;name&#34;:&#34;ContractTemplateSource&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Company Template&#34;,&#34;label&#34;:&#34;Company Template&#34;},{&#34;key&#34;:&#34;External Template&#34;,&#34;label&#34;:&#34;External Template&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;Risk Level&#34;,&#34;en&#34;:&#34;Risk Level&#34;},&#34;name&#34;:&#34;RiskLevel&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Low&#34;,&#34;label&#34;:&#34;Low&#34;},{&#34;key&#34;:&#34;Medium&#34;,&#34;label&#34;:&#34;Medium&#34;},{&#34;key&#34;:&#34;High&#34;,&#34;label&#34;:&#34;High&#34;}]}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Procurement Review Required&#34;},&#34;name&#34;:&#34;ProcurementReviewRequired&#34;,&#34;form_field_type&#34;:&#34;INPUT_RADIO&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;orientation&#34;:&#34;horizontal&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Yes&#34;,&#34;label&#34;:&#34;Yes&#34;},{&#34;key&#34;:&#34;No&#34;,&#34;label&#34;:&#34;No&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Finance Review Required&#34;},&#34;name&#34;:&#34;FinanceReviewRequired&#34;,&#34;form_field_type&#34;:&#34;INPUT_RADIO&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;orientation&#34;:&#34;horizontal&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Yes&#34;,&#34;label&#34;:&#34;Yes&#34;},{&#34;key&#34;:&#34;No&#34;,&#34;label&#34;:&#34;No&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Tax Review Required&#34;},&#34;name&#34;:&#34;TaxReviewRequired&#34;,&#34;form_field_type&#34;:&#34;INPUT_RADIO&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;orientation&#34;:&#34;horizontal&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Yes&#34;,&#34;label&#34;:&#34;Yes&#34;},{&#34;key&#34;:&#34;No&#34;,&#34;label&#34;:&#34;No&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;Compliance Review Required&#34;},&#34;name&#34;:&#34;ComplianceReviewRequired&#34;,&#34;form_field_type&#34;:&#34;INPUT_RADIO&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;orientation&#34;:&#34;horizontal&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Yes&#34;,&#34;label&#34;:&#34;Yes&#34;},{&#34;key&#34;:&#34;No&#34;,&#34;label&#34;:&#34;No&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Legal Assessment Notes&#34;,&#34;id&#34;:&#34;Legal Assessment Notes&#34;},&#34;name&#34;:&#34;LegalAssessmentNotes&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1g2nkyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qn8xd0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="StartEvent_1" name="Contract Request Received" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Contract Request Form&#34;,&#34;description&#34;:&#34;&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Request ID&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;ui_type&#34;:&#34;EXPRESSION_INPUT&#34;,&#34;formula&#34;:&#34;&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Requester Name&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqName&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Position/Role&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;role&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false},{&#34;label&#34;:{&#34;en&#34;:&#34;Requester Phone Number&#34;,&#34;id&#34;:&#34;Masukan&#34;},&#34;name&#34;:&#34;number&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_NUMBER&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;separator&#34;:{&#34;currency&#34;:&#34;&#34;,&#34;separator&#34;:{&#34;type&#34;:&#34;&#34;,&#34;thousand&#34;:&#34;&#34;,&#34;decimal&#34;:&#34;&#34;}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}}]}]},{&#34;label&#34;:{&#34;id&#34;:&#34;Contract Type&#34;,&#34;en&#34;:&#34;Contract Type&#34;},&#34;name&#34;:&#34;contract_type&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;Expense Contract&#34;,&#34;label&#34;:&#34;Expense Contract&#34;},{&#34;key&#34;:&#34;Revenue Generating Contract&#34;,&#34;label&#34;:&#34;Revenue Generating Contract&#34;},{&#34;key&#34;:&#34;Contract Without Specific Value&#34;,&#34;label&#34;:&#34;Contract Without Specific Value&#34;}]}},{&#34;label&#34;:{&#34;en&#34;:&#34;External Party Name&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;externalPartyName&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;id&#34;:&#34;&#34;,&#34;en&#34;:&#34;External Party Type&#34;},&#34;name&#34;:&#34;externalType&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:1,&#34;label&#34;:&#34;Customer&#34;},{&#34;key&#34;:2,&#34;label&#34;:&#34;Vendor&#34;},{&#34;key&#34;:&#34;3&#34;,&#34;label&#34;:&#34;Partner&#34;}]},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contact Person&#34;,&#34;id&#34;:&#34;Masukan&#34;},&#34;name&#34;:&#34;cp&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;separator&#34;:{&#34;currency&#34;:&#34;&#34;,&#34;separator&#34;:{&#34;type&#34;:&#34;&#34;,&#34;thousand&#34;:&#34;&#34;,&#34;decimal&#34;:&#34;&#34;}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Start Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;startDate&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract End Date&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;endDate&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Estimated Contract Value&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;value&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_NUMBER&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;separator&#34;:{&#34;currency&#34;:&#34;&#34;,&#34;separator&#34;:{&#34;type&#34;:&#34;separator_thousand&#34;,&#34;thousand&#34;:&#34;,&#34;,&#34;decimal&#34;:&#34;&#34;}},&#34;constraints&#34;:{}},{&#34;ui_type&#34;:&#34;INPUT_FILE_UPLOAD&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;Supporting Documents Upload&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;upload&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;multiple_file&#34;:false,&#34;max_file_size&#34;:&#34;50&#34;,&#34;extensions&#34;:&#34;jpg,png,pdf,docx,xlsx&#34;,&#34;constraints&#34;:{&#34;required&#34;:true}}]}]">
+      <bpmn:outgoing>Flow_1g2nkyp</bpmn:outgoing>
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:process id="externalParty" name="External Party" isExecutable="true">
+    <bpmn:userTask id="Activity_01ujojm" name="Contract Negotiation" camunda:assignee="vendor@yopmail.com" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Contract Negotiaion&#34;,&#34;description&#34;:&#34;Create a form with this builder.&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Request ID&#34;,&#34;id&#34;:&#34;Request ID&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;Contract Title&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true},{&#34;label&#34;:{&#34;en&#34;:&#34;Requestor Name&#34;,&#34;id&#34;:&#34;Requestor Name&#34;},&#34;name&#34;:&#34;reqName&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Classification&#34;,&#34;id&#34;:&#34;Contract Classification&#34;},&#34;name&#34;:&#34;contractClassification&#34;,&#34;placeholder&#34;:&#34;Input&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true},{&#34;label&#34;:{&#34;id&#34;:&#34;Decision&#34;,&#34;en&#34;:&#34;Decision&#34;},&#34;name&#34;:&#34;negotiationStatus&#34;,&#34;form_field_type&#34;:&#34;INPUT_SELECT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;placeholder&#34;:&#34;Select...&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;defaultValue&#34;:null,&#34;select_searchable&#34;:false,&#34;multiple&#34;:false,&#34;disabled&#34;:false,&#34;select_options&#34;:{&#34;url&#34;:&#34;&#34;,&#34;method&#34;:&#34;&#34;,&#34;option_key&#34;:&#34;key&#34;,&#34;option_label&#34;:&#34;label&#34;,&#34;options&#34;:[{&#34;key&#34;:&#34;AgreementReached&#34;,&#34;label&#34;:&#34;Aggrement Reached&#34;},{&#34;key&#34;:&#34;Revision&#34;,&#34;label&#34;:&#34;Need Further Negotiation&#34;}]}}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1t1yzw5</bpmn:incoming>
+      <bpmn:outgoing>Flow_18asbns</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Event_0ljk7le" name="Signed-ready Draft Received" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;Form Builder&#34;,&#34;description&#34;:&#34;Create a form with this builder.&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[]}]}]}]">
+      <bpmn:outgoing>Flow_1t1yzw5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12a5vqc" messageRef="Message_3hndr7h" />
+    </bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="Event_0ah30p3" name="Draft kontrak yang siap ditandatangi diterima">
+      <bpmn:incoming>Flow_0kszi6l</bpmn:incoming>
+      <bpmn:outgoing>Flow_11wrkj5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_06ok8hk" messageRef="Message_18joo80" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="Activity_1frrm75" name="External Signing" camunda:assignee="vendor@yopmail.com" alurkerja:form="[{&#34;ui_type&#34;:&#34;MAIN_DIV&#34;,&#34;className&#34;:&#34;!p-2&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;title&#34;:&#34;External Contract Signing Form&#34;,&#34;description&#34;:&#34;&#34;,&#34;ui_type&#34;:&#34;FORM_MAIN&#34;,&#34;className&#34;:&#34;w-full&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;ui_type&#34;:&#34;DIV&#34;,&#34;className&#34;:&#34;flex flex-col&#34;,&#34;element_actions&#34;:{&#34;delete&#34;:false},&#34;children&#34;:[{&#34;label&#34;:{&#34;en&#34;:&#34;Contract ID&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;reqID&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;reqID==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;Contract Title&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;title&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;title==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;External Party Name&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;externalPartyName&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:true,&#34;constraints&#34;:{&#34;required&#34;:true},&#34;logic&#34;:{&#34;expression&#34;:&#34;externalPartyName==\&#34;\&#34;&#34;}},{&#34;label&#34;:{&#34;en&#34;:&#34;External Signatory Position&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;externalSignatoryPosition&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXT&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;label&#34;:{&#34;en&#34;:&#34;Date of External Signing&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;dateExternalSigning&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_DATE&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;format&#34;:&#34;dd/MM/yyyy&#34;,&#34;dateValidation&#34;:{&#34;minDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:&#34;&#34;},&#34;maxDate&#34;:{&#34;fromField&#34;:false,&#34;isToday&#34;:false,&#34;value&#34;:null}},&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;ui_type&#34;:&#34;INPUT_FILE_UPLOAD&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;Signed Contract Document&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;signedContractDocument&#34;,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false,&#34;multiple_file&#34;:false,&#34;max_file_size&#34;:&#34;50&#34;,&#34;extensions&#34;:&#34;jpg,png,pdf,docx,xlsx&#34;,&#34;constraints&#34;:{&#34;required&#34;:true}},{&#34;ui_type&#34;:&#34;EXTERNAL_MICRO_FRONTEND_FORM&#34;,&#34;label&#34;:{&#34;en&#34;:&#34;External Micro Frontend Form&#34;,&#34;id&#34;:&#34;Formulir Micro Frontend Eksternal&#34;},&#34;name&#34;:&#34;external_micro_frontend_form_390&#34;,&#34;url&#34;:&#34;https://onprem.merapi.alurkerja.com/api/v1/integration/addons/signaturepdf/views/remoteEntry.js&#34;,&#34;component_scope&#34;:&#34;signaturepdf&#34;,&#34;component_name&#34;:&#34;signature_pad_view&#34;,&#34;height&#34;:&#34;&#34;,&#34;width&#34;:&#34;&#34;,&#34;disabled&#34;:false,&#34;edit_tabs&#34;:{&#34;mfeConfig&#34;:{&#34;additional_mfe_config&#34;:{}}}},{&#34;label&#34;:{&#34;en&#34;:&#34;Notes&#34;,&#34;id&#34;:&#34;&#34;},&#34;name&#34;:&#34;notes&#34;,&#34;placeholder&#34;:&#34;&#34;,&#34;form_field_type&#34;:&#34;INPUT_TEXTAREA&#34;,&#34;ui_type&#34;:&#34;INPUT&#34;,&#34;defaultValue&#34;:null,&#34;tooltip&#34;:{&#34;enable&#34;:false,&#34;message&#34;:&#34;&#34;},&#34;disabled&#34;:false}]}]}]}]" userAssignment:assigneeType="create_using_expression">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="create" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="assignment" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="update" />
+        <camunda:taskListener delegateExpression="${globalTaskListener}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11wrkj5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j1ju1k</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Event_1os3cea" name="Sent Feedback">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">def allVariables = execution.getVariables()
+
+execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation("sentFeedback").setVariables(allVariables).processInstanceBusinessKey(execution.getProcessBusinessKey()).correlate()</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12myyxh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kszi6l</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1f15le8" messageRef="Message_2gdsgn2">
+        <bpmn:extensionElements />
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="Gateway_14j7pmu" name="Agreement Reached?" default="Flow_1rrsbuk">
+      <bpmn:incoming>Flow_18asbns</bpmn:incoming>
+      <bpmn:outgoing>Flow_12myyxh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1rrsbuk</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1t1yzw5" sourceRef="Event_0ljk7le" targetRef="Activity_01ujojm" />
+    <bpmn:sequenceFlow id="Flow_18asbns" sourceRef="Activity_01ujojm" targetRef="Gateway_14j7pmu" />
+    <bpmn:sequenceFlow id="Flow_0kszi6l" sourceRef="Event_1os3cea" targetRef="Event_0ah30p3" />
+    <bpmn:sequenceFlow id="Flow_11wrkj5" sourceRef="Event_0ah30p3" targetRef="Activity_1frrm75" />
+    <bpmn:sequenceFlow id="Flow_0j1ju1k" sourceRef="Activity_1frrm75" targetRef="Event_0rj9f9x" />
+    <bpmn:sequenceFlow id="Flow_12myyxh" name="Yes" sourceRef="Gateway_14j7pmu" targetRef="Event_1os3cea">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${negotiationStatus == "AgreementReached"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1rrsbuk" name="No" sourceRef="Gateway_14j7pmu" targetRef="Event_03vtcca" />
+    <bpmn:endEvent id="Event_0rj9f9x" name="Contract Signed">
+      <bpmn:incoming>Flow_0j1ju1k</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_03vtcca" name="Sent Feedback">
+      <bpmn:incoming>Flow_1rrsbuk</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1z0wk53" messageRef="Message_2gdsgn2" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_0eqrc00" name="draftContract" />
+  <bpmn:message id="Message_2gdsgn2" name="sentFeedback" />
+  <bpmn:message id="Message_18joo80" name="signedContract" />
+  <bpmn:message id="Message_3hndr7h" name="draftContract2" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15bfjvo">
+      <bpmndi:BPMNShape id="Participant_0rokkce_di" bpmnElement="Participant_0rokkce" isHorizontal="true">
+        <dc:Bounds x="132" y="230" width="1558" height="410" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1k662qq_di" bpmnElement="Lane_1k662qq" isHorizontal="true">
+        <dc:Bounds x="162" y="230" width="1528" height="195" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0n02vgf_di" bpmnElement="Lane_0n02vgf" isHorizontal="true">
+        <dc:Bounds x="162" y="425" width="1528" height="215" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1js0wfr_di" bpmnElement="Activity_1wwntyt">
+        <dc:Bounds x="470" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mjp3ng_di" bpmnElement="Review_Contract">
+        <dc:Bounds x="630" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0k7koq0_di" bpmnElement="Event_08tbepz">
+        <dc:Bounds x="1072" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1065" y="472" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19z0t1k_di" bpmnElement="Event_1kr65bf">
+        <dc:Bounds x="1182" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1176" y="472" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1oiatoq_di" bpmnElement="Gateway_1oiatoq" isMarkerVisible="true">
+        <dc:Bounds x="1285" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1283" y="555" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lc7mvg_di" bpmnElement="Activity_17ihl0u">
+        <dc:Bounds x="1430" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kh7v8m_di" bpmnElement="Event_16k4dq7">
+        <dc:Bounds x="1612" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1598" y="472" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1h0c06u_di" bpmnElement="Gateway_1h0c06u" isMarkerVisible="true">
+        <dc:Bounds x="845" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="831" y="555" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yc3mpl_di" bpmnElement="Activity_0qtkj7h">
+        <dc:Bounds x="330" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="189" y="358" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1y3uwjy_di" bpmnElement="Flow_1y3uwjy">
+        <di:waypoint x="870" y="495" />
+        <di:waypoint x="870" y="360" />
+        <di:waypoint x="570" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="713" y="342" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kq93ta_di" bpmnElement="Flow_1kq93ta">
+        <di:waypoint x="895" y="520" />
+        <di:waypoint x="1072" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="910" y="493" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0brt17u_di" bpmnElement="Flow_0brt17u">
+        <di:waypoint x="1310" y="495" />
+        <di:waypoint x="1310" y="320" />
+        <di:waypoint x="570" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1318" y="402" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07251p8_di" bpmnElement="Flow_07251p8">
+        <di:waypoint x="1335" y="520" />
+        <di:waypoint x="1430" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1370" y="498" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g2nkyp_di" bpmnElement="Flow_1g2nkyp">
+        <di:waypoint x="248" y="340" />
+        <di:waypoint x="330" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_179s9vf_di" bpmnElement="Flow_179s9vf">
+        <di:waypoint x="730" y="520" />
+        <di:waypoint x="845" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06dcw0q_di" bpmnElement="Flow_06dcw0q">
+        <di:waypoint x="520" y="380" />
+        <di:waypoint x="520" y="520" />
+        <di:waypoint x="630" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p6exhp_di" bpmnElement="Flow_1p6exhp">
+        <di:waypoint x="1108" y="520" />
+        <di:waypoint x="1182" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11gk0xc_di" bpmnElement="Flow_11gk0xc">
+        <di:waypoint x="1218" y="520" />
+        <di:waypoint x="1285" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yosc6j_di" bpmnElement="Flow_1yosc6j">
+        <di:waypoint x="1530" y="520" />
+        <di:waypoint x="1612" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qn8xd0_di" bpmnElement="Flow_0qn8xd0">
+        <di:waypoint x="430" y="340" />
+        <di:waypoint x="470" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0sxgbv7_di" bpmnElement="Participant_0sxgbv7" isHorizontal="true">
+        <dc:Bounds x="132" y="670" width="1078" height="300" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v8i2rb_di" bpmnElement="Activity_01ujojm">
+        <dc:Bounds x="310" y="700" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0y9dpbq_di" bpmnElement="Event_0ljk7le">
+        <dc:Bounds x="202" y="722" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184" y="765" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qyz7ow_di" bpmnElement="Event_0ah30p3">
+        <dc:Bounds x="702" y="722" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="675" y="765" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gd7zz7_di" bpmnElement="Activity_1frrm75">
+        <dc:Bounds x="830" y="700" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e4madp_di" bpmnElement="Event_1os3cea">
+        <dc:Bounds x="562" y="722" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="692" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14j7pmu_di" bpmnElement="Gateway_14j7pmu" isMarkerVisible="true">
+        <dc:Bounds x="445" y="715" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="443" y="685" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rj9f9x_di" bpmnElement="Event_0rj9f9x">
+        <dc:Bounds x="1072" y="722" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1051" y="765" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jo6281_di" bpmnElement="Event_03vtcca">
+        <dc:Bounds x="1072" y="902" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1053" y="945" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1t1yzw5_di" bpmnElement="Flow_1t1yzw5">
+        <di:waypoint x="238" y="740" />
+        <di:waypoint x="310" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18asbns_di" bpmnElement="Flow_18asbns">
+        <di:waypoint x="410" y="740" />
+        <di:waypoint x="445" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kszi6l_di" bpmnElement="Flow_0kszi6l">
+        <di:waypoint x="598" y="740" />
+        <di:waypoint x="702" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11wrkj5_di" bpmnElement="Flow_11wrkj5">
+        <di:waypoint x="738" y="740" />
+        <di:waypoint x="830" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j1ju1k_di" bpmnElement="Flow_0j1ju1k">
+        <di:waypoint x="930" y="740" />
+        <di:waypoint x="1072" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12myyxh_di" bpmnElement="Flow_12myyxh">
+        <di:waypoint x="495" y="740" />
+        <di:waypoint x="562" y="740" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="722" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rrsbuk_di" bpmnElement="Flow_1rrsbuk">
+        <di:waypoint x="470" y="765" />
+        <di:waypoint x="470" y="920" />
+        <di:waypoint x="1072" y="920" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="478" y="840" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r657ix_di" bpmnElement="Flow_1r657ix">
+        <di:waypoint x="1090" y="538" />
+        <di:waypoint x="1090" y="680" />
+        <di:waypoint x="220" y="680" />
+        <di:waypoint x="220" y="722" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12utpmt_di" bpmnElement="Flow_12utpmt">
+        <di:waypoint x="1630" y="538" />
+        <di:waypoint x="1630" y="655" />
+        <di:waypoint x="720" y="655" />
+        <di:waypoint x="720" y="722" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zv07ob_di" bpmnElement="Flow_0zv07ob">
+        <di:waypoint x="580" y="758" />
+        <di:waypoint x="580" y="900" />
+        <di:waypoint x="1200" y="900" />
+        <di:waypoint x="1200" y="538" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16n0h3w_di" bpmnElement="Flow_16n0h3w">
+        <di:waypoint x="1108" y="920" />
+        <di:waypoint x="1200" y="920" />
+        <di:waypoint x="1200" y="538" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

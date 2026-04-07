@@ -11,6 +11,7 @@ import { WorkspacesPage } from "@/components/pages/WorkspacesPage"
 import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
 import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
+import { StartProcessPage } from "@/components/pages/StartProcessPage"
 import { PreferencesProvider } from "@/contexts/PreferencesContext"
 import { Toaster } from "@/components/ui/sonner"
 import type { Page } from "@/types/navigation"
@@ -29,6 +30,7 @@ const PAGE_PATHS: Record<Page, string> = {
   "md-departments": "/master-data/departments",
   "md-positions": "/master-data/positions",
   "md-locations": "/master-data/locations",
+  start: "/start",
 }
 
 function getPageFromPathname(pathname: string): Page {
@@ -86,6 +88,8 @@ export default function App() {
         return <PositionsPage />
       case "md-locations":
         return <LocationsPage />
+      case "start":
+        return <StartProcessPage />
     }
   }
 

@@ -12,3 +12,4 @@ export type Page =
   | "md-departments"
   | "md-positions"
   | "md-locations"
+  | "start"

@@ -337,7 +337,7 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
               <ComboboxContent>
                 <ComboboxList>
                   {USERS.map((u) => (
-                    <ComboboxItem key={u.email} value={u.email} textValue={`${u.name} ${u.email}`}>
+                    <ComboboxItem key={u.email} value={u.email}>
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">{u.name}</span>
                         <span className="text-xs text-muted-foreground">{u.email}</span>

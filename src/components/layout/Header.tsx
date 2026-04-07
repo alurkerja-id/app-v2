@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, Fragment } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Menu02Icon,
@@ -50,6 +50,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-departments": ["Master Data", "Departments"],
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
+  start: ["Start Process", "Formulation"],
 }
 
 const notifications = [
@@ -167,21 +168,22 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false 
             )}
 
             {/* Crumb items — middle items hidden on mobile, last item always visible */}
-            {PAGE_BREADCRUMBS[activePage].map((crumb, i, arr) => (
-              <BreadcrumbItem
-                key={i}
-                className={cn(
-                  "shrink-0",
-                  arr.length > 1 && i < arr.length - 1 && "hidden sm:inline-flex"
-                )}
-              >
-                <BreadcrumbSeparator />
-                {i < arr.length - 1 ? (
-                  <BreadcrumbLink>{crumb}</BreadcrumbLink>
-                ) : (
-                  <BreadcrumbPage>{crumb}</BreadcrumbPage>
-                )}
-              </BreadcrumbItem>
+            {PAGE_BREADCRUMBS[activePage]?.map((crumb, i, arr) => (
+              <Fragment key={i}>
+                <BreadcrumbSeparator className={cn(arr.length > 1 && i < arr.length - 1 && "hidden sm:block")} />
+                <BreadcrumbItem
+                  className={cn(
+                    "shrink-0",
+                    arr.length > 1 && i < arr.length - 1 && "hidden sm:inline-flex"
+                  )}
+                >
+                  {i < arr.length - 1 ? (
+                    <BreadcrumbLink>{crumb}</BreadcrumbLink>
+                  ) : (
+                    <BreadcrumbPage>{crumb}</BreadcrumbPage>
+                  )}
+                </BreadcrumbItem>
+              </Fragment>
             ))}
           </BreadcrumbList>
         </Breadcrumb>

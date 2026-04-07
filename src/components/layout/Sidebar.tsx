@@ -22,7 +22,6 @@ import {
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   Dialog,
