@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
@@ -9,7 +10,36 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from "@/components/ui/combobox"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 import { FormTab } from "./tabs/FormTab"
 import { DetailsTab } from "./tabs/DetailsTab"
 import { DiagramTab } from "./tabs/DiagramTab"
@@ -49,10 +79,59 @@ function getTaskAge(createdDate: string) {
   return `${weeks} weeks`
 }
 
+const USERS = [
+  { name: "Alice Wang", email: "alice@company.com" },
+  { name: "Bayu Hendra", email: "bayu@company.com" },
+  { name: "Carlos Ruiz", email: "carlos@company.com" },
+  { name: "David Park", email: "david@company.com" },
+  { name: "Ken Watanabe", email: "ken@company.com" },
+  { name: "Priya Sharma", email: "priya@company.com" },
+  { name: "Rachel Kim", email: "rachel@company.com" },
+  { name: "Rina Susanti", email: "rina@company.com" },
+  { name: "Sophie Martin", email: "sophie@company.com" },
+  { name: "Tom Brady", email: "tom@company.com" },
+]
+
 export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetailPanelProps) {
   const theme = PROCESS_THEME[task.process] ?? DEFAULT_THEME
+  const [delegateOpen, setDelegateOpen] = useState(false)
+  const [unclaimOpen, setUnclaimOpen] = useState(false)
+  const [delegateTo, setDelegateTo] = useState<string | null>(null)
+  const [delegateReason, setDelegateReason] = useState("")
+
+  const handleDelegate = () => {
+    setDelegateTo(null)
+    setDelegateReason("")
+    setDelegateOpen(true)
+  }
+
+  const handleDelegateSubmit = () => {
+    setDelegateOpen(false)
+    const user = USERS.find((u) => u.email === delegateTo)
+    toast.success("Task delegated", {
+      description: `Task has been delegated to ${user?.name ?? delegateTo}.`,
+    })
+  }
+
+  const handleUnclaim = () => {
+    setUnclaimOpen(true)
+  }
+
+  const handleUnclaimConfirm = () => {
+    setUnclaimOpen(false)
+    toast.success("Task unclaimed", {
+      description: "The task has been moved back to group tasks.",
+    })
+  }
+
+  const handleComplete = () => {
+    toast.success("Task completed", {
+      description: `"${task.title}" has been marked as completed.`,
+    })
+  }
 
   return (
+    <>
     <div className="flex h-full flex-col bg-background">
       {/* Colored Header */}
       <div className={cn("relative overflow-hidden bg-gradient-to-br text-white", theme.gradient)}>
@@ -95,22 +174,22 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
           <div className="flex sm:hidden items-center gap-2 flex-wrap">
             {mode === "my-tasks" ? (
               <>
-                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   Delegate
                 </Button>
-                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   Unclaim
                 </Button>
-                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                <Button size="sm" onClick={handleComplete} className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
                   Complete Task
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                   Delegate
                 </Button>
-                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
                   Claim
                 </Button>
               </>
@@ -154,22 +233,22 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
             <div className="flex items-center gap-2 shrink-0 flex-wrap">
               {mode === "my-tasks" ? (
                 <>
-                  <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Delegate
                   </Button>
-                  <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Unclaim
                   </Button>
-                  <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                  <Button size="sm" onClick={handleComplete} className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
                     Complete Task
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Delegate
                   </Button>
-                  <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white/20 dark:text-white dark:hover:bg-white/30", theme.btnText)}>
+                  <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:text-zinc-900 dark:hover:bg-white/90", theme.btnText)}>
                     Claim
                   </Button>
                 </>
@@ -217,5 +296,74 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
         </div>
       </Tabs>
     </div>
+
+    {/* Delegate Dialog */}
+    <Dialog open={delegateOpen} onOpenChange={setDelegateOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Delegate Task</DialogTitle>
+          <DialogDescription>
+            Assign this task to another team member.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-2">
+          <div className="grid gap-2">
+            <Label>Delegate to</Label>
+            <Combobox value={delegateTo} onValueChange={setDelegateTo}>
+              <ComboboxInput placeholder="Search by name or email..." showClear />
+              <ComboboxContent>
+                <ComboboxList>
+                  {USERS.map((u) => (
+                    <ComboboxItem key={u.email} value={u.email} textValue={`${u.name} ${u.email}`}>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{u.name}</span>
+                        <span className="text-xs text-muted-foreground">{u.email}</span>
+                      </div>
+                    </ComboboxItem>
+                  ))}
+                  <ComboboxEmpty>No users found.</ComboboxEmpty>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </div>
+          <div className="grid gap-2">
+            <Label>Reason</Label>
+            <Textarea
+              placeholder="Explain why you are delegating this task..."
+              value={delegateReason}
+              onChange={(e) => setDelegateReason(e.target.value)}
+              className="min-h-24"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setDelegateOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelegateSubmit} disabled={!delegateTo}>
+            Delegate
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    {/* Unclaim Confirmation */}
+    <AlertDialog open={unclaimOpen} onOpenChange={setUnclaimOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Unclaim Task</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to unclaim this task? It will be returned to the group task pool and become available for other team members to claim.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleUnclaimConfirm}>
+            Yes, Unclaim
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }

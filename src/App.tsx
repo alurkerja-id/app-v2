@@ -12,6 +12,7 @@ import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
 import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
 import { PreferencesProvider } from "@/contexts/PreferencesContext"
+import { Toaster } from "@/components/ui/sonner"
 import type { Page } from "@/types/navigation"
 
 const PAGE_PATHS: Record<Page, string> = {
@@ -97,6 +98,7 @@ export default function App() {
           {renderPage()}
         </AppLayout>
       )}
+      <Toaster position="top-right" richColors />
     </PreferencesProvider>
   )
 }
