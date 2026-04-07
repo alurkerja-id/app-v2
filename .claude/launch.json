@@ -4,13 +4,13 @@
     {
       "name": "Dev Server (Vite)",
       "runtimeExecutable": "/Users/uyab/.nvm/versions/node/v22.14.0/bin/node",
-      "runtimeArgs": ["/Users/uyab/Code/lotus/app-v2/node_modules/.bin/vite", "--port", "5174", "--strictPort"],
+      "runtimeArgs": ["/Users/uyab/Code/app-v2/node_modules/.bin/vite", "--port", "5174", "--strictPort"],
       "port": 5174
     },
     {
       "name": "Preview (Vite built)",
       "runtimeExecutable": "/Users/uyab/.nvm/versions/node/v22.14.0/bin/node",
-      "runtimeArgs": ["/Users/uyab/Code/lotus/app-v2/node_modules/.bin/vite", "preview"],
+      "runtimeArgs": ["/Users/uyab/Code/app-v2/node_modules/.bin/vite", "preview"],
       "port": 4173
     }
   ]

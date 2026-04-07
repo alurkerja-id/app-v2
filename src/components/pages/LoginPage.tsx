@@ -8,10 +8,13 @@ import {
   Globe02Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
+  Sun01Icon,
+  Moon01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import { usePreferences } from "@/contexts/PreferencesContext"
+import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
 
@@ -35,7 +38,8 @@ const FEATURES = [
 
 export function LoginPage({ onNavigate }: LoginPageProps) {
   const { pattern } = usePreferences()
-  const isDark = document.documentElement.classList.contains("dark")
+  const { theme, setTheme } = useTheme()
+  const isDark = theme === "dark" || (theme === "system" && document.documentElement.classList.contains("dark"))
   const pageStyle = useMemo(
     () => pattern.getStyle(isDark ? PATTERN_COLOR_DARK : PATTERN_COLOR_LIGHT),
     [isDark, pattern]
@@ -101,6 +105,18 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             <div className="w-full max-w-sm space-y-5 lg:space-y-7">
               {/* Heading + description — always visible */}
               <div className="space-y-2 text-center lg:text-left">
+                {/* Demo theme toggler */}
+                <div className="flex items-center gap-2 justify-center lg:justify-start mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setTheme(isDark ? "light" : "dark")}
+                    className="flex items-center justify-center size-7 rounded-full border border-border/50 bg-background/60 backdrop-blur-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-background/80"
+                    aria-label="Toggle theme"
+                  >
+                    <HugeiconsIcon icon={isDark ? Sun01Icon : Moon01Icon} className="size-3.5" />
+                  </button>
+                  <span className="text-xs text-muted-foreground/60">← Click to use dark/light mode</span>
+                </div>
                 <h1 className="font-heading text-2xl font-semibold leading-tight lg:text-3xl">Welcome Back</h1>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   AlurKerja is one stop platform for SOP Management and Business Process Automation.
