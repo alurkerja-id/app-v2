@@ -256,7 +256,7 @@ function RecordPanel({
       </div>
 
       {/* Footer — mobile only */}
-      <div className="flex sm:hidden items-center gap-2 border-t border-border px-6 py-3">
+      <div className="flex sm:hidden items-center gap-2 border-t border-border bg-muted px-6 py-4">
         {mode === "view" ? (
           <>
             <Button variant="outline" size="sm" onClick={onDelete} className="gap-1.5 text-destructive hover:text-destructive">

@@ -285,7 +285,7 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
       </Tabs>
 
       {/* Mobile: Sticky footer actions */}
-      <div className="flex sm:hidden items-center gap-2 border-t border-border px-4 py-3">
+      <div className="flex sm:hidden items-center gap-2 border-t border-border bg-muted px-4 py-4">
         {mode === "my-tasks" ? (
           <>
             <Button variant="outline" size="sm" onClick={handleDelegate}>

@@ -640,13 +640,7 @@ export function StartProcessPage() {
                     )}
                   </div>
 
-                  {/* Mobile button */}
-                  <div className="pt-2 sm:hidden">
-                    <Button className="w-full" size="lg" onClick={handleStartProcess}>
-                      Start Process
-                      <HugeiconsIcon icon={PlayIcon} className="ml-1.5 size-5" />
-                    </Button>
-                  </div>
+                  {/* Mobile button is in sticky footer below */}
                 </div>
               </div>
             )}
@@ -665,6 +659,15 @@ export function StartProcessPage() {
           </div>
         </div>
       </Card>
+
+      {/* Mobile: Sticky footer action */}
+      <div className="fixed bottom-0 inset-x-0 flex sm:hidden items-center border-t border-border bg-muted px-4 py-4 z-10">
+        <Button className="w-full" onClick={handleStartProcess}>
+          Start Process
+          <HugeiconsIcon icon={PlayIcon} className="ml-1.5 size-4" />
+        </Button>
+      </div>
+      <div className="h-16 sm:hidden" />
     </div>
   )
 }
