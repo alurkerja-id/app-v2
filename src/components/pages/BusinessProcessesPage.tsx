@@ -518,7 +518,7 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-1 items-center gap-2">
             {/* Desktop filter toggle */}
             <Button
               variant={showFilters ? "secondary" : "outline"}
@@ -585,12 +585,12 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
               <HugeiconsIcon icon={FileExportIcon} className="size-3.5" />
               <span className="hidden sm:inline">Export</span>
             </Button>
-
-            {/* Count */}
-            <span className="ml-auto text-xs text-muted-foreground shrink-0">
-              {filtered.length} instance{filtered.length !== 1 ? "s" : ""}
-            </span>
           </div>
+
+          {/* Count — right side */}
+          <span className="text-xs text-muted-foreground shrink-0">
+            {filtered.length} instance{filtered.length !== 1 ? "s" : ""}
+          </span>
         </div>
 
         {/* Filter grid (toggleable, above table) */}
