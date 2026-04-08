@@ -188,7 +188,30 @@ function RecordPanel({
             {mode === "edit" ? `Edit ${schema.singular}` : title}
           </h2>
         </div>
-        <Button variant="ghost" size="icon-sm" onClick={onClose} className="shrink-0">
+        <div className="hidden sm:flex items-center gap-2 shrink-0">
+          {mode === "view" ? (
+            <>
+              <Button variant="outline" size="sm" onClick={onDelete} className="gap-1.5 text-destructive hover:text-destructive">
+                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                Delete
+              </Button>
+              <Button size="sm" onClick={() => onSwitchMode("edit")} className="gap-1.5">
+                <HugeiconsIcon icon={PencilEdit02Icon} className="size-3.5" />
+                Edit
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={() => onSave(formData)} disabled={!isFormValid}>
+                {mode === "create" ? `Add ${schema.singular}` : "Save Changes"}
+              </Button>
+            </>
+          )}
+        </div>
+        <Button variant="ghost" size="icon-sm" onClick={onClose} className="shrink-0 sm:hidden">
           <HugeiconsIcon icon={Cancel01Icon} />
         </Button>
       </div>
@@ -232,8 +255,8 @@ function RecordPanel({
         )}
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center gap-2 border-t border-border px-6 py-3">
+      {/* Footer — mobile only */}
+      <div className="flex sm:hidden items-center gap-2 border-t border-border px-6 py-3">
         {mode === "view" ? (
           <>
             <Button variant="outline" size="sm" onClick={onDelete} className="gap-1.5 text-destructive hover:text-destructive">

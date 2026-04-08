@@ -175,41 +175,6 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
             <span className="text-xs font-mono text-white/50 shrink-0">#{task.id}</span>
           </div>
 
-          {/* Mobile: Actions as separate row */}
-          <div className="flex sm:hidden items-center gap-2 flex-wrap">
-            {mode === "my-tasks" ? (
-              <>
-                <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
-                  Delegate
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
-                  Unclaim
-                </Button>
-                <Button size="sm" onClick={handleComplete} disabled={isCompleting} className={cn("relative bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
-                  <span className={cn("bg-gradient-to-br bg-clip-text text-transparent transition-opacity", isCompleting ? "opacity-0" : "opacity-100", theme.gradient)}>
-                    Complete Task
-                  </span>
-                  {isCompleting && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin" />
-                    </div>
-                  )}
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" size="sm" onClick={handleDelegate} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
-                  Delegate
-                </Button>
-                <Button size="sm" className={cn("bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
-                  <span className={cn("bg-gradient-to-br bg-clip-text text-transparent", theme.gradient)}>
-                    Claim
-                  </span>
-                </Button>
-              </>
-            )}
-          </div>
-
           {/* Desktop: Metadata + Actions side by side */}
           <div className="hidden sm:flex sm:items-end sm:gap-6">
             <div className="flex items-start gap-5 flex-1 min-w-0 flex-wrap">
@@ -318,6 +283,41 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
           </TabsContent>
         </div>
       </Tabs>
+
+      {/* Mobile: Sticky footer actions */}
+      <div className="flex sm:hidden items-center gap-2 border-t border-border px-4 py-3">
+        {mode === "my-tasks" ? (
+          <>
+            <Button variant="outline" size="sm" onClick={handleDelegate}>
+              Delegate
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleUnclaim}>
+              Unclaim
+            </Button>
+            <div className="flex-1" />
+            <Button size="sm" onClick={handleComplete} disabled={isCompleting} className="relative">
+              <span className={cn("transition-opacity", isCompleting ? "opacity-0" : "opacity-100")}>
+                Complete Task
+              </span>
+              {isCompleting && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin" />
+                </div>
+              )}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="outline" size="sm" onClick={handleDelegate}>
+              Delegate
+            </Button>
+            <div className="flex-1" />
+            <Button size="sm">
+              Claim
+            </Button>
+          </>
+        )}
+      </div>
     </div>
 
     {/* Delegate Dialog */}
