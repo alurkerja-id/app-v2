@@ -103,7 +103,7 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
       )}
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col transition-[padding] duration-200 lg:pl-56">
+      <div className="flex flex-1 flex-col transition-[padding] duration-200 lg:pl-56 min-w-0">
         <Header
           activePage={activePage}
           onMenuToggle={() => setMobileSidebarOpen((v) => !v)}

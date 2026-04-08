@@ -98,7 +98,7 @@ function getHumanDuration(startDate: string, endDate: string) {
   return `${diffMins}m`
 }
 
-/* ── Filter Panel ── */
+/* ── Filter Types ── */
 
 interface FilterValues {
   processInstanceId: string
@@ -108,10 +108,8 @@ interface FilterValues {
   currentAssignee: string
   currentAssigneeEmail: string
   currentTask: string
-  creationDateFrom: string
-  creationDateTo: string
-  completionDateFrom: string
-  completionDateTo: string
+  creationDate: string
+  completionDate: string
 }
 
 const EMPTY_FILTERS: FilterValues = {
@@ -122,10 +120,8 @@ const EMPTY_FILTERS: FilterValues = {
   currentAssignee: "",
   currentAssigneeEmail: "",
   currentTask: "",
-  creationDateFrom: "",
-  creationDateTo: "",
-  completionDateFrom: "",
-  completionDateTo: "",
+  creationDate: "",
+  completionDate: "",
 }
 
 const FILTER_LABELS: { key: keyof FilterValues; label: string; type: "text" | "date" }[] = [
@@ -136,69 +132,46 @@ const FILTER_LABELS: { key: keyof FilterValues; label: string; type: "text" | "d
   { key: "currentAssignee", label: "Current Assignee", type: "text" },
   { key: "currentAssigneeEmail", label: "Current Assignee Email", type: "text" },
   { key: "currentTask", label: "Current Task", type: "text" },
-  { key: "creationDateFrom", label: "Creation Date (From)", type: "date" },
-  { key: "creationDateTo", label: "Creation Date (To)", type: "date" },
-  { key: "completionDateFrom", label: "Completion Date (From)", type: "date" },
-  { key: "completionDateTo", label: "Completion Date (To)", type: "date" },
+  { key: "creationDate", label: "Creation Date", type: "date" },
+  { key: "completionDate", label: "Completion Date", type: "date" },
 ]
 
-function FilterPanelContent({
-  search,
-  onSearchChange,
+/* ── Filter Grid (above table, toggleable) ── */
+
+function FilterGrid({
   filters,
   onFilterChange,
   onClearFilters,
 }: {
-  search: string
-  onSearchChange: (v: string) => void
   filters: FilterValues
   onFilterChange: (key: keyof FilterValues, value: string) => void
   onClearFilters: () => void
 }) {
-  const hasActiveFilters = Object.values(filters).some((v) => v !== "") || search !== ""
+  const hasActiveFilters = Object.values(filters).some((v) => v !== "")
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Search */}
-      <div>
-        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-2">Search</p>
-        <div className="relative">
-          <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by keyword..."
-            className="pl-8 h-8"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
-        </div>
+    <div className="border-b border-border px-4 py-3 sm:px-5">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Filters</p>
+        {hasActiveFilters && (
+          <button onClick={onClearFilters} className="text-[11px] text-primary hover:underline">
+            Clear all
+          </button>
+        )}
       </div>
-
-      {/* Filters */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Filters</p>
-          {hasActiveFilters && (
-            <button onClick={onClearFilters} className="text-[11px] text-primary hover:underline">
-              Clear all
-            </button>
-          )}
-        </div>
-        <div className="flex flex-col gap-3">
-          {FILTER_LABELS.map(({ key, label, type }) => (
-            <div key={key}>
-              <Label className="text-[11px] font-medium text-muted-foreground mb-1">
-                {label}
-              </Label>
-              <Input
-                type={type}
-                placeholder={`Filter by ${label.toLowerCase()}...`}
-                className="h-8 text-xs"
-                value={filters[key]}
-                onChange={(e) => onFilterChange(key, e.target.value)}
-              />
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2.5">
+        {FILTER_LABELS.map(({ key, label, type }) => (
+          <div key={key} className="flex flex-col gap-1">
+            <Label className="text-[11px] text-muted-foreground">{label}</Label>
+            <Input
+              type={type}
+              placeholder={label}
+              className="h-7 text-xs"
+              value={filters[key]}
+              onChange={(e) => onFilterChange(key, e.target.value)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -361,14 +334,20 @@ function InstanceDetailPanel({
 /* ── Export to Excel ── */
 
 function exportToExcel(data: ProcessInstance[], processName: string) {
-  const headers = ["No", "Process Instance ID", "Initiator", "Process Name", "Created Date", "Assignee", "Current Task"]
+  const headers = [
+    "No", "Process Instance ID", "Initiator", "Requestor Email", "Process Name",
+    "Created Date", "Completion Date", "Assignee", "Assignee Email", "Current Task",
+  ]
   const rows = data.map((inst, i) => [
     i + 1,
     inst.id,
     inst.initiator,
+    inst.initiatorEmail,
     inst.processName,
     formatDate(inst.createdDate),
+    inst.completedDate ? formatDate(inst.completedDate) : "",
     inst.assignee,
+    inst.assigneeEmail,
     inst.currentTask,
   ])
 
@@ -416,7 +395,6 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
 
   const handleClearFilters = () => {
     setFilters(EMPTY_FILTERS)
-    setSearch("")
     setPage(1)
   }
 
@@ -440,8 +418,10 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
           inst.id.toLowerCase().includes(q) ||
           inst.processName.toLowerCase().includes(q) ||
           inst.initiator.toLowerCase().includes(q) ||
+          inst.initiatorEmail.toLowerCase().includes(q) ||
           inst.title.toLowerCase().includes(q) ||
           inst.assignee.toLowerCase().includes(q) ||
+          inst.assigneeEmail.toLowerCase().includes(q) ||
           inst.currentTask.toLowerCase().includes(q)
       )
     }
@@ -468,17 +448,11 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
     if (filters.currentTask) {
       result = result.filter((inst) => inst.currentTask.toLowerCase().includes(filters.currentTask.toLowerCase()))
     }
-    if (filters.creationDateFrom) {
-      result = result.filter((inst) => inst.createdDate >= filters.creationDateFrom)
+    if (filters.creationDate) {
+      result = result.filter((inst) => inst.createdDate.startsWith(filters.creationDate))
     }
-    if (filters.creationDateTo) {
-      result = result.filter((inst) => inst.createdDate <= filters.creationDateTo + "T23:59:59")
-    }
-    if (filters.completionDateFrom) {
-      result = result.filter((inst) => inst.completedDate && inst.completedDate >= filters.completionDateFrom)
-    }
-    if (filters.completionDateTo) {
-      result = result.filter((inst) => inst.completedDate && inst.completedDate <= filters.completionDateTo + "T23:59:59")
+    if (filters.completionDate) {
+      result = result.filter((inst) => inst.completedDate?.startsWith(filters.completionDate))
     }
 
     // Sort
@@ -495,7 +469,7 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  const activeFilterCount = Object.values(filters).filter((v) => v !== "").length + (search ? 1 : 0)
+  const activeFilterCount = Object.values(filters).filter((v) => v !== "").length
 
   const gradient = PROCESS_GRADIENTS[activeProcess.name] ?? "from-zinc-500 to-zinc-600"
   const abbr = activeProcess.abbr
@@ -511,7 +485,7 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
   }
 
   return (
-    <div className="p-6 md:p-10">
+    <div className="p-6 md:p-10 overflow-hidden">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3">
@@ -530,24 +504,21 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
         </div>
       </div>
 
-      <div className="flex gap-6 items-start">
-        {/* ── Desktop Filter Sidebar ── */}
-        {showFilters && (
-          <div className="hidden lg:block w-60 shrink-0 sticky top-4 md:top-6">
-            <FilterPanelContent
-              search={search}
-              onSearchChange={handleSearchChange}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onClearFilters={handleClearFilters}
+      <Card className="gap-0 py-0 overflow-hidden">
+        {/* Toolbar: Search (always visible) + Filter toggle + Export */}
+        <div className="flex flex-col gap-2 border-b border-border px-4 py-2.5 sm:flex-row sm:items-center sm:px-5">
+          {/* Search — always visible */}
+          <div className="relative flex-1 min-w-0 sm:max-w-xs">
+            <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by keyword..."
+              className="pl-8 h-8 text-xs"
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
           </div>
-        )}
 
-        {/* ── Main Content ── */}
-        <Card className="gap-0 py-0 overflow-hidden flex-1 min-w-0">
-          {/* Toolbar */}
-          <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5 sm:px-5">
+          <div className="flex items-center gap-2">
             {/* Desktop filter toggle */}
             <Button
               variant={showFilters ? "secondary" : "outline"}
@@ -582,20 +553,31 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
                   <DrawerTitle>Filters</DrawerTitle>
                 </DrawerHeader>
                 <div className="max-h-[60vh] overflow-y-auto px-4 pb-6">
-                  <FilterPanelContent
-                    search={search}
-                    onSearchChange={handleSearchChange}
-                    filters={filters}
-                    onFilterChange={handleFilterChange}
-                    onClearFilters={handleClearFilters}
-                  />
+                  <div className="flex flex-col gap-3">
+                    {FILTER_LABELS.map(({ key, label, type }) => (
+                      <div key={key} className="flex flex-col gap-1">
+                        <Label className="text-[11px] text-muted-foreground">{label}</Label>
+                        <Input
+                          type={type}
+                          placeholder={label}
+                          className="h-8 text-xs"
+                          value={filters[key]}
+                          onChange={(e) => handleFilterChange(key, e.target.value)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {Object.values(filters).some((v) => v !== "") && (
+                    <button onClick={handleClearFilters} className="mt-3 text-xs text-primary hover:underline">
+                      Clear all filters
+                    </button>
+                  )}
                 </div>
               </DrawerContent>
             </Drawer>
 
-            {/* Export button */}
+            {/* Export — primary action */}
             <Button
-              variant="outline"
               size="sm"
               className="gap-1.5"
               onClick={() => exportToExcel(filtered, activeProcess.name)}
@@ -609,167 +591,197 @@ export function BusinessProcessesPage({ processId }: BusinessProcessesPageProps)
               {filtered.length} instance{filtered.length !== 1 ? "s" : ""}
             </span>
           </div>
+        </div>
 
-          {/* Active filter pills (mobile) */}
-          {activeFilterCount > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto px-4 py-2 border-b border-border lg:hidden">
-              {search && (
-                <Badge variant="secondary" className="shrink-0 gap-1 text-xs">
-                  "{search}"
-                  <button onClick={() => handleSearchChange("")} className="ml-0.5 hover:text-foreground">&times;</button>
-                </Badge>
-              )}
-              {FILTER_LABELS.filter(({ key }) => filters[key]).map(({ key, label }) => (
-                <Badge key={key} variant="secondary" className="shrink-0 gap-1 text-xs">
-                  {label.split(" ")[0]}: {filters[key]}
-                  <button onClick={() => handleFilterChange(key, "")} className="ml-0.5 hover:text-foreground">&times;</button>
-                </Badge>
-              ))}
-            </div>
-          )}
+        {/* Filter grid (toggleable, above table) */}
+        {showFilters && (
+          <div className="hidden lg:block">
+            <FilterGrid
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onClearFilters={handleClearFilters}
+            />
+          </div>
+        )}
 
-          {/* Datatable */}
-          {paginated.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
-              <p className="font-medium">No process instances found</p>
-              <p className="text-sm text-muted-foreground">Adjust your search or filters</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="hidden sm:[display:table-header-group]">
-                  <TableRow>
-                    <TableHead className="w-12 text-center">No</TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("id")}>
-                      <span className="flex items-center gap-1">Process Instance ID <SortIcon field="id" /></span>
-                    </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("initiator")}>
-                      <span className="flex items-center gap-1">Initiator <SortIcon field="initiator" /></span>
-                    </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("processName")}>
-                      <span className="flex items-center gap-1">Process Name <SortIcon field="processName" /></span>
-                    </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("createdDate")}>
-                      <span className="flex items-center gap-1">Created Date <SortIcon field="createdDate" /></span>
-                    </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("assignee")}>
-                      <span className="flex items-center gap-1">Assignee <SortIcon field="assignee" /></span>
-                    </TableHead>
-                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort("currentTask")}>
-                      <span className="flex items-center gap-1">Current Task <SortIcon field="currentTask" /></span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((inst, i) => (
-                    <TableRow
-                      key={inst.id}
-                      className={cn(
-                        "block sm:[display:table-row] cursor-pointer hover:bg-muted/40 sm:h-9 py-2.5 sm:py-0 px-4 sm:px-0",
-                        selectedInstance?.id === inst.id && "bg-primary/5"
-                      )}
-                      onClick={() => setSelectedInstance(inst)}
-                    >
-                      {/* No */}
-                      <TableCell className="flex items-center justify-between sm:[display:table-cell] p-0 pb-1 sm:p-3 sm:py-1.5 sm:text-center">
-                        <span className="text-xs text-muted-foreground">{(page - 1) * PAGE_SIZE + i + 1}</span>
-                        <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 text-muted-foreground sm:hidden" />
-                      </TableCell>
-                      {/* Instance ID */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Instance ID</span>
-                        <span className="text-xs font-mono">{inst.id}</span>
-                      </TableCell>
-                      {/* Initiator */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Initiator</span>
-                        <span className="text-xs">{inst.initiator}</span>
-                      </TableCell>
-                      {/* Process Name */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Process</span>
-                        <span className="text-xs">{inst.processName}</span>
-                      </TableCell>
-                      {/* Created Date */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Created</span>
+        {/* Active filter pills (mobile) */}
+        {activeFilterCount > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto px-4 py-2 border-b border-border lg:hidden">
+            {FILTER_LABELS.filter(({ key }) => filters[key]).map(({ key, label }) => (
+              <Badge key={key} variant="secondary" className="shrink-0 gap-1 text-xs">
+                {label.split(" ")[0]}: {filters[key]}
+                <button onClick={() => handleFilterChange(key, "")} className="ml-0.5 hover:text-foreground">&times;</button>
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Datatable */}
+        {paginated.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
+            <p className="font-medium">No process instances found</p>
+            <p className="text-sm text-muted-foreground">Adjust your search or filters</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table className="min-w-max">
+              <TableHeader className="hidden sm:[display:table-header-group]">
+                <TableRow>
+                  <TableHead className="w-12 text-center">No</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("id")}>
+                    <span className="flex items-center gap-1">Process Instance ID <SortIcon field="id" /></span>
+                  </TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("initiator")}>
+                    <span className="flex items-center gap-1">Initiator <SortIcon field="initiator" /></span>
+                  </TableHead>
+                  <TableHead>Requestor Email</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("processName")}>
+                    <span className="flex items-center gap-1">Process Name <SortIcon field="processName" /></span>
+                  </TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("createdDate")}>
+                    <span className="flex items-center gap-1">Created Date <SortIcon field="createdDate" /></span>
+                  </TableHead>
+                  <TableHead>Completion Date</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("assignee")}>
+                    <span className="flex items-center gap-1">Assignee <SortIcon field="assignee" /></span>
+                  </TableHead>
+                  <TableHead>Assignee Email</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => handleSort("currentTask")}>
+                    <span className="flex items-center gap-1">Current Task <SortIcon field="currentTask" /></span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginated.map((inst, i) => (
+                  <TableRow
+                    key={inst.id}
+                    className={cn(
+                      "block sm:[display:table-row] cursor-pointer hover:bg-muted/40 sm:h-9 py-2.5 sm:py-0 px-4 sm:px-0",
+                      selectedInstance?.id === inst.id && "bg-primary/5"
+                    )}
+                    onClick={() => setSelectedInstance(inst)}
+                  >
+                    {/* No */}
+                    <TableCell className="flex items-center justify-between sm:[display:table-cell] p-0 pb-1 sm:p-3 sm:py-1.5 sm:text-center">
+                      <span className="text-xs text-muted-foreground">{(page - 1) * PAGE_SIZE + i + 1}</span>
+                      <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 text-muted-foreground sm:hidden" />
+                    </TableCell>
+                    {/* Instance ID */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Instance ID</span>
+                      <span className="text-xs font-mono">{inst.id}</span>
+                    </TableCell>
+                    {/* Initiator */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Initiator</span>
+                      <span className="text-xs">{inst.initiator}</span>
+                    </TableCell>
+                    {/* Requestor Email */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Email</span>
+                      <span className="text-xs text-muted-foreground">{inst.initiatorEmail}</span>
+                    </TableCell>
+                    {/* Process Name */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Process</span>
+                      <span className="text-xs">{inst.processName}</span>
+                    </TableCell>
+                    {/* Created Date */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Created</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <HugeiconsIcon icon={Calendar01Icon} className="size-3 hidden sm:block" />
+                        {formatDate(inst.createdDate)}
+                      </span>
+                    </TableCell>
+                    {/* Completion Date */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Completed</span>
+                      {inst.completedDate ? (
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
                           <HugeiconsIcon icon={Calendar01Icon} className="size-3 hidden sm:block" />
-                          {formatDate(inst.createdDate)}
+                          {formatDate(inst.completedDate)}
                         </span>
-                      </TableCell>
-                      {/* Assignee */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Assignee</span>
-                        <span className="text-xs">{inst.assignee}</span>
-                      </TableCell>
-                      {/* Current Task */}
-                      <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
-                        <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Task</span>
-                        {inst.currentTask !== "-" ? (
-                          <span className="flex items-center gap-1.5 text-xs">
-                            <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            {inst.currentTask}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    {/* Assignee */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Assignee</span>
+                      <span className="text-xs">{inst.assignee}</span>
+                    </TableCell>
+                    {/* Assignee Email */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Assignee Email</span>
+                      <span className="text-xs text-muted-foreground">{inst.assigneeEmail}</span>
+                    </TableCell>
+                    {/* Current Task */}
+                    <TableCell className="flex items-center gap-2 sm:[display:table-cell] p-0 py-0.5 sm:p-3 sm:py-1.5">
+                      <span className="text-[11px] text-muted-foreground/60 min-w-20 shrink-0 sm:hidden">Task</span>
+                      {inst.currentTask !== "-" ? (
+                        <span className="flex items-center gap-1.5 text-xs">
+                          <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
+                          {inst.currentTask}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex flex-col gap-2 border-t border-border px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-              <p className="text-[11px] text-muted-foreground">
-                Page {page} of {totalPages}
-              </p>
-              <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
-                <PaginationContent className="gap-0.5">
-                  <PaginationItem>
-                    <PaginationPrevious
-                      text=""
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex flex-col gap-2 border-t border-border px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+            <p className="text-[11px] text-muted-foreground">
+              Page {page} of {totalPages}
+            </p>
+            <Pagination className="mx-0 w-full justify-center sm:w-auto sm:justify-end">
+              <PaginationContent className="gap-0.5">
+                <PaginationItem>
+                  <PaginationPrevious
+                    text=""
+                    size="icon-xs"
+                    className="pl-0! text-[11px]"
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); if (page > 1) setPage((p) => p - 1) }}
+                    aria-disabled={page <= 1}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <PaginationItem key={p}>
+                    <PaginationLink
                       size="icon-xs"
-                      className="pl-0! text-[11px]"
+                      className="text-[11px]"
                       href="#"
-                      onClick={(e) => { e.preventDefault(); if (page > 1) setPage((p) => p - 1) }}
-                      aria-disabled={page <= 1}
-                    />
+                      isActive={p === page}
+                      onClick={(e) => { e.preventDefault(); setPage(p) }}
+                    >
+                      {p}
+                    </PaginationLink>
                   </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <PaginationItem key={p}>
-                      <PaginationLink
-                        size="icon-xs"
-                        className="text-[11px]"
-                        href="#"
-                        isActive={p === page}
-                        onClick={(e) => { e.preventDefault(); setPage(p) }}
-                      >
-                        {p}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      text=""
-                      size="icon-xs"
-                      className="pr-0! text-[11px]"
-                      href="#"
-                      onClick={(e) => { e.preventDefault(); if (page < totalPages) setPage((p) => p + 1) }}
-                      aria-disabled={page >= totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
-        </Card>
-      </div>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    text=""
+                    size="icon-xs"
+                    className="pr-0! text-[11px]"
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); if (page < totalPages) setPage((p) => p + 1) }}
+                    aria-disabled={page >= totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </Card>
 
       {/* Instance Detail Sheet */}
       <Sheet
