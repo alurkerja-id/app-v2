@@ -53,6 +53,8 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-locations": ["Master Data", "Locations"],
   start: ["Start Process", "Formulation"],
   "business-processes": ["Business Processes"],
+  "analytics-process": ["Analytics", "Process Analytics"],
+  "analytics-workforce": ["Analytics", "Workforce Analytics"],
 }
 
 const notifications = [

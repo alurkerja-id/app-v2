@@ -14,3 +14,5 @@ export type Page =
   | "md-locations"
   | "start"
   | "business-processes"
+  | "analytics-process"
+  | "analytics-workforce"

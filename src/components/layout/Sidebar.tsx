@@ -2,7 +2,7 @@ import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Home01Icon,
-  Task01Icon,
+  UserCheck02Icon,
   UserGroupIcon,
   InboxIcon,
   Database02Icon,
@@ -20,6 +20,10 @@ import {
   CpuIcon,
   Globe02Icon,
   Database01Icon,
+  RecordIcon,
+  Analytics01Icon,
+  BarChartIcon,
+  UserMultiple02Icon,
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
@@ -63,7 +67,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: "home", label: "Home", icon: Home01Icon },
-  { id: "tasks", label: "My Tasks", icon: Task01Icon, badge: "3" },
+  { id: "tasks", label: "My Tasks", icon: UserCheck02Icon, badge: "3" },
   { id: "group-tasks", label: "Group Tasks", icon: UserGroupIcon, badge: "8" },
   {
     label: "My Requests",
@@ -71,6 +75,14 @@ const navItems: NavItem[] = [
     children: [
       { id: "requests-active", label: "Active", icon: TimeHalfPassIcon },
       { id: "requests-completed", label: "Completed", icon: CheckmarkCircle02Icon },
+    ],
+  },
+  {
+    label: "Analytics",
+    icon: Analytics01Icon,
+    children: [
+      { id: "analytics-process" as Page, label: "Process Analytics", icon: BarChartIcon },
+      { id: "analytics-workforce" as Page, label: "Workforce Analytics", icon: UserMultiple02Icon },
     ],
   },
   {
@@ -455,6 +467,23 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
               </div>
             )
           })()}
+        </div>
+
+        {/* Custom Pages */}
+        <div className="px-2 mt-4">
+          <p className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Pages</p>
+          {[
+            { label: "External Page 1" },
+            { label: "External Page 2" },
+          ].map((item) => (
+            <button
+              key={item.label}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+            >
+              <HugeiconsIcon icon={RecordIcon} className="size-4 shrink-0" />
+              <span className="flex-1 text-left">{item.label}</span>
+            </button>
+          ))}
         </div>
       </nav>
     </aside>

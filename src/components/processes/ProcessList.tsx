@@ -3,7 +3,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Search01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
-export const processes = [
+export const processes = ([
   { id: "emp",     name: "Employee Onboarding",        description: "Streamline new hire setup from day one",             gradient: "from-blue-500 to-indigo-600",    abbr: "EO", bgHover: "hover:bg-blue-500/10" },
   { id: "exp",     name: "Expense Reimbursement",       description: "Submit and track expense claims",                    gradient: "from-emerald-500 to-teal-600",   abbr: "ER", bgHover: "hover:bg-emerald-500/10" },
   { id: "it",      name: "IT Support Ticket",           description: "Report and resolve IT issues quickly",               gradient: "from-amber-500 to-orange-600",   abbr: "IT", bgHover: "hover:bg-amber-500/10" },
@@ -35,7 +35,7 @@ export const processes = [
   { id: "soft",    name: "Software License Request",    description: "Request new or additional software licenses",        gradient: "from-teal-600 to-cyan-600",      abbr: "SL", bgHover: "hover:bg-teal-500/10" },
   { id: "train",   name: "Training Enrollment",         description: "Register for internal or external training",         gradient: "from-amber-500 to-yellow-500",   abbr: "TE", bgHover: "hover:bg-amber-500/10" },
   { id: "wfh",     name: "Work From Home Request",      description: "Apply for remote work arrangements",                 gradient: "from-indigo-400 to-blue-500",    abbr: "WH", bgHover: "hover:bg-indigo-500/10" },
-]
+] as const satisfies { id: string; name: string; description: string; gradient: string; abbr: string; bgHover: string }[]).sort((a, b) => a.name.localeCompare(b.name))
 
 interface ProcessListProps {
   search?: string

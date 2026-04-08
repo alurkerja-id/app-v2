@@ -13,6 +13,7 @@ import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
 import { StartProcessPage } from "@/components/pages/StartProcessPage"
 import { BusinessProcessesPage } from "@/components/pages/BusinessProcessesPage"
+import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
 import { PreferencesProvider } from "@/contexts/PreferencesContext"
 import { Toaster } from "@/components/ui/sonner"
 import type { Page } from "@/types/navigation"
@@ -33,6 +34,8 @@ const PAGE_PATHS: Record<Page, string> = {
   "md-locations": "/master-data/locations",
   start: "/start",
   "business-processes": "/business-processes",
+  "analytics-process": "/analytics/process",
+  "analytics-workforce": "/analytics/workforce",
 }
 
 function getPageFromPathname(pathname: string): Page {
@@ -113,6 +116,10 @@ export default function App() {
         return <StartProcessPage />
       case "business-processes":
         return <BusinessProcessesPage processId={activeProcessId} />
+      case "analytics-process":
+        return <AnalyticsPage variant="process" />
+      case "analytics-workforce":
+        return <AnalyticsPage variant="workforce" />
     }
   }
 
