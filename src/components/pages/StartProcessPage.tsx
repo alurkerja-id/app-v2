@@ -195,33 +195,28 @@ export function StartProcessPage() {
 
       {/* Main Card */}
       <Card className="p-0 overflow-hidden">
-        <div className="flex min-h-[520px] md:min-h-[580px]">
-          {/* Left: Vertical toggle rail */}
-          <TooltipProvider>
-            <div className="flex flex-col items-center gap-1 border-r border-border bg-muted/30 p-1.5 pt-8">
-              {toggleItems.map(({ value, label, icon, hiddenOnMobile }) => (
-                <Tooltip key={value}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => setLayoutMode(value)}
-                      className={cn(
-                        "flex size-8 items-center justify-center rounded-lg transition-colors",
-                        layoutMode === value
-                          ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                          : "text-muted-foreground hover:text-foreground hover:bg-background/60",
-                        hiddenOnMobile && "hidden md:flex"
-                      )}
-                    >
-                      <HugeiconsIcon icon={icon} className="size-4" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right"><span className="text-xs">{label}</span></TooltipContent>
-                </Tooltip>
-              ))}
-            </div>
-          </TooltipProvider>
+        {/* Layout toggle bar — always on top, centered */}
+        <div className="flex items-center justify-center gap-1 border-b border-border bg-muted/30 px-3 py-1.5">
+          {toggleItems.map(({ value, label, icon, hiddenOnMobile }) => (
+            <button
+              key={value}
+              onClick={() => setLayoutMode(value)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                layoutMode === value
+                  ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/60",
+                hiddenOnMobile && "hidden md:flex"
+              )}
+            >
+              <HugeiconsIcon icon={icon} className="size-3.5" />
+              {label}
+            </button>
+          ))}
+        </div>
 
-          {/* Right: Content area */}
+        <div className="flex min-h-[520px] md:min-h-[580px]">
+          {/* Content area */}
           <div className="flex flex-1 min-w-0 overflow-hidden">
             {/* Form Panel */}
             {(layoutMode === "form" || layoutMode === "split") && (
