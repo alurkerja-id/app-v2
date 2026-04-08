@@ -1,6 +1,16 @@
 {
   "version": 1,
   "skills": {
+    "caveman": {
+      "source": "JuliusBrussee/caveman",
+      "sourceType": "github",
+      "computedHash": "aa7939fc4d1fe31484090290da77f2d21e026aa4b34b329d00e6630feb985d75"
+    },
+    "compress": {
+      "source": "JuliusBrussee/caveman",
+      "sourceType": "github",
+      "computedHash": "531847e57d6261fe0a38ad78426be4561914c01f6760ba9f32ac3da0ad064d16"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
