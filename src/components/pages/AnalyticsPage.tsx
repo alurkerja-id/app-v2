@@ -195,12 +195,11 @@ export function AnalyticsPage({ variant }: AnalyticsPageProps) {
   const isProcess = variant === "process"
 
   const statCards   = isProcess ? procStatCards   : wfStatCards
-  const barData     = isProcess ? procBarData     : wfBarData
-  const lineData    = isProcess ? procLineData    : wfLineData
-  const areaData    = isProcess ? procAreaData    : wfAreaData
+  const barData     = (isProcess ? procBarData     : wfBarData)     as object[]
+  const lineData    = (isProcess ? procLineData    : wfLineData)    as object[]
+  const areaData    = (isProcess ? procAreaData    : wfAreaData)    as object[]
   const pieData     = isProcess ? procPieData     : wfPieData
   const scatterData = isProcess ? procScatterData : wfScatterData
-  const tableData   = isProcess ? procTableData   : wfTableData
 
   const barKey      = isProcess ? "instances"  : "headcount"
   const barLabel    = isProcess ? "Instances"  : "Headcount"
