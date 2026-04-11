@@ -61,7 +61,7 @@ export function ProcessList({ search = "", onSelect }: ProcessListProps) {
   }
 
   return (
-    <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-0.5">
+    <div className="flex flex-col gap-0.5 w-full">
       {filtered.map((proc) => (
         <ProcessItem key={proc.id} proc={proc} onSelect={onSelect} />
       ))}
@@ -126,7 +126,7 @@ export function GroupedProcessList({ search = "", onSelect, renderPrefix }: Grou
   }
 
   return (
-    <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-0.5">
+    <div className="flex flex-col gap-0.5 w-full">
       {ungrouped.map((proc) => (
         <ProcessItem key={proc.id} proc={proc} onSelect={onSelect} renderPrefix={renderPrefix} />
       ))}
