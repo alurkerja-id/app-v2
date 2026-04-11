@@ -1,7 +1,10 @@
+import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Search01Icon } from "@hugeicons/core-free-icons"
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
+import { PROCESS_GROUPS, PROCESS_GROUP_MAP } from "@/data/process-groups"
 
 export const processes = ([
   { id: "emp",     name: "Employee Onboarding",        description: "Streamline new hire setup from day one",             gradient: "from-blue-500 to-indigo-600",    abbr: "EO", bgHover: "hover:bg-blue-500/10" },
@@ -62,26 +65,156 @@ export function ProcessList({ search = "", onSelect }: ProcessListProps) {
   return (
     <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-0.5">
       {filtered.map((proc) => (
-        <button
-          key={proc.id}
-          onClick={() => onSelect?.(proc.id)}
-          className={cn("group flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-left transition-all duration-200 hover:translate-x-0.5", proc.bgHover)}
-        >
-          <div
-            className={cn(
-              "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",
-              proc.gradient
-            )}
-          >
-            {proc.abbr}
-          </div>
-          <span className="text-sm font-medium truncate flex-1 transition-all duration-200 group-hover:translate-x-0.5">{proc.name}</span>
-          <HugeiconsIcon
-            icon={ArrowRight01Icon}
-            className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
-          />
-        </button>
+        <ProcessItem key={proc.id} proc={proc} onSelect={onSelect} />
       ))}
     </div>
   )
 }
+
+/* ── Grouped Process List ── */
+
+interface GroupedProcessListProps {
+  search?: string
+  onSelect?: (id: string) => void
+  renderPrefix?: (processId: string) => React.ReactNode
+}
+
+export function GroupedProcessList({ search = "", onSelect, renderPrefix }: GroupedProcessListProps) {
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(
+    () => PROCESS_GROUPS.map((g) => g.id)
+  )
+
+  const q = search.toLowerCase()
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) =>
+      prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]
+    )
+  }
+
+  // Separate grouped vs ungrouped
+  const grouped = PROCESS_GROUPS.map((group) => {
+    const groupProcesses = processes
+      .filter((p) => PROCESS_GROUP_MAP[p.id] === group.id)
+      .filter(
+        (p) =>
+          !q ||
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          group.name.toLowerCase().includes(q)
+      )
+    return { group, processes: groupProcesses }
+  }).filter((g) => g.processes.length > 0)
+
+  const ungrouped = processes
+    .filter((p) => !PROCESS_GROUP_MAP[p.id])
+    .filter(
+      (p) =>
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+    )
+
+  const hasResults = grouped.length > 0 || ungrouped.length > 0
+
+  if (!hasResults) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <HugeiconsIcon icon={Search01Icon} className="size-8 text-muted-foreground mb-2" />
+        <p className="font-medium text-sm">No processes found</p>
+        <p className="text-xs text-muted-foreground">Try a different search term</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-h-[60vh] overflow-y-auto flex flex-col gap-0.5">
+      {ungrouped.map((proc) => (
+        <ProcessItem key={proc.id} proc={proc} onSelect={onSelect} renderPrefix={renderPrefix} />
+      ))}
+
+      {grouped.map(({ group, processes: groupProcesses }) => {
+        const expanded = q ? true : expandedGroups.includes(group.id)
+        return (
+          <div key={group.id}>
+            {/* Group header */}
+            <button
+              onClick={() => toggleGroup(group.id)}
+              className="group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted/50"
+            >
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className={cn(
+                  "size-3 shrink-0 text-muted-foreground transition-transform duration-200",
+                  expanded && "rotate-90"
+                )}
+              />
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex-1">
+                {group.name}
+              </span>
+              <span className="text-[10px] tabular-nums text-muted-foreground/60">
+                {groupProcesses.length}
+              </span>
+            </button>
+
+            {/* Group children */}
+            <div
+              className={cn(
+                "overflow-hidden transition-all duration-200",
+                expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+              )}
+            >
+              <div className="ml-3 border-l border-border pl-1.5 flex flex-col gap-0.5">
+                {groupProcesses.map((proc) => (
+                  <ProcessItem key={proc.id} proc={proc} onSelect={onSelect} renderPrefix={renderPrefix} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ── Shared Process Item ── */
+
+function ProcessItem({
+  proc,
+  onSelect,
+  renderPrefix,
+}: {
+  proc: (typeof processes)[number]
+  onSelect?: (id: string) => void
+  renderPrefix?: (processId: string) => React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "group flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-all duration-200 hover:translate-x-0.5",
+        proc.bgHover
+      )}
+    >
+      {renderPrefix && renderPrefix(proc.id)}
+      <button
+        onClick={() => onSelect?.(proc.id)}
+        className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
+      >
+        <div
+          className={cn(
+            "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",
+            proc.gradient
+          )}
+        >
+          {proc.abbr}
+        </div>
+        <span className="text-sm font-medium truncate flex-1 transition-all duration-200 group-hover:translate-x-0.5">{proc.name}</span>
+        <HugeiconsIcon
+          icon={ArrowRight01Icon}
+          className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+        />
+      </button>
+    </div>
+  )
+}
+

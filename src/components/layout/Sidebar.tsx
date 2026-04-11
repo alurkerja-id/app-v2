@@ -24,6 +24,7 @@ import {
   Analytics01Icon,
   BarChartIcon,
   UserMultiple02Icon,
+  Folder02Icon,
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
@@ -40,8 +41,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ProcessList, processes } from "@/components/processes/ProcessList"
+import { GroupedProcessList, processes } from "@/components/processes/ProcessList"
 import { usePreferences } from "@/contexts/PreferencesContext"
+import { PROCESS_GROUPS, PROCESS_GROUP_MAP } from "@/data/process-groups"
 
 interface SidebarProps {
   activePage: Page
@@ -290,7 +292,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                   <div className="flex size-6 items-center justify-center rounded-md bg-sidebar-primary">
                     <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-sidebar-primary-foreground" />
                   </div>
-                  Start a Process
+                  <span className="flex-1">Start a Process</span>
                 </DialogTitle>
               </DialogHeader>
               <div className="relative">
@@ -303,7 +305,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                   autoFocus
                 />
               </div>
-              <ProcessList
+              <GroupedProcessList
                 search={processSearch}
                 onSelect={() => { setProcessDialogOpen(false); onNavigate("start") }}
               />
@@ -410,59 +412,112 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
 
             return (
               <div>
-                <button
-                  onClick={() => toggleMenu("Business Processes")}
-                  className={cn(
-                    "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
-                    isChildActive
-                      ? "text-zinc-100 font-medium"
-                      : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-                  )}
-                >
-                  <HugeiconsIcon icon={Database01Icon} className="size-4 shrink-0" />
-                  <span className="flex-1 text-left">Business Processes</span>
-                  <HugeiconsIcon
-                    icon={ArrowRight01Icon}
+                <div className="flex items-center">
+                  <button
+                    onClick={() => toggleMenu("Business Processes")}
                     className={cn(
-                      "size-3.5 shrink-0 text-zinc-500 transition-transform duration-200",
-                      expanded && "rotate-90"
+                      "flex flex-1 items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base min-w-0",
+                      isChildActive
+                        ? "text-zinc-100 font-medium"
+                        : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
                     )}
-                  />
-                </button>
+                  >
+                    <HugeiconsIcon icon={Database01Icon} className="size-4 shrink-0" />
+                    <span className="flex-1 text-left truncate">Business Processes</span>
+                    <HugeiconsIcon
+                      icon={ArrowRight01Icon}
+                      className={cn(
+                        "size-3.5 shrink-0 text-zinc-500 transition-transform duration-200",
+                        expanded && "rotate-90"
+                      )}
+                    />
+                  </button>
+                </div>
 
                 <div
                   className={cn(
                     "overflow-hidden transition-all duration-200",
-                    expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+                    expanded ? "max-h-[4000px] opacity-100" : "max-h-0 opacity-0"
                   )}
                 >
-                  <div className="ml-4 border-l border-zinc-700/60 pl-2 py-0.5">
-                    {processes.map((proc) => {
-                      const childActive = activePage === "business-processes" && activeProcessId === proc.id
-                      return (
-                        <button
-                          key={proc.id}
-                          onClick={() => onNavigateProcess?.(proc.id)}
-                          className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-sm",
-                            childActive
-                              ? "bg-zinc-700/60 text-zinc-100 font-medium"
-                              : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "flex size-4 shrink-0 items-center justify-center rounded bg-gradient-to-br text-white text-[7px] font-bold",
-                              proc.gradient
-                            )}
-                          >
-                            {proc.abbr}
+                    <div className="ml-4 border-l border-zinc-700/60 pl-2 py-0.5">
+                      {(() => {
+                        const ungrouped = processes.filter((p) => !PROCESS_GROUP_MAP[p.id])
+                        if (ungrouped.length === 0) return null
+                        return ungrouped.map((proc) => {
+                          const childActive = activePage === "business-processes" && activeProcessId === proc.id
+                          return (
+                            <SidebarProcessItem
+                              key={proc.id}
+                              proc={proc}
+                              active={childActive}
+                              onClick={() => onNavigateProcess?.(proc.id)}
+                            />
+                          )
+                        })
+                      })()}
+
+                      {PROCESS_GROUPS.map((group) => {
+                        const groupProcesses = processes.filter((p) => PROCESS_GROUP_MAP[p.id] === group.id)
+                        if (groupProcesses.length === 0) return null
+                        const groupExpanded = expandedMenus.includes(`bp-group-${group.id}`)
+                        const isGroupChildActive = groupProcesses.some(
+                          (p) => activePage === "business-processes" && activeProcessId === p.id
+                        )
+
+                        return (
+                          <div key={group.id}>
+                            <button
+                              onClick={() => toggleMenu(`bp-group-${group.id}`)}
+                              className={cn(
+                                "flex w-full items-center gap-2 rounded-lg px-2 py-1 mb-0.5 transition-colors text-xs",
+                                isGroupChildActive
+                                  ? "text-zinc-200 font-medium"
+                                  : "text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+                              )}
+                            >
+                              <HugeiconsIcon
+                                icon={Folder02Icon}
+                                className={cn(
+                                  "size-3.5 shrink-0 transition-colors",
+                                  groupExpanded ? "text-zinc-300" : "text-zinc-500"
+                                )}
+                              />
+                              <span className="flex-1 text-left truncate uppercase tracking-wider font-semibold">{group.name}</span>
+                              <span className="text-[9px] tabular-nums text-zinc-600 mr-1">{groupProcesses.length}</span>
+                              <HugeiconsIcon
+                                icon={ArrowRight01Icon}
+                                className={cn(
+                                  "size-2.5 shrink-0 text-zinc-600 transition-transform duration-200",
+                                  groupExpanded && "rotate-90"
+                                )}
+                              />
+                            </button>
+
+                            <div
+                              className={cn(
+                                "overflow-hidden transition-all duration-200",
+                                groupExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+                              )}
+                            >
+                              <div className="ml-3 border-l border-zinc-700/40 pl-1.5">
+                                {groupProcesses.map((proc) => {
+                                  const childActive = activePage === "business-processes" && activeProcessId === proc.id
+                                  return (
+                                    <SidebarProcessItem
+                                      key={proc.id}
+                                      proc={proc}
+                                      active={childActive}
+                                      onClick={() => onNavigateProcess?.(proc.id)}
+                                    />
+                                  )
+                                })}
+                              </div>
+                            </div>
                           </div>
-                          <span className="flex-1 text-left truncate">{proc.name}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
+                        )
+                      })}
+                    </div>
                 </div>
               </div>
             )
@@ -487,5 +542,39 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
         </div>
       </nav>
     </aside>
+  )
+}
+
+/* ── Sidebar Process Item (shared between grouped and flat views) ── */
+
+function SidebarProcessItem({
+  proc,
+  active,
+  onClick,
+}: {
+  proc: (typeof processes)[number]
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-sm",
+        active
+          ? "bg-zinc-700/60 text-zinc-100 font-medium"
+          : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+      )}
+    >
+      <div
+        className={cn(
+          "flex size-4 shrink-0 items-center justify-center rounded bg-gradient-to-br text-white text-[7px] font-bold",
+          proc.gradient
+        )}
+      >
+        {proc.abbr}
+      </div>
+      <span className="flex-1 text-left truncate">{proc.name}</span>
+    </button>
   )
 }

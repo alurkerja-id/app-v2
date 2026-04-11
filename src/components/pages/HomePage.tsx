@@ -12,7 +12,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { processes } from "@/components/processes/ProcessList"
+import { processes, GroupedProcessList } from "@/components/processes/ProcessList"
 
 const statCards = [
   {
@@ -162,62 +162,44 @@ export function HomePage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            {filtered.length === 0 ? (
+            {filtered.length === 0 && search !== "" ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground mb-1.5" />
                 <p className="font-medium text-sm">No processes found</p>
                 <p className="text-xs text-muted-foreground">Try a different search term</p>
               </div>
             ) : (
-              <div className="flex flex-col">
-                {filtered.map((proc) => {
-                  const isFav = favorites.includes(proc.id)
+              <GroupedProcessList
+                search={search}
+                onSelect={() => {
+                  window.history.pushState({}, "", "/start")
+                  window.dispatchEvent(new PopStateEvent("popstate"))
+                }}
+                renderPrefix={(processId) => {
+                  const isFav = favorites.includes(processId)
                   return (
-                    <div
-                      key={proc.id}
-                      className={cn("group flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-all duration-200 hover:translate-x-0.5", proc.bgHover)}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavorite(processId)
+                      }}
+                      className={cn(
+                        "shrink-0 transition-all duration-200",
+                        isFav
+                          ? "text-amber-500 hover:scale-125 hover:rotate-12"
+                          : "text-muted-foreground/30 hover:text-amber-400 hover:scale-110"
+                      )}
+                      aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
                     >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleFavorite(proc.id)
-                        }}
-                        className={cn(
-                          "shrink-0 transition-all duration-200",
-                          isFav
-                            ? "text-amber-500 hover:scale-125 hover:rotate-12"
-                            : "text-muted-foreground/30 hover:text-amber-400 hover:scale-110"
-                        )}
-                        aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
-                      >
-                        <HugeiconsIcon
-                          icon={StarIcon}
-                          className="size-3.5"
-                          fill={isFav ? "currentColor" : "none"}
-                        />
-                      </button>
-                      <button 
-                        onClick={() => { window.history.pushState({}, "", "/start"); window.dispatchEvent(new PopStateEvent("popstate")); }}
-                        className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
-                      >
-                        <div
-                          className={cn(
-                            "flex size-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br text-white text-[9px] font-bold transition-all duration-200 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md",
-                            proc.gradient
-                          )}
-                        >
-                          {proc.abbr}
-                        </div>
-                        <span className="text-sm font-medium truncate flex-1 transition-all duration-200 group-hover:translate-x-0.5">{proc.name}</span>
-                        <HugeiconsIcon
-                          icon={ArrowRight01Icon}
-                          className="size-3.5 shrink-0 text-muted-foreground opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
-                        />
-                      </button>
-                    </div>
+                      <HugeiconsIcon
+                        icon={StarIcon}
+                        className="size-3.5"
+                        fill={isFav ? "currentColor" : "none"}
+                      />
+                    </button>
                   )
-                })}
-              </div>
+                }}
+              />
             )}
           </div>
         </div>
