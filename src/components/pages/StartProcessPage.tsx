@@ -8,7 +8,6 @@ import {
   TextUnderlineIcon,
   ListViewIcon,
   Flowchart01Icon,
-  LayoutTwoColumnIcon,
   Link01Icon,
   UploadSquare02Icon,
   Cancel01Icon,
@@ -34,7 +33,7 @@ import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Combobox,
@@ -49,7 +48,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { processes } from "@/components/processes/ProcessList"
 
-type LayoutMode = "form" | "bpmn" | "split"
+type LayoutMode = "form" | "bpmn"
 
 const CURRENT_PROCESS_ID = "con"
 
@@ -171,23 +170,39 @@ export function StartProcessPage() {
     }
   }, [])
 
-  const toggleItems: { value: LayoutMode; label: string; icon: any; hiddenOnMobile?: boolean }[] = [
-    { value: "form", label: "Form", icon: ListViewIcon },
-    { value: "bpmn", label: "BPMN Diagram", icon: Flowchart01Icon },
-    { value: "split", label: "Split Layout", icon: LayoutTwoColumnIcon, hiddenOnMobile: true },
-  ]
 
   return (
     <div className="p-6 md:p-10">
-      {/* Page Header */}
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <h1 className="flex items-center gap-2.5 text-xl font-normal font-heading min-w-0">
-          <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-linear-to-br text-white text-[10px] font-bold shadow-sm", process.gradient)}>
-            {process.abbr}
-          </span>
-          <span className="truncate">Start {process.name}</span>
-        </h1>
-        <Button onClick={handleStartProcess} className="shrink-0 hidden sm:inline-flex">
+      {/* Page Header - Sticky on Desktop */}
+      <div className="sticky top-0 z-20 flex items-center justify-between gap-4 py-4 md:-mx-10 md:px-10 mb-2 md:mb-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <h1 className="flex items-center gap-2.5 text-xl font-normal font-heading min-w-0">
+            <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-linear-to-br text-white text-[10px] font-bold shadow-sm", process.gradient)}>
+              {process.abbr}
+            </span>
+            <span className="truncate">Start {process.name}</span>
+          </h1>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon-sm" className="ml-2 bg-background shadow-xs hover:bg-muted">
+                <HugeiconsIcon icon={layoutMode === "form" ? ListViewIcon : Flowchart01Icon} className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => setLayoutMode("form")} className="gap-2">
+                <HugeiconsIcon icon={ListViewIcon} className="size-3.5" />
+                View Form
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLayoutMode("bpmn")} className="gap-2">
+                <HugeiconsIcon icon={Flowchart01Icon} className="size-3.5" />
+                View BPMN Diagram
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <Button onClick={handleStartProcess} className="shrink-0 hidden sm:inline-flex shadow-md">
           Start Process
           <HugeiconsIcon icon={PlayIcon} className="ml-1.5 size-4" />
         </Button>
@@ -195,35 +210,13 @@ export function StartProcessPage() {
 
       {/* Main Card */}
       <Card className="p-0 overflow-hidden">
-        {/* Layout toggle bar — always on top, centered */}
-        <div className="flex items-center justify-center gap-1 border-b border-border bg-muted/30 px-3 py-1.5">
-          {toggleItems.map(({ value, label, icon, hiddenOnMobile }) => (
-            <button
-              key={value}
-              onClick={() => setLayoutMode(value)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                layoutMode === value
-                  ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                  : "text-muted-foreground hover:text-foreground hover:bg-background/60",
-                hiddenOnMobile && "hidden md:flex"
-              )}
-            >
-              <HugeiconsIcon icon={icon} className="size-3.5" />
-              {label}
-            </button>
-          ))}
-        </div>
 
         <div className="flex min-h-[520px] md:min-h-[580px]">
           {/* Content area */}
           <div className="flex flex-1 min-w-0 overflow-hidden">
             {/* Form Panel */}
-            {(layoutMode === "form" || layoutMode === "split") && (
-              <div className={cn(
-                "flex-1 overflow-y-auto p-6 md:p-8",
-                layoutMode === "split" && "max-w-xl border-r border-border"
-              )}>
+            {layoutMode === "form" && (
+              <div className="flex-1 overflow-y-auto p-6 md:p-8">
                 <div className="space-y-8 max-w-2xl">
 
                   {/* ── Contract Details ── */}
@@ -640,9 +633,9 @@ export function StartProcessPage() {
               </div>
             )}
 
-            {/* BPMN Panel */}
-            {(layoutMode === "bpmn" || layoutMode === "split") && (
-              <div className="flex-1 relative bg-white dark:bg-zinc-900 min-h-0">
+            {/* BPMN Diagram rendering */}
+            {layoutMode === "bpmn" && (
+              <div className="flex-1 relative bg-white dark:bg-zinc-950">
                 <div className="absolute inset-0" ref={viewerRef} />
                 <div className="absolute top-3 left-3 pointer-events-none z-10">
                   <div className="bg-background/80 backdrop-blur-md border border-border px-2.5 py-1 rounded-lg shadow-sm">

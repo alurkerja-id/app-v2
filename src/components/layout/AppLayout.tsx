@@ -78,7 +78,7 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
   }, [])
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-[100dvh] overflow-hidden bg-background">
       {/* Sidebar */}
       <Sidebar
         activePage={activePage}
@@ -111,7 +111,7 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
           scrolled={scrolled}
           activeProcessId={activeProcessId}
         />
-        <main ref={mainRef} className="flex-1 overflow-auto" style={patternStyle}>{children}</main>
+        <main ref={mainRef} className="flex-1 overflow-auto bg-background" style={patternStyle}>{children}</main>
       </div>
     </div>
   )

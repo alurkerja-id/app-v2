@@ -295,7 +295,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                   <span className="flex-1">Start a Process</span>
                 </DialogTitle>
               </DialogHeader>
-              <div className="relative">
+              <div className="relative mb-4 mt-4">
                 <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search processes..."

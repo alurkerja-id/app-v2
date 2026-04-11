@@ -1,8 +1,6 @@
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
-import { Search01Icon } from "@hugeicons/core-free-icons"
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight01Icon, Search01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { PROCESS_GROUPS, PROCESS_GROUP_MAP } from "@/data/process-groups"
 
