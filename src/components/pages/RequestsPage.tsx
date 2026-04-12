@@ -7,6 +7,8 @@ import {
   FilterIcon,
   InboxIcon,
   CheckmarkCircle02Icon,
+  Appointment02Icon,
+  CalendarCheckOut02Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -21,6 +23,14 @@ import {
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Sheet,
   SheetContent,
@@ -33,6 +43,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
+import { formatDistanceStrict, format } from "date-fns"
 import { REQUESTS } from "@/data/requests"
 import type { Request } from "@/data/requests"
 import { processes } from "@/components/processes/ProcessList"
@@ -49,20 +60,7 @@ const PROCESS_GRADIENTS: Record<string, string> = {
   "Travel Request": "from-cyan-500 to-sky-600",
 }
 
-const PROCESS_TEXT_COLOR: Record<string, string> = {
-  "Employee Onboarding": "text-blue-500",
-  "Expense Reimbursement": "text-emerald-500",
-  "IT Support Ticket": "text-amber-500",
-  "Leave Request": "text-violet-500",
-  "Procurement Request": "text-rose-500",
-  "Travel Request": "text-cyan-500",
-}
 
-const PRIORITY_STYLES: Record<string, string> = {
-  High: "bg-red-500/10 text-red-600 dark:text-red-400",
-  Medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  Low: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -176,68 +174,92 @@ function RequestCard({
   selected?: boolean
 }) {
   const gradient = PROCESS_GRADIENTS[request.process] ?? "from-zinc-500 to-zinc-600"
+  const completedDateStr = request.completedDate ? format(new Date(request.completedDate), "MMM d") : ""
+  const durationStr = formatDistanceStrict(
+    request.completedDate ? new Date(request.completedDate) : new Date(),
+    new Date(request.createdDate)
+  )
 
   return (
     <button
       onClick={() => onClick(request)}
       className={cn(
-        "group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors sm:items-center sm:px-5",
+        "group flex w-full flex-col gap-2 px-4 py-3 text-left transition-colors sm:px-5",
         selected ? "bg-primary/5" : "hover:bg-muted/40"
       )}
     >
-      {/* Process icon */}
-      <div
-        className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white text-xs font-bold shadow-sm",
-          gradient
-        )}
-      >
-        {getProcessAbbr(request.process)}
-      </div>
-
-      {/* Content — 2 rows */}
-      <div className="min-w-0 flex-1">
-        {/* Row 1: title + process name */}
-        <p className="text-sm leading-snug whitespace-normal">
-          <span className="font-medium">{request.title}</span>
-          <span className="mx-1.5 text-muted-foreground">·</span>
-          <span className={cn("text-xs font-medium", PROCESS_TEXT_COLOR[request.process] ?? "text-muted-foreground")}>{request.process}</span>
-        </p>
-        {/* Row 2: metadata */}
-        <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">
-          <span className="text-xs font-mono text-muted-foreground shrink-0">{request.id}</span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-            <span className="flex size-4 items-center justify-center rounded-full border border-current text-[7px] font-bold leading-none">
-              {getInitials(request.requester)}
-            </span>
-            <span className="hidden sm:inline">{request.requester}</span>
-          </span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-            <HugeiconsIcon icon={Calendar01Icon} className="size-3" />
-            {formatDate(request.createdDate)}
-          </span>
-          {request.currentTask !== "-" && (
-            <span className="flex items-center gap-1.5 text-xs shrink-0 hidden sm:flex">
-              <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-muted-foreground">{request.currentTask}</span>
-            </span>
-          )}
-          <span
+      <div className="flex w-full items-start justify-between min-w-0 gap-3">
+        {/* Row 1: Process Logo, Process Name, Process ID */}
+        <div className="flex gap-2.5 items-center flex-1 min-w-0">
+          <div
             className={cn(
-              "rounded-full px-1.5 py-0.5 text-xs font-medium shrink-0",
-              PRIORITY_STYLES[request.priority]
+              "flex size-5 shrink-0 items-center justify-center rounded bg-gradient-to-br text-white text-[8px] font-bold shadow-sm",
+              gradient
             )}
           >
-            {request.priority}
-          </span>
+            {getProcessAbbr(request.process)}
+          </div>
+          <p className="text-sm leading-snug whitespace-normal min-w-0 flex items-center flex-wrap gap-x-1.5 flex-1">
+            <span className="font-medium text-foreground">{request.process}</span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-xs font-mono text-muted-foreground">{request.id}</span>
+          </p>
         </div>
+        <HugeiconsIcon
+          icon={ArrowRight01Icon}
+          className="hidden size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground sm:block mt-0.5"
+        />
       </div>
 
-      {/* Arrow */}
-      <HugeiconsIcon
-        icon={ArrowRight01Icon}
-        className="hidden size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground sm:block"
-      />
+      {/* Row 2: User avatar & name, timeline visual, priority */}
+      <div className="flex items-center justify-start w-full gap-3 flex-wrap min-w-0 mt-1">
+        <span className="flex items-center gap-1.5 text-xs text-foreground font-medium min-w-0">
+          <Avatar className="size-4">
+            <AvatarFallback className="bg-foreground/[0.08] text-[7px] font-bold">
+              {getInitials(request.requester)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="truncate">{request.requester}</span>
+          {request.priority === "High" && (
+            <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ml-1">
+              High
+            </span>
+          )}
+        </span>
+
+        {/* Race Duration Timeline */}
+        <div className="flex items-center gap-1.5 rounded-full bg-secondary/40 border border-border/40 px-2.5 py-0.5 flex-shrink-0">
+          <div className="flex items-center gap-1 title-xs text-xs font-medium text-muted-foreground">
+            <HugeiconsIcon icon={CalendarCheckOut02Icon} className="size-3.5 opacity-60" />
+            <span>{formatDate(request.createdDate)}</span>
+          </div>
+          
+          <div className="flex items-center text-muted-foreground/50 gap-0.5">
+            <div className="w-3 border-t border-dashed border-current relative top-px" />
+            <span className="text-xs font-medium px-1 border-current">
+              {durationStr}
+            </span>
+            <div className="flex items-center">
+              <div className="w-3 border-t border-dashed border-current relative top-px" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-2.5 -ml-[3px]" />
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+            {request.completedDate ? (
+              <>
+                <HugeiconsIcon icon={Appointment02Icon} className="size-3.5 opacity-60" />
+                <span>{completedDateStr}</span>
+              </>
+            ) : (
+              <>
+                 <span className="size-1.5 rounded-full bg-primary/60 animate-pulse ml-0.5" />
+                 <span className="italic">Ongoing</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </button>
   )
 }
@@ -246,12 +268,21 @@ interface RequestsPageProps {
   status?: "active" | "completed"
 }
 
+type SortOrder = 
+  | "created_desc"
+  | "created_asc"
+  | "completed_desc"
+  | "completed_asc"
+  | "duration_asc"
+  | "duration_desc"
+
 export function RequestsPage({ status = "active" }: RequestsPageProps) {
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null)
   const [search, setSearch] = useState("")
   const [processFilter, setProcessFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
+  const [sortOrder, setSortOrder] = useState<SortOrder>("created_desc")
 
   const toggleProcess = (name: string) => {
     setProcessFilter((prev) =>
@@ -282,8 +313,21 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
       const matchStatus =
         status === "active" ? r.status === "Active" : r.status === "Completed"
       return matchSearch && matchProcess && matchStatus
+    }).sort((a, b) => {
+      if (sortOrder === "created_desc") return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
+      if (sortOrder === "created_asc") return new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      if (sortOrder === "completed_desc") return (b.completedDate ? new Date(b.completedDate).getTime() : 0) - (a.completedDate ? new Date(a.completedDate).getTime() : 0)
+      if (sortOrder === "completed_asc") return (a.completedDate ? new Date(a.completedDate).getTime() : Infinity) - (b.completedDate ? new Date(b.completedDate).getTime() : Infinity)
+      
+      const durA = (a.completedDate ? new Date(a.completedDate).getTime() : Date.now()) - new Date(a.createdDate).getTime()
+      const durB = (b.completedDate ? new Date(b.completedDate).getTime() : Date.now()) - new Date(b.createdDate).getTime()
+      
+      if (sortOrder === "duration_asc") return durA - durB
+      if (sortOrder === "duration_desc") return durB - durA
+      
+      return 0
     })
-  }, [search, processFilter, status])
+  }, [search, processFilter, status, sortOrder])
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -362,13 +406,43 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
               </div>
             )}
 
+            <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as any)}>
+              <SelectTrigger className="h-7 text-[10px] w-auto border-border px-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="created_desc">Req. Newest</SelectItem>
+                <SelectItem value="created_asc">Req. Oldest</SelectItem>
+                <SelectItem value="completed_desc">Done Newest</SelectItem>
+                <SelectItem value="completed_asc">Done Oldest</SelectItem>
+                <SelectItem value="duration_asc">Short Duration</SelectItem>
+                <SelectItem value="duration_desc">Long Duration</SelectItem>
+              </SelectContent>
+            </Select>
+
             <span className="ml-auto text-xs text-muted-foreground shrink-0">
               {filtered.length} request{filtered.length !== 1 ? "s" : ""}
             </span>
           </div>
 
           {/* Desktop count bar */}
-          <div className="hidden lg:flex items-center justify-end px-5 py-2.5 border-b border-border">
+          <div className="hidden lg:flex items-center justify-between px-5 py-2.5 border-b border-border">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">Sort by:</span>
+              <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as any)}>
+                <SelectTrigger className="h-7 text-xs border-none shadow-none focus:ring-0 px-2 bg-transparent">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="created_desc">Request Time (Newest)</SelectItem>
+                  <SelectItem value="created_asc">Request Time (Oldest)</SelectItem>
+                  <SelectItem value="completed_desc">Completion Time (Newest)</SelectItem>
+                  <SelectItem value="completed_asc">Completion Time (Oldest)</SelectItem>
+                  <SelectItem value="duration_asc">Shortest Duration</SelectItem>
+                  <SelectItem value="duration_desc">Longest Duration</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <span className="text-xs text-muted-foreground">
               {filtered.length} request{filtered.length !== 1 ? "s" : ""}
             </span>
