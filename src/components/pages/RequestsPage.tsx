@@ -64,10 +64,6 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" })
 }
 
-function getInitials(name: string) {
-  return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
-}
-
 function getProcessAbbr(process: string) {
   return process.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
 }
@@ -136,24 +132,24 @@ function FilterPanelContent({
             <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-background via-background/95 to-transparent" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-background via-background/95 to-transparent" />
             <div className="h-72 overflow-y-auto p-1.5">
-            <div className="flex flex-col gap-0.5">
-            {filteredProcesses.length === 0 ? (
-              <div className="px-2 py-6 text-center text-sm text-muted-foreground">
-                No process found
+              <div className="flex flex-col gap-0.5">
+                {filteredProcesses.length === 0 ? (
+                  <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                    No process found
+                  </div>
+                ) : filteredProcesses.map((p) => (
+                  <label
+                    key={p.id}
+                    className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted/60 cursor-pointer transition-colors"
+                  >
+                    <Checkbox
+                      checked={processFilter.includes(p.name)}
+                      onCheckedChange={() => onToggleProcess(p.name)}
+                    />
+                    <span className="text-sm">{p.name}</span>
+                  </label>
+                ))}
               </div>
-            ) : filteredProcesses.map((p) => (
-              <label
-                key={p.id}
-                className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted/60 cursor-pointer transition-colors"
-              >
-                <Checkbox
-                  checked={processFilter.includes(p.name)}
-                  onCheckedChange={() => onToggleProcess(p.name)}
-                />
-                <span className="text-sm">{p.name}</span>
-              </label>
-            ))}
-            </div>
             </div>
           </div>
         </div>
@@ -177,8 +173,8 @@ function RequestCard({
     request.completedDate ? new Date(request.completedDate) : new Date(),
     new Date(request.createdDate)
   )
-  const currentTasks = request.currentTask !== "-" 
-    ? request.currentTask.split(",").map(t => t.trim()).filter(Boolean) 
+  const currentTasks = request.currentTask !== "-"
+    ? request.currentTask.split(",").map(t => t.trim()).filter(Boolean)
     : []
 
   return (
@@ -220,7 +216,7 @@ function RequestCard({
             <HugeiconsIcon icon={CalendarCheckOut02Icon} className="size-3.5 opacity-60" />
             <span>{formatDate(request.createdDate)}</span>
           </div>
-          
+
           <div className="flex items-center text-muted-foreground/50 gap-0.5">
             <div className="w-3 border-t border-dashed border-current relative top-px" />
             <span className="text-xs font-medium px-1 border-current">
@@ -231,7 +227,7 @@ function RequestCard({
               <HugeiconsIcon icon={ArrowRight01Icon} className="size-2.5 -ml-[3px]" />
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground min-w-0">
             {request.completedDate ? (
               <>
@@ -240,21 +236,21 @@ function RequestCard({
               </>
             ) : (
               <>
-                 <span className="size-1.5 rounded-full bg-primary/60 animate-pulse ml-0.5 shrink-0" />
-                 {currentTasks.length > 0 ? (
-                   <span className="italic flex items-center gap-1 min-w-0" title={request.currentTask}>
-                     <span className="truncate max-w-[80px] sm:max-w-[130px]">
-                       {currentTasks[0]}
-                     </span>
-                     {currentTasks.length > 1 && (
-                       <span className="not-italic shrink-0 bg-primary/10 text-primary text-[9px] px-1 rounded-sm font-bold">
-                         +{currentTasks.length - 1}
-                       </span>
-                     )}
-                   </span>
-                 ) : (
-                   <span className="italic">Ongoing</span>
-                 )}
+                <span className="size-1.5 rounded-full bg-primary/60 animate-pulse ml-0.5 shrink-0" />
+                {currentTasks.length > 0 ? (
+                  <span className="italic flex items-center gap-1 min-w-0" title={request.currentTask}>
+                    <span className="truncate max-w-[80px] sm:max-w-[130px]">
+                      {currentTasks[0]}
+                    </span>
+                    {currentTasks.length > 1 && (
+                      <span className="not-italic shrink-0 bg-primary/10 text-primary text-[9px] px-1 rounded-sm font-bold">
+                        +{currentTasks.length - 1}
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <span className="italic">Ongoing</span>
+                )}
               </>
             )}
           </div>
@@ -275,7 +271,7 @@ interface RequestsPageProps {
   status?: "active" | "completed"
 }
 
-type SortOrder = 
+type SortOrder =
   | "created_desc"
   | "created_asc"
   | "completed_desc"
@@ -325,13 +321,13 @@ export function RequestsPage({ status = "active" }: RequestsPageProps) {
       if (sortOrder === "created_asc") return new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
       if (sortOrder === "completed_desc") return (b.completedDate ? new Date(b.completedDate).getTime() : 0) - (a.completedDate ? new Date(a.completedDate).getTime() : 0)
       if (sortOrder === "completed_asc") return (a.completedDate ? new Date(a.completedDate).getTime() : Infinity) - (b.completedDate ? new Date(b.completedDate).getTime() : Infinity)
-      
+
       const durA = (a.completedDate ? new Date(a.completedDate).getTime() : Date.now()) - new Date(a.createdDate).getTime()
       const durB = (b.completedDate ? new Date(b.completedDate).getTime() : Date.now()) - new Date(b.createdDate).getTime()
-      
+
       if (sortOrder === "duration_asc") return durA - durB
       if (sortOrder === "duration_desc") return durB - durA
-      
+
       return 0
     })
   }, [search, processFilter, status, sortOrder])
