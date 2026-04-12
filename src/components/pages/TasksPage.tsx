@@ -11,6 +11,13 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
@@ -32,6 +39,7 @@ import type { Task } from "@/data/tasks"
 import { processes } from "@/components/processes/ProcessList"
 
 type DueFilter = "all" | "overdue" | "today" | "soon"
+type TaskSortOrder = "newest" | "oldest" | "due_date"
 
 const PAGE_SIZE = 10
 
@@ -174,6 +182,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const [dueFilter, setDueFilter] = useState<DueFilter>("all")
   const [page, setPage] = useState(1)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
+  const [sortOrder, setSortOrder] = useState<TaskSortOrder>("newest")
 
   const toggleProcess = (name: string) => {
     setProcessFilter((prev) =>
@@ -211,8 +220,23 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
     })
   }, [search, processFilter, dueFilter])
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      if (sortOrder === "newest") {
+        return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
+      }
+      if (sortOrder === "oldest") {
+        return new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      }
+      if (sortOrder === "due_date") {
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      }
+      return 0
+    })
+  }, [filtered, sortOrder])
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
+  const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const activeFilterCount =
     (dueFilter !== "all" ? 1 : 0) + processFilter.length + (search ? 1 : 0)
@@ -274,6 +298,17 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
               </DrawerContent>
             </Drawer>
 
+            <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as TaskSortOrder)}>
+              <SelectTrigger className="h-7 text-[10px] w-auto border-border px-2 shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="due_date">Due Date</SelectItem>
+              </SelectContent>
+            </Select>
+
             {/* Active filter pills */}
             {activeFilterCount > 0 && (
               <div className="flex items-center gap-1.5 overflow-x-auto">
@@ -304,7 +339,20 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
           </div>
 
           {/* Desktop count bar */}
-          <div className="hidden lg:flex items-center justify-end px-5 py-2.5 border-b border-border">
+          <div className="hidden lg:flex items-center justify-between px-5 py-2.5 border-b border-border">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Sort by</span>
+              <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as TaskSortOrder)}>
+                <SelectTrigger className="h-7 text-xs border-none shadow-none focus:ring-0 px-2 bg-transparent">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                  <SelectItem value="due_date">Due Date</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <span className="text-xs text-muted-foreground">
               {filtered.length} task{filtered.length !== 1 ? "s" : ""}
             </span>
