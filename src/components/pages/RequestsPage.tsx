@@ -3,7 +3,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Search01Icon,
   ArrowRight01Icon,
-  Calendar01Icon,
   FilterIcon,
   InboxIcon,
   CheckmarkCircle02Icon,
