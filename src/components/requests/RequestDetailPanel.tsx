@@ -69,6 +69,10 @@ function getProcessDuration(request: { createdDate: string; completedDate?: stri
 export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps) {
   const theme = PROCESS_THEME[request.process] ?? DEFAULT_THEME
 
+  const currentTasks = request.currentTask !== "-" 
+    ? request.currentTask.split(",").map(t => t.trim()).filter(Boolean) 
+    : []
+
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Colored Header */}
@@ -102,7 +106,7 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
           </div>
 
           {/* Status badge (always visible) */}
-          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <div className="flex items-center gap-2.5 mb-3 sm:mb-4 flex-wrap">
             <Badge className={cn(
               "text-sm font-medium px-3 py-1",
               request.status === "Active"
@@ -111,6 +115,15 @@ export function RequestDetailPanel({ request, onClose }: RequestDetailPanelProps
             )}>
               {request.status === "Active" ? "In Progress" : "Completed"}
             </Badge>
+
+            {request.status === "Active" && currentTasks.length > 0 && currentTasks.map((task, idx) => (
+              <div key={idx} className="flex items-center gap-1.5 text-sm text-white/90 ml-1">
+                <span className="size-1.5 rounded-full bg-white/70 animate-pulse shrink-0" />
+                <span className="font-medium italic">
+                  {task}
+                </span>
+              </div>
+            ))}
           </div>
 
           {/* Metadata (hidden on mobile, visible on sm+) */}

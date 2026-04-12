@@ -22,7 +22,6 @@ import {
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Select,
   SelectContent,
@@ -178,6 +177,9 @@ function RequestCard({
     request.completedDate ? new Date(request.completedDate) : new Date(),
     new Date(request.createdDate)
   )
+  const currentTasks = request.currentTask !== "-" 
+    ? request.currentTask.split(",").map(t => t.trim()).filter(Boolean) 
+    : []
 
   return (
     <button
@@ -210,24 +212,10 @@ function RequestCard({
         />
       </div>
 
-      {/* Row 2: User avatar & name, timeline visual, priority */}
+      {/* Row 2: Timeline visual, user avatar & name, priority */}
       <div className="flex items-center justify-start w-full gap-3 flex-wrap min-w-0 mt-1">
-        <span className="flex items-center gap-1.5 text-xs text-foreground font-medium min-w-0">
-          <Avatar className="size-4">
-            <AvatarFallback className="bg-foreground/[0.08] text-[7px] font-bold">
-              {getInitials(request.requester)}
-            </AvatarFallback>
-          </Avatar>
-          <span className="truncate">{request.requester}</span>
-          {request.priority === "High" && (
-            <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ml-1">
-              High
-            </span>
-          )}
-        </span>
-
         {/* Race Duration Timeline */}
-        <div className="flex items-center gap-1.5 rounded-full bg-secondary/40 border border-border/40 px-2.5 py-0.5 flex-shrink-0">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <div className="flex items-center gap-1 title-xs text-xs font-medium text-muted-foreground">
             <HugeiconsIcon icon={CalendarCheckOut02Icon} className="size-3.5 opacity-60" />
             <span>{formatDate(request.createdDate)}</span>
@@ -244,20 +232,40 @@ function RequestCard({
             </div>
           </div>
           
-          <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+          <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground min-w-0">
             {request.completedDate ? (
               <>
-                <HugeiconsIcon icon={Appointment02Icon} className="size-3.5 opacity-60" />
-                <span>{completedDateStr}</span>
+                <HugeiconsIcon icon={Appointment02Icon} className="size-3.5 opacity-60 shrink-0" />
+                <span className="truncate">{completedDateStr}</span>
               </>
             ) : (
               <>
-                 <span className="size-1.5 rounded-full bg-primary/60 animate-pulse ml-0.5" />
-                 <span className="italic">Ongoing</span>
+                 <span className="size-1.5 rounded-full bg-primary/60 animate-pulse ml-0.5 shrink-0" />
+                 {currentTasks.length > 0 ? (
+                   <span className="italic flex items-center gap-1 min-w-0" title={request.currentTask}>
+                     <span className="truncate max-w-[80px] sm:max-w-[130px]">
+                       {currentTasks[0]}
+                     </span>
+                     {currentTasks.length > 1 && (
+                       <span className="not-italic shrink-0 bg-primary/10 text-primary text-[9px] px-1 rounded-sm font-bold">
+                         +{currentTasks.length - 1}
+                       </span>
+                     )}
+                   </span>
+                 ) : (
+                   <span className="italic">Ongoing</span>
+                 )}
               </>
             )}
           </div>
         </div>
+
+        {/* Priority */}
+        {request.priority === "High" && (
+          <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ml-1">
+            High
+          </span>
+        )}
       </div>
     </button>
   )

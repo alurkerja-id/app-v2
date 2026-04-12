@@ -23,7 +23,7 @@ export const REQUESTS: Request[] = [
     requester: "Emma Wilson",
     requesterEmail: "emma@company.com",
     createdDate: "2026-03-28T09:15:00",
-    currentTask: "Manager Review",
+    currentTask: "Supervisor Review, Manager Review",
     assignee: "Alice Wang",
     status: "Active",
     priority: "Medium",
