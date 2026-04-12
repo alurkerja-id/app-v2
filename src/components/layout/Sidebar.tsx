@@ -286,8 +286,8 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                 </div>
               </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
-              <DialogHeader>
+            <DialogContent className="sm:max-w-lg flex flex-col gap-0 max-h-[calc(100dvh-4rem)]">
+              <DialogHeader className="shrink-0">
                 <DialogTitle className="flex items-center gap-2">
                   <div className="flex size-6 items-center justify-center rounded-md bg-sidebar-primary">
                     <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-sidebar-primary-foreground" />
@@ -295,7 +295,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                   <span className="flex-1">Start a Process</span>
                 </DialogTitle>
               </DialogHeader>
-              <div className="relative mb-4 mt-4">
+              <div className="relative mt-4 mb-2 shrink-0">
                 <HugeiconsIcon icon={Search01Icon} className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search processes..."
@@ -305,10 +305,12 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
                   autoFocus
                 />
               </div>
-              <GroupedProcessList
-                search={processSearch}
-                onSelect={() => { setProcessDialogOpen(false); onNavigate("start") }}
-              />
+              <div className="flex-1 min-h-0 overflow-y-auto -mx-2 px-2 py-2">
+                <GroupedProcessList
+                  search={processSearch}
+                  onSelect={() => { setProcessDialogOpen(false); onNavigate("start") }}
+                />
+              </div>
             </DialogContent>
           </Dialog>
         </div>
