@@ -6,7 +6,7 @@ import Underline from "@tiptap/extension-underline"
 import Link from "@tiptap/extension-link"
 import { useDropzone } from "react-dropzone"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Mail01Icon } from "@hugeicons/core-free-icons"
+import { Mail01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { format, subDays, startOfWeek, startOfMonth, startOfYear } from "date-fns"
 
 import { cn } from "@/lib/utils"
@@ -91,6 +91,10 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const YEARS = Array.from({ length: 60 }, (_, i) => 2035 - i)
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
+// Luma-style trigger (matches Input/NativeSelect: rounded-3xl pill, bg-input/50).
+const dateTriggerClass =
+  "flex h-9 items-center justify-between gap-2 rounded-3xl border border-transparent bg-input/50 px-3 py-1 text-left text-sm transition-[color,box-shadow,background-color] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
+
 /* ── Layout primitives ───────────────────────────────────────────────── */
 
 function ShowField({
@@ -131,7 +135,7 @@ function ReadOnlyBox({ children, className }: { children: React.ReactNode; class
   return (
     <div
       className={cn(
-        "flex min-h-9 items-center rounded-md border border-input bg-muted/40 px-3 py-2 text-sm text-muted-foreground",
+        "flex min-h-9 items-center rounded-3xl border border-transparent bg-input/50 px-3 py-2 text-sm text-muted-foreground opacity-70",
         className,
       )}
     >
@@ -393,7 +397,10 @@ function DatePickerDemo({ disabled, withTime = false }: { disabled: boolean; wit
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-start rounded-md font-normal">{label}</Button>
+        <button className={cn(dateTriggerClass, "w-full")}>
+          <span className="truncate">{label}</span>
+          <HugeiconsIcon icon={Calendar01Icon} className="size-4 shrink-0 text-muted-foreground" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar mode="single" selected={date} onSelect={setDate} />
@@ -427,7 +434,10 @@ function DateRangeDemo({ disabled }: { disabled: boolean }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-start rounded-md font-normal">{label}</Button>
+        <button className={cn(dateTriggerClass, "w-full")}>
+          <span className="truncate">{label}</span>
+          <HugeiconsIcon icon={Calendar01Icon} className="size-4 shrink-0 text-muted-foreground" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex max-sm:flex-col">
@@ -456,7 +466,10 @@ function MonthPickerDemo({ disabled }: { disabled: boolean }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-44 justify-start rounded-md font-normal">{MONTHS[m]}</Button>
+        <button className={cn(dateTriggerClass, "w-44")}>
+          <span className="truncate">{MONTHS[m]}</span>
+          <HugeiconsIcon icon={Calendar01Icon} className="size-4 shrink-0 text-muted-foreground" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2" align="start">
         <div className="grid grid-cols-3 gap-1">
@@ -484,7 +497,10 @@ function YearPickerDemo({ disabled }: { disabled: boolean }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-44 justify-start rounded-md font-normal">{year}</Button>
+        <button className={cn(dateTriggerClass, "w-44")}>
+          <span className="truncate">{year}</span>
+          <HugeiconsIcon icon={Calendar01Icon} className="size-4 shrink-0 text-muted-foreground" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2" align="start">
         <div className="mb-1.5 flex items-center justify-between">
@@ -558,20 +574,15 @@ function CurrencyDemo({ disabled }: { disabled: boolean }) {
   const [raw, setRaw] = useState("1250000")
   const display = raw ? Number(raw).toLocaleString("id-ID") : ""
   return (
-    <div className="flex">
-      <span className={cn(
-        "inline-flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm font-medium text-muted-foreground",
-        disabled && "opacity-60",
-      )}>
-        Rp
-      </span>
+    <div className="relative">
+      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">Rp</span>
       <Input
         value={display}
         onChange={(e) => setRaw(e.target.value.replace(/\D/g, ""))}
         disabled={disabled}
         inputMode="numeric"
         placeholder="0"
-        className="rounded-l-none tabular-nums"
+        className="pl-9 tabular-nums"
       />
     </div>
   )
@@ -614,14 +625,9 @@ function PhoneDemo({ disabled }: { disabled: boolean }) {
 
 function AddonDemo({ disabled, suffix }: { disabled: boolean; suffix: string }) {
   return (
-    <div className="flex">
-      <Input defaultValue="75" disabled={disabled} className="rounded-r-none" inputMode="numeric" />
-      <span className={cn(
-        "inline-flex items-center rounded-r-md border border-l-0 border-input bg-muted px-3 text-sm text-muted-foreground",
-        disabled && "opacity-60",
-      )}>
-        {suffix}
-      </span>
+    <div className="relative">
+      <Input defaultValue="75" disabled={disabled} inputMode="numeric" className="pr-9" />
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{suffix}</span>
     </div>
   )
 }
@@ -752,14 +758,57 @@ function FileUploadDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
+// Search bar that queries the live province API (debounced) — icon + clear.
 function SearchDemo({ disabled }: { disabled: boolean }) {
-  const [v, setV] = useState("Contract")
+  const [v, setV] = useState(disabled ? "Jawa Barat" : "")
+  const [open, setOpen] = useState(false)
+  const [results, setResults] = useState<Region[]>([])
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    const q = v.trim().toLowerCase()
+    if (disabled || !q) { setResults([]); setLoading(false); return }
+    let alive = true
+    setLoading(true)
+    const t = setTimeout(() => {
+      fetchRegions("/states")
+        .then((d) => alive && setResults(d.filter((r) => r.name.toLowerCase().includes(q)).slice(0, 8)))
+        .catch(() => alive && setResults([]))
+        .finally(() => alive && setLoading(false))
+    }, 300)
+    return () => { alive = false; clearTimeout(t) }
+  }, [v, disabled])
+
   return (
     <div className="relative">
       <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">🔍</span>
-      <Input value={v} onChange={(e) => setV(e.target.value)} disabled={disabled} placeholder="Search…" className="px-9" />
+      <Input
+        value={v}
+        onChange={(e) => { setV(e.target.value); setOpen(true) }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        disabled={disabled}
+        placeholder="Search province…"
+        className="px-9"
+      />
       {v && !disabled && (
-        <button onClick={() => setV("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">×</button>
+        <button onMouseDown={(e) => e.preventDefault()} onClick={() => { setV(""); setResults([]) }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">×</button>
+      )}
+      {open && v.trim() && !disabled && (
+        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover shadow-md">
+          {loading ? (
+            <p className="px-3 py-2 text-sm text-muted-foreground">Searching…</p>
+          ) : results.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-muted-foreground">No results</p>
+          ) : (
+            <div className="max-h-48 overflow-auto py-1">
+              {results.map((r) => (
+                <button key={r.code} onMouseDown={(e) => e.preventDefault()} onClick={() => { setV(r.name); setOpen(false) }} className="block w-full px-3 py-1.5 text-left text-sm hover:bg-muted">
+                  {r.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
@@ -907,15 +956,15 @@ export function StartProcessPage() {
         {/* ── Text & basic ── */}
         <Section id="text" title="Basic" visible={show("text")}>
           <ShowField title="Text" hint="single-line">{(d) => <Input defaultValue="Service Agreement #2024-118" disabled={d} placeholder="Enter text" />}</ShowField>
-          <ShowField title="Search" hint="icon + clear">{(d) => <SearchDemo disabled={d} />}</ShowField>
+          <ShowField title="Search" hint="icon + clear · live province API">{(d) => <SearchDemo disabled={d} />}</ShowField>
           <ShowField title="Number stepper" hint="quantity ±">{(d) => <StepperDemo disabled={d} />}</ShowField>
           <ShowField title="Number">{(d) => <Input type="number" defaultValue={42} disabled={d} />}</ShowField>
           <ShowField title="Email" hint="icon + client-side validation">{(d) => <EmailValidatedDemo disabled={d} />}</ShowField>
           <ShowField title="Password">{(d) => <Input type="password" defaultValue="secret123" disabled={d} />}</ShowField>
           <ShowField title="URL" hint="https:// prefix">{(d) => (
-            <div className="flex">
-              <span className={cn("inline-flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm text-muted-foreground", d && "opacity-60")}>https://</span>
-              <Input type="text" defaultValue="alurkerja.com" disabled={d} className="rounded-l-none" />
+            <div className="relative">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">https://</span>
+              <Input type="text" defaultValue="alurkerja.com" disabled={d} className="pl-[4.25rem]" />
             </div>
           )}</ShowField>
           <ShowField title="Time">{(d) => <Input type="time" defaultValue="09:30" disabled={d} />}</ShowField>
