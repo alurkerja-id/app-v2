@@ -6,6 +6,7 @@ import { ProfilePage } from "@/components/pages/ProfilePage"
 import { TasksPage } from "@/components/pages/TasksPage"
 import { RequestsPage } from "@/components/pages/RequestsPage"
 import { InvitationsPage } from "@/components/pages/InvitationsPage"
+import { InviteLinkPage } from "@/components/pages/InviteLinkPage"
 import { LoginPage } from "@/components/pages/LoginPage"
 import { WorkspacesPage } from "@/components/pages/WorkspacesPage"
 import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
@@ -36,13 +37,20 @@ const PAGE_PATHS: Record<Page, string> = {
   "business-processes": "/business-processes",
   "analytics-process": "/analytics/process",
   "analytics-workforce": "/analytics/workforce",
+  "invite-link": "/invite_link",
 }
 
 function getPageFromPathname(pathname: string): Page {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/"
   if (normalizedPath.startsWith("/business-processes")) return "business-processes"
+  if (normalizedPath.startsWith("/invite_link")) return "invite-link"
   const match = Object.entries(PAGE_PATHS).find(([, path]) => path === normalizedPath)
   return (match?.[0] as Page | undefined) ?? "home"
+}
+
+function getInviteTokenFromPathname(pathname: string): string | undefined {
+  const match = pathname.match(/^\/invite_link\/(.+)/)
+  return match?.[1]
 }
 
 function getProcessIdFromPathname(pathname: string): string | undefined {
@@ -53,6 +61,7 @@ function getProcessIdFromPathname(pathname: string): string | undefined {
 export default function App() {
   const [activePage, setActivePage] = useState<Page>(() => getPageFromPathname(window.location.pathname))
   const [activeProcessId, setActiveProcessId] = useState<string | undefined>(() => getProcessIdFromPathname(window.location.pathname))
+  const [activeInviteToken, setActiveInviteToken] = useState<string | undefined>(() => getInviteTokenFromPathname(window.location.pathname))
 
   const navigate = useCallback((page: Page) => {
     setActivePage(page)
@@ -78,6 +87,7 @@ export default function App() {
     const onPopState = () => {
       setActivePage(getPageFromPathname(window.location.pathname))
       setActiveProcessId(getProcessIdFromPathname(window.location.pathname))
+      setActiveInviteToken(getInviteTokenFromPathname(window.location.pathname))
     }
 
     window.addEventListener("popstate", onPopState)
@@ -92,6 +102,8 @@ export default function App() {
         return <WorkspacesPage onNavigate={navigate} />
       case "invitations":
         return <InvitationsPage onNavigate={navigate} />
+      case "invite-link":
+        return <InviteLinkPage token={activeInviteToken} onNavigate={navigate} />
       case "home":
         return <HomePage />
       case "profile":
@@ -125,7 +137,7 @@ export default function App() {
 
   return (
     <PreferencesProvider>
-      {activePage === "login" || activePage === "workspaces" || activePage === "invitations" ? (
+      {activePage === "login" || activePage === "workspaces" || activePage === "invitations" || activePage === "invite-link" ? (
         renderPage()
       ) : (
         <AppLayout activePage={activePage} onNavigate={navigate} activeProcessId={activeProcessId} onNavigateProcess={navigateProcess}>

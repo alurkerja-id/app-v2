@@ -16,3 +16,4 @@ export type Page =
   | "business-processes"
   | "analytics-process"
   | "analytics-workforce"
+  | "invite-link"
