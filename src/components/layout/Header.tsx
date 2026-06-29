@@ -55,6 +55,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "business-processes": ["Business Processes"],
   "analytics-process": ["Analytics", "Process Analytics"],
   "analytics-workforce": ["Analytics", "Workforce Analytics"],
+  "invite-link": [],
 }
 
 const notifications = [
