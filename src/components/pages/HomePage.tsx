@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Task01Icon,
@@ -11,6 +11,7 @@ import {
   FavouriteIcon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { processes, GroupedProcessList } from "@/components/processes/ProcessList"
 
@@ -49,8 +50,14 @@ const statCards = [
 const DEFAULT_FAVORITES = ["exp", "lv", "it"]
 
 export function HomePage() {
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [favorites, setFavorites] = useState<string[]>(DEFAULT_FAVORITES)
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 1500)
+    return () => clearTimeout(t)
+  }, [])
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -69,6 +76,47 @@ export function HomePage() {
   )
 
   const favoriteProcesses = allSorted.filter((p) => favorites.includes(p.id))
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-8 px-4 py-10 md:px-6 md:py-12 max-w-4xl mx-auto w-full">
+        {/* Welcome skeleton */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="h-6 w-52" />
+          </div>
+          <Skeleton className="h-4 w-64 hidden sm:block" />
+        </div>
+
+        {/* Task summary banner skeleton */}
+        <Skeleton className="h-14 w-full rounded-4xl" />
+
+        {/* Process columns skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-3 w-20" />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-2 py-1.5">
+                <Skeleton className="size-6 rounded-md shrink-0" />
+                <Skeleton className="h-4 flex-1" />
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-8 w-full rounded-3xl" />
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-2 py-1.5">
+                <Skeleton className="size-6 rounded-md shrink-0" />
+                <Skeleton className="h-4 flex-1" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-8 px-4 py-10 md:px-6 md:py-12 max-w-4xl mx-auto w-full">
