@@ -3,15 +3,9 @@
   "configurations": [
     {
       "name": "Dev Server (Vite)",
-      "runtimeExecutable": "/Users/uyab/.nvm/versions/node/v22.14.0/bin/node",
-      "runtimeArgs": ["/Users/uyab/Code/app-v2/node_modules/.bin/vite", "--port", "5175", "--strictPort"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5175", "--strictPort"],
       "port": 5175
-    },
-    {
-      "name": "Preview (Vite built)",
-      "runtimeExecutable": "/Users/uyab/.nvm/versions/node/v22.14.0/bin/node",
-      "runtimeArgs": ["/Users/uyab/Code/app-v2/node_modules/.bin/vite", "preview"],
-      "port": 4173
     }
   ]
 }

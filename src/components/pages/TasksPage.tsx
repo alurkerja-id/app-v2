@@ -41,6 +41,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { TaskCard } from "@/components/tasks/TaskCard"
+import { TaskTable } from "@/components/tasks/TaskTable"
 import { TaskDetailPanel, type TaskMode } from "@/components/tasks/TaskDetailPanel"
 import { TASKS } from "@/data/tasks"
 import type { Task } from "@/data/tasks"
@@ -48,6 +49,7 @@ import { processes } from "@/components/processes/ProcessList"
 
 type DueFilter = "all" | "overdue" | "today" | "soon"
 type TaskSortOrder = "newest" | "oldest" | "due_date"
+type CardVariant = "detailed" | "compact" | "expandable" | "tabular" | "table"
 
 interface VariableFilterRow {
   id: string
@@ -315,6 +317,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>("newest")
   const [variableRows, setVariableRows] = useState<VariableFilterRow[]>([emptyVariableRow()])
   const [appliedVariableFilters, setAppliedVariableFilters] = useState<VariableFilterRow[]>([])
+  const [cardVariant, setCardVariant] = useState<CardVariant>("detailed")
 
   const handleVariableRowChange = (id: string, patch: Partial<Pick<VariableFilterRow, "name" | "value">>) => {
     setVariableRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)))
@@ -494,6 +497,19 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
               </SelectContent>
             </Select>
 
+            <Select value={cardVariant} onValueChange={(v) => setCardVariant(v as CardVariant)}>
+              <SelectTrigger className="h-7 text-[10px] w-auto border-border px-2 shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="detailed">Detailed (3-row)</SelectItem>
+                <SelectItem value="compact">Compact (2-row)</SelectItem>
+                <SelectItem value="expandable">Expandable</SelectItem>
+                <SelectItem value="tabular">Variables Table</SelectItem>
+                <SelectItem value="table">Table</SelectItem>
+              </SelectContent>
+            </Select>
+
             {/* Active filter pills */}
             {activeFilterCount > 0 && (
               <div className="flex items-center gap-1.5 overflow-x-auto">
@@ -551,9 +567,23 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                 </SelectContent>
               </Select>
             </div>
-            <span className="text-xs text-muted-foreground">
-              {filtered.length} task{filtered.length !== 1 ? "s" : ""}
-            </span>
+            <div className="flex items-center gap-3">
+              <Select value={cardVariant} onValueChange={(v) => setCardVariant(v as CardVariant)}>
+                <SelectTrigger className="h-7 text-xs border-none shadow-none focus:ring-0 px-2 bg-transparent">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="detailed">Detailed (3-row)</SelectItem>
+                  <SelectItem value="compact">Compact (2-row)</SelectItem>
+                  <SelectItem value="expandable">Expandable</SelectItem>
+                  <SelectItem value="tabular">Variables Table</SelectItem>
+                  <SelectItem value="table">Table</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-xs text-muted-foreground">
+                {filtered.length} task{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
 
           {/* Task list */}
@@ -563,6 +593,12 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
               <p className="font-medium">No tasks found</p>
               <p className="text-sm text-muted-foreground">Adjust your filters</p>
             </div>
+          ) : cardVariant === "table" ? (
+            <TaskTable
+              tasks={paginated}
+              onSelect={(t) => setSelectedTask(t)}
+              selectedId={selectedTask?.id}
+            />
           ) : (
             <div className="divide-y divide-border">
               {paginated.map((task) => (
@@ -571,6 +607,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                   task={task}
                   onClick={(t) => setSelectedTask(t)}
                   selected={selectedTask?.id === task.id}
+                  variant={cardVariant}
                 />
               ))}
             </div>
