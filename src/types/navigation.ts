@@ -13,6 +13,7 @@ export type Page =
   | "md-positions"
   | "md-locations"
   | "start"
+  | "form-component"
   | "business-processes"
   | "analytics-process"
   | "analytics-workforce"
