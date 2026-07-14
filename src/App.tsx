@@ -13,6 +13,7 @@ import { DepartmentsPage } from "@/components/pages/master-data/DepartmentsPage"
 import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
 import { StartProcessPage } from "@/components/pages/StartProcessPage"
+import { FormComponentsPage } from "@/components/pages/FormComponentsPage"
 import { BusinessProcessesPage } from "@/components/pages/BusinessProcessesPage"
 import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
 import { PreferencesProvider } from "@/contexts/PreferencesContext"
@@ -34,6 +35,7 @@ const PAGE_PATHS: Record<Page, string> = {
   "md-positions": "/master-data/positions",
   "md-locations": "/master-data/locations",
   start: "/start",
+  "form-component": "/pages/form-component",
   "business-processes": "/business-processes",
   "analytics-process": "/analytics/process",
   "analytics-workforce": "/analytics/workforce",
@@ -126,6 +128,8 @@ export default function App() {
         return <LocationsPage />
       case "start":
         return <StartProcessPage />
+      case "form-component":
+        return <FormComponentsPage />
       case "business-processes":
         return <BusinessProcessesPage processId={activeProcessId} />
       case "analytics-process":

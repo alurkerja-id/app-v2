@@ -530,17 +530,27 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
         <div className="px-2 mt-4">
           <p className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Pages</p>
           {[
-            { label: "External Page 1" },
-            { label: "External Page 2" },
-          ].map((item) => (
-            <button
-              key={item.label}
-              className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-            >
-              <HugeiconsIcon icon={RecordIcon} className="size-4 shrink-0" />
-              <span className="flex-1 text-left">{item.label}</span>
-            </button>
-          ))}
+            { label: "Form Component", id: "form-component" as Page, icon: Folder02Icon },
+            { label: "External Page 1", id: undefined, icon: RecordIcon },
+            { label: "External Page 2", id: undefined, icon: RecordIcon },
+          ].map((item) => {
+            const active = item.id != null && activePage === item.id
+            return (
+              <button
+                key={item.label}
+                onClick={() => item.id && onNavigate(item.id)}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 mb-0.5 transition-colors text-base",
+                  active
+                    ? "bg-zinc-700/60 text-zinc-100 font-medium"
+                    : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200",
+                )}
+              >
+                <HugeiconsIcon icon={item.icon} className="size-4 shrink-0" />
+                <span className="flex-1 text-left">{item.label}</span>
+              </button>
+            )
+          })}
         </div>
       </nav>
     </aside>
