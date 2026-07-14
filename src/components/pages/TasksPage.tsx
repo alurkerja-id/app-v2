@@ -1,8 +1,16 @@
 import { useState, useMemo } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, FilterIcon, Task01Icon, UserGroupIcon } from "@hugeicons/core-free-icons"
+import { Search01Icon, FilterIcon, Task01Icon, UserGroupIcon, Add01Icon, Cancel01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from "@/components/ui/combobox"
 import {
   Pagination,
   PaginationContent,
@@ -33,6 +41,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { TaskCard } from "@/components/tasks/TaskCard"
+import { TaskTable } from "@/components/tasks/TaskTable"
 import { TaskDetailPanel, type TaskMode } from "@/components/tasks/TaskDetailPanel"
 import { TASKS } from "@/data/tasks"
 import type { Task } from "@/data/tasks"
@@ -40,8 +49,33 @@ import { processes } from "@/components/processes/ProcessList"
 
 type DueFilter = "all" | "overdue" | "today" | "soon"
 type TaskSortOrder = "newest" | "oldest" | "due_date"
+type CardVariant = "detailed" | "compact" | "expandable" | "tabular" | "table"
+
+interface VariableFilterRow {
+  id: string
+  name: string
+  value: string
+}
 
 const PAGE_SIZE = 10
+
+function getVariableNamesForProcess(process: string): string[] {
+  const names = new Set<string>()
+  TASKS.forEach((t) => {
+    if (t.process === process) t.fields.forEach((f) => names.add(f.label))
+  })
+  return Array.from(names).sort()
+}
+
+function stringifyFieldValue(value: unknown): string {
+  if (value === null || value === undefined) return ""
+  if (typeof value === "object") return JSON.stringify(value)
+  return String(value)
+}
+
+function emptyVariableRow(): VariableFilterRow {
+  return { id: Math.random().toString(36).slice(2), name: "", value: "" }
+}
 
 function getDueCategory(dueDate: string, status: string): DueFilter {
   if (status === "Done") return "all"
@@ -70,6 +104,13 @@ function FilterPanelContent({
   processFilter,
   onToggleProcess,
   onClearProcesses,
+  variableRows,
+  onVariableRowChange,
+  onAddVariableRow,
+  onRemoveVariableRow,
+  onApplyVariableFilters,
+  onResetVariableFilters,
+  appliedVariableCount,
 }: {
   search: string
   onSearchChange: (v: string) => void
@@ -78,10 +119,23 @@ function FilterPanelContent({
   processFilter: string[]
   onToggleProcess: (name: string) => void
   onClearProcesses: () => void
+  variableRows: VariableFilterRow[]
+  onVariableRowChange: (id: string, patch: Partial<Pick<VariableFilterRow, "name" | "value">>) => void
+  onAddVariableRow: () => void
+  onRemoveVariableRow: (id: string) => void
+  onApplyVariableFilters: () => void
+  onResetVariableFilters: () => void
+  appliedVariableCount: number
 }) {
   const [processSearch, setProcessSearch] = useState("")
   const filteredProcesses = processes.filter((p) =>
     p.name.toLowerCase().includes(processSearch.toLowerCase())
+  )
+
+  const selectedProcess = processFilter.length === 1 ? processFilter[0] : null
+  const variableNames = useMemo(
+    () => (selectedProcess ? getVariableNamesForProcess(selectedProcess) : []),
+    [selectedProcess]
   )
 
   return (
@@ -171,6 +225,84 @@ function FilterPanelContent({
           </div>
         </div>
       </div>
+
+      {/* Filter by Variables */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Filter by Variables</p>
+          {selectedProcess && (
+            <button
+              onClick={onAddVariableRow}
+              className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+            >
+              <HugeiconsIcon icon={Add01Icon} className="size-3" />
+              Add Variable
+            </button>
+          )}
+        </div>
+
+        {!selectedProcess ? (
+          <div className="flex items-start gap-1.5 rounded-xl border border-dashed border-border/70 bg-muted/30 px-2.5 py-2">
+            <HugeiconsIcon icon={InformationCircleIcon} className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+            <p className="text-[11px] leading-snug text-muted-foreground">
+              Select 1 Business Process first to filter by variables.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-col gap-2">
+              {variableRows.map((row) => (
+                <div key={row.id} className="relative flex flex-col gap-1.5 rounded-xl border border-border/70 bg-background/70 p-2">
+                  {variableRows.length > 1 && (
+                    <button
+                      onClick={() => onRemoveVariableRow(row.id)}
+                      className="absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm hover:text-foreground"
+                      aria-label="Remove variable filter"
+                    >
+                      <HugeiconsIcon icon={Cancel01Icon} className="size-2.5" />
+                    </button>
+                  )}
+                  <Combobox
+                    value={row.name || null}
+                    onValueChange={(v) => onVariableRowChange(row.id, { name: (v as string) ?? "" })}
+                  >
+                    <ComboboxInput placeholder="nama_variable" className="h-8" showClear />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {variableNames.map((name) => (
+                          <ComboboxItem key={name} value={name}>{name}</ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                      <ComboboxEmpty>No variables found.</ComboboxEmpty>
+                    </ComboboxContent>
+                  </Combobox>
+                  <Input
+                    placeholder="value"
+                    className="h-8"
+                    value={row.value}
+                    onChange={(e) => onVariableRowChange(row.id, { value: e.target.value })}
+                  />
+                </div>
+              ))}
+            </div>
+            <Button
+              size="sm"
+              className="mt-2 w-full"
+              onClick={onApplyVariableFilters}
+            >
+              Apply Filter
+            </Button>
+            {appliedVariableCount > 0 && (
+              <button
+                onClick={onResetVariableFilters}
+                className="mt-1.5 w-full text-center text-[11px] text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Reset ({appliedVariableCount} applied)
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -183,16 +315,51 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const [page, setPage] = useState(1)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
   const [sortOrder, setSortOrder] = useState<TaskSortOrder>("newest")
+  const [variableRows, setVariableRows] = useState<VariableFilterRow[]>([emptyVariableRow()])
+  const [appliedVariableFilters, setAppliedVariableFilters] = useState<VariableFilterRow[]>([])
+  const [cardVariant, setCardVariant] = useState<CardVariant>("detailed")
+
+  const handleVariableRowChange = (id: string, patch: Partial<Pick<VariableFilterRow, "name" | "value">>) => {
+    setVariableRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)))
+  }
+
+  const addVariableRow = () => {
+    setVariableRows((prev) => [...prev, emptyVariableRow()])
+  }
+
+  const removeVariableRow = (id: string) => {
+    setVariableRows((prev) => {
+      const next = prev.filter((row) => row.id !== id)
+      return next.length > 0 ? next : [emptyVariableRow()]
+    })
+  }
+
+  const applyVariableFilters = () => {
+    setAppliedVariableFilters(
+      variableRows.filter((row) => row.name.trim() !== "" && row.value.trim() !== "")
+    )
+    setPage(1)
+  }
+
+  const resetVariableFilters = () => {
+    setVariableRows([emptyVariableRow()])
+    setAppliedVariableFilters([])
+    setPage(1)
+  }
 
   const toggleProcess = (name: string) => {
     setProcessFilter((prev) =>
       prev.includes(name) ? prev.filter((p) => p !== name) : [...prev, name]
     )
+    setVariableRows([emptyVariableRow()])
+    setAppliedVariableFilters([])
     setPage(1)
   }
 
   const clearProcesses = () => {
     setProcessFilter([])
+    setVariableRows([emptyVariableRow()])
+    setAppliedVariableFilters([])
     setPage(1)
   }
 
@@ -216,9 +383,16 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
         processFilter.length === 0 || processFilter.includes(t.process)
       const matchDue =
         dueFilter === "all" || getDueCategory(t.dueDate, t.status) === dueFilter
-      return matchSearch && matchProcess && matchDue
+      const matchVariables = appliedVariableFilters.every((row) =>
+        t.fields.some(
+          (f) =>
+            f.label === row.name &&
+            stringifyFieldValue(f.value).toLowerCase().includes(row.value.toLowerCase())
+        )
+      )
+      return matchSearch && matchProcess && matchDue && matchVariables
     })
-  }, [search, processFilter, dueFilter])
+  }, [search, processFilter, dueFilter, appliedVariableFilters])
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -239,7 +413,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
   const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const activeFilterCount =
-    (dueFilter !== "all" ? 1 : 0) + processFilter.length + (search ? 1 : 0)
+    (dueFilter !== "all" ? 1 : 0) + processFilter.length + (search ? 1 : 0) + appliedVariableFilters.length
 
   const pageTitle = mode === "my-tasks" ? "My Tasks" : "Group Tasks"
   return (
@@ -252,7 +426,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
       </div>
       <div className="flex items-start gap-6">
         {/* ── Desktop Filter Sidebar ── */}
-        <div className="hidden w-56 shrink-0 lg:block sticky top-4 md:top-6">
+        <div className="hidden w-64 shrink-0 lg:block sticky top-4 md:top-6">
           <FilterPanelContent
             search={search}
             onSearchChange={handleSearchChange}
@@ -261,6 +435,13 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
             processFilter={processFilter}
             onToggleProcess={toggleProcess}
             onClearProcesses={clearProcesses}
+            variableRows={variableRows}
+            onVariableRowChange={handleVariableRowChange}
+            onAddVariableRow={addVariableRow}
+            onRemoveVariableRow={removeVariableRow}
+            onApplyVariableFilters={applyVariableFilters}
+            onResetVariableFilters={resetVariableFilters}
+            appliedVariableCount={appliedVariableFilters.length}
           />
         </div>
 
@@ -293,6 +474,13 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                     processFilter={processFilter}
                     onToggleProcess={toggleProcess}
                     onClearProcesses={clearProcesses}
+                    variableRows={variableRows}
+                    onVariableRowChange={handleVariableRowChange}
+                    onAddVariableRow={addVariableRow}
+                    onRemoveVariableRow={removeVariableRow}
+                    onApplyVariableFilters={applyVariableFilters}
+                    onResetVariableFilters={resetVariableFilters}
+                    appliedVariableCount={appliedVariableFilters.length}
                   />
                 </div>
               </DrawerContent>
@@ -306,6 +494,19 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                 <SelectItem value="newest">Newest</SelectItem>
                 <SelectItem value="oldest">Oldest</SelectItem>
                 <SelectItem value="due_date">Due Date</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={cardVariant} onValueChange={(v) => setCardVariant(v as CardVariant)}>
+              <SelectTrigger className="h-7 text-[10px] w-auto border-border px-2 shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="detailed">Detailed (3-row)</SelectItem>
+                <SelectItem value="compact">Compact (2-row)</SelectItem>
+                <SelectItem value="expandable">Expandable</SelectItem>
+                <SelectItem value="tabular">Variables Table</SelectItem>
+                <SelectItem value="table">Table</SelectItem>
               </SelectContent>
             </Select>
 
@@ -328,6 +529,19 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                   <Badge key={p} variant="secondary" className="shrink-0 gap-1 text-xs">
                     {p.split(" ")[0]}
                     <button onClick={() => toggleProcess(p)} className="ml-0.5 hover:text-foreground">&times;</button>
+                  </Badge>
+                ))}
+                {appliedVariableFilters.map((row) => (
+                  <Badge key={row.id} variant="secondary" className="shrink-0 gap-1 text-xs">
+                    {row.name}: {row.value}
+                    <button
+                      onClick={() =>
+                        setAppliedVariableFilters((prev) => prev.filter((r) => r.id !== row.id))
+                      }
+                      className="ml-0.5 hover:text-foreground"
+                    >
+                      &times;
+                    </button>
                   </Badge>
                 ))}
               </div>
@@ -353,9 +567,23 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                 </SelectContent>
               </Select>
             </div>
-            <span className="text-xs text-muted-foreground">
-              {filtered.length} task{filtered.length !== 1 ? "s" : ""}
-            </span>
+            <div className="flex items-center gap-3">
+              <Select value={cardVariant} onValueChange={(v) => setCardVariant(v as CardVariant)}>
+                <SelectTrigger className="h-7 text-xs border-none shadow-none focus:ring-0 px-2 bg-transparent">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="detailed">Detailed (3-row)</SelectItem>
+                  <SelectItem value="compact">Compact (2-row)</SelectItem>
+                  <SelectItem value="expandable">Expandable</SelectItem>
+                  <SelectItem value="tabular">Variables Table</SelectItem>
+                  <SelectItem value="table">Table</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-xs text-muted-foreground">
+                {filtered.length} task{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
 
           {/* Task list */}
@@ -365,6 +593,12 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
               <p className="font-medium">No tasks found</p>
               <p className="text-sm text-muted-foreground">Adjust your filters</p>
             </div>
+          ) : cardVariant === "table" ? (
+            <TaskTable
+              tasks={paginated}
+              onSelect={(t) => setSelectedTask(t)}
+              selectedId={selectedTask?.id}
+            />
           ) : (
             <div className="divide-y divide-border">
               {paginated.map((task) => (
@@ -373,6 +607,7 @@ export function TasksPage({ mode = "my-tasks" }: TasksPageProps) {
                   task={task}
                   onClick={(t) => setSelectedTask(t)}
                   selected={selectedTask?.id === task.id}
+                  variant={cardVariant}
                 />
               ))}
             </div>

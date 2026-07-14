@@ -9,6 +9,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { JsonValueView } from "./JsonValueView"
 
 interface ActivityFormField {
   label: string
@@ -58,6 +59,16 @@ const ACTIVITIES: HistoryActivity[] = [
       { label: "Sisa Kuota Izin", value: "8 hari" },
       { label: "Overlap", value: "Tidak" },
       { label: "Hasil Pengecekan", value: "Lolos validasi" },
+      {
+        label: "Related Tasks",
+        value: JSON.stringify([
+          { completed_today: false, completion_pct: 0, created_by: "Contoh User", due_on: "2026-07-15", id: 1, is_completed: false, is_overdue: false, label_color: "#FBD6E7", label_name: "READY FOR TEST", name: "UAT Internal", project_id: 1, project_name: "[Contoh] Redesign Landing Page" },
+          { completed_today: false, completion_pct: 0, created_by: "Contoh User", due_on: "2026-07-13", id: 2, is_completed: false, is_overdue: true, label_color: "#DDDDDD", label_name: "READ", name: "Lengkapi Dokumentasi Fitur", project_id: 2, project_name: "[Contoh] Dokumentasi Produk" },
+          { completed_today: false, completion_pct: 0, created_by: "Contoh User", due_on: "2026-07-15", id: 3, is_completed: false, is_overdue: false, label_color: "#FBD6E7", label_name: "READY FOR TEST", name: "UAT External", project_id: 1, project_name: "[Contoh] Redesign Landing Page" },
+          { completed_today: false, completion_pct: 0, created_by: "Contoh User", due_on: "2026-07-15", id: 4, is_completed: false, is_overdue: false, label_color: "", label_name: "", name: "Deploy", project_id: 1, project_name: "[Contoh] Redesign Landing Page" },
+          { completed_today: false, completion_pct: 0, created_by: "Contoh User", due_on: "2026-07-15", id: 5, is_completed: false, is_overdue: false, label_color: "", label_name: "", name: "Release", project_id: 1, project_name: "[Contoh] Redesign Landing Page" },
+        ]),
+      },
     ],
   },
   {
@@ -86,6 +97,12 @@ const ACTIVITIES: HistoryActivity[] = [
     formFields: [
       { label: "Approver", value: "Bayu Hendra" },
       { label: "Aksi", value: "Menunggu approval" },
+      { label: "Kategori Izin", value: JSON.stringify(["Sakit", "Perlu Dokter"]) },
+      {
+        label: "executor_do",
+        value:
+          '<p style="text-align:start;"><span style="font-size: 14px;font-family: Figtree Variable;">Jangan sampai diingatkan lagi yaa, tolong isi DWM nyaa </span></p><p style="text-align:start;"></p><p style="text-align:left;"><span style="font-size: 14px;font-family: Figtree Variable;">Terimakasih</span></p>',
+      },
     ],
   },
 ]
@@ -228,32 +245,34 @@ export function HistoryTab() {
                     </div>
                   </button>
 
-                  {/* Accordion content */}
+                  {/* Accordion content — grid-rows trick animates to full content height, no clipping */}
                   <div
                     className={cn(
-                      "overflow-hidden transition-all duration-200 ease-in-out",
-                      isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                      "grid transition-all duration-200 ease-in-out",
+                      isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     )}
                   >
-                    <div className="rounded-b-2xl border border-t-0 border-border bg-muted/30 px-3 pt-2.5 pb-3">
-                      {/* Form fields */}
-                      {a.formFields && a.formFields.length > 0 && (
-                        <div className="flex flex-col gap-0">
-                          <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider mb-2">
-                            Input Variables
-                          </p>
-                          {a.formFields.map((f) => (
-                            <div key={f.label} className="flex items-start gap-2 py-1.5 border-b border-border/50 last:border-0">
-                              <span className="text-[11px] text-muted-foreground w-24 shrink-0 pt-px leading-relaxed">
-                                {f.label}
-                              </span>
-                              <span className="text-[11px] font-medium text-foreground flex-1 min-w-0 leading-relaxed break-words">
-                                {f.value}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                    <div className="overflow-hidden">
+                      <div className="rounded-b-2xl border border-t-0 border-border bg-muted/30 px-3 pt-2.5 pb-3">
+                        {/* Form fields */}
+                        {a.formFields && a.formFields.length > 0 && (
+                          <div className="flex flex-col gap-0">
+                            <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider mb-2">
+                              Input Variables
+                            </p>
+                            {a.formFields.map((f) => (
+                              <div key={f.label} className="flex items-start gap-2 py-1.5 border-b border-border/50 last:border-0">
+                                <span className="text-[11px] text-muted-foreground w-24 shrink-0 pt-px leading-relaxed">
+                                  {f.label}
+                                </span>
+                                <div className="flex-1 min-w-0 leading-relaxed">
+                                  <JsonValueView value={f.value} />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

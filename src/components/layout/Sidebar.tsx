@@ -49,6 +49,7 @@ interface SidebarProps {
   activePage: Page
   onNavigate: (page: Page) => void
   open?: boolean
+  isLoading?: boolean
   activeProcessId?: string
   onNavigateProcess?: (processId: string) => void
 }
@@ -137,7 +138,7 @@ const quickWorkspaces = [
   { id: "ws3", name: "SyarQ", current: false, role: "member" as const },
 ]
 
-export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, onNavigateProcess }: SidebarProps) {
+export function Sidebar({ activePage, onNavigate, open = true, isLoading = false, activeProcessId, onNavigateProcess }: SidebarProps) {
   const { color } = usePreferences()
   const isDefaultAccent = color.id === "zinc"
   const [wsSearch, setWsSearch] = useState("")
@@ -244,8 +245,28 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3">
+        {isLoading ? (
+          <div className="px-3 flex flex-col gap-2">
+            <div className="h-9 rounded-full bg-zinc-700/50 animate-pulse mb-2" />
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-2.5 px-2 py-1.5">
+                <div className="size-4 rounded bg-zinc-700/60 animate-pulse shrink-0" />
+                <div className="h-3.5 flex-1 rounded bg-zinc-700/60 animate-pulse" style={{ width: `${60 + (i % 3) * 15}%` }} />
+              </div>
+            ))}
+            <div className="mt-3 px-2">
+              <div className="h-2.5 w-16 rounded bg-zinc-700/40 animate-pulse mb-2" />
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center gap-2.5 px-2 py-1.5">
+                  <div className="size-4 rounded bg-zinc-700/60 animate-pulse shrink-0" />
+                  <div className="h-3.5 rounded bg-zinc-700/60 animate-pulse" style={{ width: `${50 + (i % 3) * 20}%` }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
         {/* Start a Process CTA */}
-        <div className="px-2 mb-2">
+        <div className={cn("px-2 mb-2", isLoading && "hidden")}>
           <Dialog open={processDialogOpen} onOpenChange={(open) => {
             setProcessDialogOpen(open)
             if (!open) setProcessSearch("")
@@ -315,7 +336,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
           </Dialog>
         </div>
 
-        <div className="px-2">
+        <div className={cn("px-2", isLoading && "hidden")}>
           {navItems.map((item) => {
             // Item with children (expandable)
             if (item.children) {
@@ -527,7 +548,7 @@ export function Sidebar({ activePage, onNavigate, open = true, activeProcessId, 
         </div>
 
         {/* Custom Pages */}
-        <div className="px-2 mt-4">
+        <div className={cn("px-2 mt-4", isLoading && "hidden")}>
           <p className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Pages</p>
           {[
             { label: "Form Component", id: "form-component" as Page, icon: Folder02Icon },
