@@ -52,6 +52,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-positions": ["Master Data", "Positions"],
   "md-locations": ["Master Data", "Locations"],
   start: ["Start Process", "Formulation"],
+  "form-component": ["Pages", "Form Component"],
   "business-processes": ["Business Processes"],
   "analytics-process": ["Analytics", "Process Analytics"],
   "analytics-workforce": ["Analytics", "Workforce Analytics"],
