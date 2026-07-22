@@ -94,21 +94,24 @@ export function TaskCard({ task, onClick, selected, variant = "detailed" }: Task
         >
           {task.process.split(" ").map((w) => w[0]).join("").slice(0, 2)}
         </div>
-        <span className="text-xs font-medium text-muted-foreground">{task.process}</span>
+        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{task.process}</span>
       </div>
 
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0">
-        <Avatar className="size-4">
-          <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[7px] font-bold">
-            {getInitials(task.author)}
-          </AvatarFallback>
-        </Avatar>
-        <span className="hidden sm:inline">{task.author}</span>
-      </span>
+      {variant !== "compact" && (
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0">
+          <Avatar className="size-4">
+            <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[7px] font-bold">
+              {getInitials(task.author)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="hidden sm:inline">{task.author}</span>
+        </span>
+      )}
 
       <span
         className={cn(
           "flex items-center gap-1 text-xs shrink-0",
+          variant === "compact" && "w-14 tabular-nums",
           isOverdue ? "text-destructive" : "text-muted-foreground"
         )}
       >
@@ -116,10 +119,24 @@ export function TaskCard({ task, onClick, selected, variant = "detailed" }: Task
         {formatDate(task.dueDate)}
       </span>
 
-      {task.priority === "High" && (
-        <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shrink-0">
-          High
+      {variant === "compact" ? (
+        <span
+          className={cn(
+            "flex items-center shrink-0",
+            task.priority !== "High" && "invisible"
+          )}
+          aria-hidden={task.priority !== "High"}
+        >
+          <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
+            High
+          </span>
         </span>
+      ) : (
+        task.priority === "High" && (
+          <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shrink-0">
+            High
+          </span>
+        )
       )}
     </>
   )
