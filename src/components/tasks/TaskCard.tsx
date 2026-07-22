@@ -62,6 +62,21 @@ export function TaskCard({ task, onClick, selected, variant = "detailed" }: Task
     </span>
   ))
 
+  const compactVariables = task.fields.slice(0, maxVariables)
+  const compactVariableContent = variant === "compact" && compactVariables.length > 0 && (
+    <span
+      className="min-w-0 flex-1 truncate text-[11px] text-muted-foreground"
+      title={compactVariables.map((f) => `${f.label}: ${formatFieldValue(f)}`).join(" · ")}
+    >
+      {compactVariables.map((f, i) => (
+        <span key={f.id}>
+          {i > 0 && <span className="mx-1.5 text-muted-foreground/40">·</span>}
+          <span className="font-medium text-foreground/70">{f.label}:</span> {formatFieldValue(f)}
+        </span>
+      ))}
+    </span>
+  )
+
   const titleContent = (
     <p className="text-sm leading-snug whitespace-normal min-w-0 flex-1 flex flex-wrap items-center gap-y-0.5">
       <span className="font-medium">{task.title}</span>
@@ -201,56 +216,62 @@ export function TaskCard({ task, onClick, selected, variant = "detailed" }: Task
           {arrowIcon}
         </div>
       ) : (
-        <>
-          {/* Row 1: Title + Action */}
-          <div className="flex w-full items-start justify-between min-w-0 gap-3">
-            {titleContent}
-            {arrowIcon}
-          </div>
+        <div className="flex w-full items-center min-w-0 gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            {/* Row 1: Title */}
+            <div className="flex w-full items-start min-w-0">{titleContent}</div>
 
-          {/* Row 2: Metadata */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
-            {metadataContent}
+            {/* Row 2: Metadata */}
+            <div
+              className={cn(
+                "flex items-center gap-2 sm:gap-3 min-w-0",
+                variant === "compact" ? "flex-nowrap" : "flex-wrap"
+              )}
+            >
+              {metadataContent}
 
-            {variant === "compact" && variableChips}
+              {compactVariableContent}
 
-            {variant === "expandable" && task.fields.length > 0 && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setExpanded((v) => !v)
-                }}
-                className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium text-primary hover:bg-primary/10"
+              {variant === "expandable" && task.fields.length > 0 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setExpanded((v) => !v)
+                  }}
+                  className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium text-primary hover:bg-primary/10"
+                >
+                  {task.fields.length} variable{task.fields.length !== 1 ? "s" : ""}
+                  <HugeiconsIcon icon={expanded ? ArrowUp01Icon : ArrowDown01Icon} className="size-3" />
+                </button>
+              )}
+            </div>
+
+            {/* Row 3: Process variables (detailed variant only) */}
+            {variant === "detailed" && task.fields.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 min-w-0">{variableChips}</div>
+            )}
+
+            {/* Expanded variables panel (expandable variant only) */}
+            {variant === "expandable" && expanded && task.fields.length > 0 && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="grid grid-cols-1 gap-x-4 gap-y-1.5 rounded-lg border border-border/70 bg-muted/30 p-2.5 sm:grid-cols-2"
               >
-                {task.fields.length} variable{task.fields.length !== 1 ? "s" : ""}
-                <HugeiconsIcon icon={expanded ? ArrowUp01Icon : ArrowDown01Icon} className="size-3" />
-              </button>
+                {task.fields.map((f) => (
+                  <div key={f.id} className="flex items-baseline justify-between gap-3 text-xs min-w-0">
+                    <span className="shrink-0 text-muted-foreground">{f.label}</span>
+                    <span className="min-w-0 flex-1 truncate text-right font-medium" title={formatFieldValue(f)}>
+                      {formatFieldValue(f)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
-          {/* Row 3: Process variables (detailed variant only) */}
-          {variant === "detailed" && task.fields.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 min-w-0">{variableChips}</div>
-          )}
-
-          {/* Expanded variables panel (expandable variant only) */}
-          {variant === "expandable" && expanded && task.fields.length > 0 && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="grid grid-cols-1 gap-x-4 gap-y-1.5 rounded-lg border border-border/70 bg-muted/30 p-2.5 sm:grid-cols-2"
-            >
-              {task.fields.map((f) => (
-                <div key={f.id} className="flex items-baseline justify-between gap-3 text-xs min-w-0">
-                  <span className="shrink-0 text-muted-foreground">{f.label}</span>
-                  <span className="min-w-0 flex-1 truncate text-right font-medium" title={formatFieldValue(f)}>
-                    {formatFieldValue(f)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
+          {arrowIcon}
+        </div>
       )}
     </div>
   )
