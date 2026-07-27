@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
@@ -8,6 +8,8 @@ import {
   WorkHistoryIcon,
   BubbleChatIcon,
   Loading03Icon,
+  FloppyDiskIcon,
+  InformationCircleIcon,
 } from "@hugeicons/core-free-icons"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -39,9 +41,13 @@ import {
 } from "@/components/ui/combobox"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { FormTab } from "./tabs/FormTab"
+import { useDraft } from "@/hooks/use-draft"
+import { formatRelativeTime } from "@/lib/drafts"
+import { DraftAutosaveStatus } from "@/components/drafts/DraftAutosaveStatus"
+import { FormTab, fieldsToValues, computeEditedPercent } from "./tabs/FormTab"
 import { DetailsTab } from "./tabs/DetailsTab"
 import { DiagramTab } from "./tabs/DiagramTab"
 import { HistoryTab } from "./tabs/HistoryTab"
@@ -101,6 +107,30 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
   const [delegateReason, setDelegateReason] = useState("")
   const [isCompleting, setIsCompleting] = useState(false)
 
+  const originalValues = useMemo(() => fieldsToValues(task.fields), [task])
+  const {
+    data: formValues,
+    setField: setFormField,
+    status: draftStatus,
+    savedAt: draftSavedAt,
+    saveNow: saveDraftNow,
+    clearDraft,
+    pendingDraft,
+    resumeDraft,
+    dismissDraft,
+  } = useDraft(originalValues, {
+    key: `complete-task:${task.id}`,
+    title: task.title,
+    context: task.process,
+    computePercent: (current) => computeEditedPercent(originalValues, current),
+    mode: "confirm",
+  })
+
+  const handleSaveDraft = () => {
+    saveDraftNow()
+    toast.success("Draft saved", { description: "Your edits are safe on this device until you complete the task." })
+  }
+
   const handleDelegate = () => {
     setDelegateTo(null)
     setDelegateReason("")
@@ -130,6 +160,7 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
     setIsCompleting(true)
     await new Promise((resolve) => setTimeout(resolve, 500))
     setIsCompleting(false)
+    clearDraft()
     toast.success("Task completed", {
       description: `"${task.title}" has been marked as completed.`,
     })
@@ -218,6 +249,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
                   <Button variant="outline" size="sm" onClick={handleUnclaim} className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
                     Unclaim
                   </Button>
+                  <Button variant="outline" size="sm" onClick={handleSaveDraft} className="gap-1.5 border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                    <HugeiconsIcon icon={FloppyDiskIcon} className="size-3.5" />
+                    Save Draft
+                  </Button>
                   <Button size="sm" onClick={handleComplete} disabled={isCompleting} className={cn("relative bg-white hover:bg-white/90 font-semibold shadow-sm dark:bg-white dark:hover:bg-white/90", theme.btnText)}>
                     <span className={cn("bg-gradient-to-br bg-clip-text text-transparent transition-opacity", isCompleting ? "opacity-0" : "opacity-100", theme.gradient)}>
                       Complete Task
@@ -267,7 +302,25 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
 
         <div className="flex-1 overflow-y-auto">
           <TabsContent value="form">
-            <FormTab task={task} />
+            {pendingDraft && (
+              <Alert className="m-4 w-auto">
+                <HugeiconsIcon icon={InformationCircleIcon} />
+                <AlertTitle>Unsubmitted draft found</AlertTitle>
+                <AlertDescription>
+                  You have edits saved {formatRelativeTime(pendingDraft.savedAt)} that were never completed.
+                </AlertDescription>
+                <div className="col-start-2 mt-2 flex gap-2">
+                  <Button variant="ghost" size="sm" onClick={dismissDraft}>Keep current values</Button>
+                  <Button size="sm" onClick={resumeDraft}>Resume draft</Button>
+                </div>
+              </Alert>
+            )}
+            {mode === "my-tasks" && (
+              <div className="px-6 pt-3">
+                <DraftAutosaveStatus status={draftStatus} savedAt={draftSavedAt} />
+              </div>
+            )}
+            <FormTab task={task} values={formValues} onFieldChange={(id, v) => setFormField({ [id]: v })} />
           </TabsContent>
           <TabsContent value="details">
             <DetailsTab task={task} />
@@ -295,6 +348,10 @@ export function TaskDetailPanel({ task, onClose, mode = "my-tasks" }: TaskDetail
               Unclaim
             </Button>
             <div className="flex-1" />
+            <Button variant="outline" size="sm" onClick={handleSaveDraft} className="gap-1.5">
+              <HugeiconsIcon icon={FloppyDiskIcon} className="size-3.5" />
+              Save Draft
+            </Button>
             <Button size="sm" onClick={handleComplete} disabled={isCompleting} className="relative">
               <span className={cn("transition-opacity", isCompleting ? "opacity-0" : "opacity-100")}>
                 Complete Task

@@ -1,10 +1,21 @@
 import { useCallback, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Calendar01Icon, Rocket01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import {
+  Calendar01Icon,
+  Rocket01Icon,
+  ArrowRight01Icon,
+  FloppyDiskIcon,
+  InformationCircleIcon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons"
 import { format } from "date-fns"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
+import { formatRelativeTime } from "@/lib/drafts"
+import { useDraft } from "@/hooks/use-draft"
+import { DraftAutosaveStatus } from "@/components/drafts/DraftAutosaveStatus"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,6 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { Alert, AlertTitle, AlertDescription, AlertAction } from "@/components/ui/alert"
 
 /* ────────────────────────────────────────────────────────────────────────
    Start-process form. Toggles between a SHORT form (fits the screen) and a
@@ -23,6 +35,12 @@ import { Calendar } from "@/components/ui/calendar"
    bottom-0`: when the form is short it rests at the bottom of the box; when
    the form overflows it stays pinned to the bottom of the viewport — always
    visible, and always visually inside the box. Pure CSS — no height measuring.
+
+   Every field is persisted to a local draft (autosave + a manual "Save
+   Draft" button) so the process definition doesn't need to exist yet in
+   Camunda for the user's in-progress input to be safe — see the
+   "Save as Draft" PRD. Attachments are intentionally excluded: a real
+   implementation should stage them separately (see PRD, "Attachments").
 ──────────────────────────────────────────────────────────────────────── */
 
 const CATEGORIES = [
@@ -38,6 +56,59 @@ const DEPARTMENTS = [
   { value: "engineering", label: "Engineering" },
   { value: "operations", label: "Operations" },
 ]
+
+interface StartProcessDraftData {
+  long: boolean
+  processName: string
+  category: string
+  priority: "low" | "medium" | "high"
+  notes: string
+  requester: string
+  department: string
+  dueDate: string
+  estimatedAmount: string
+  description: string
+  justification: string
+  additionalRecipients: string
+  internalReferenceCode: string
+  urgent: boolean
+}
+
+const EMPTY_DRAFT: StartProcessDraftData = {
+  long: false,
+  processName: "",
+  category: "",
+  priority: "medium",
+  notes: "",
+  requester: "",
+  department: "",
+  dueDate: "",
+  estimatedAmount: "",
+  description: "",
+  justification: "",
+  additionalRecipients: "",
+  internalReferenceCode: "",
+  urgent: false,
+}
+
+const TRACKED_TEXT_FIELDS: (keyof StartProcessDraftData)[] = [
+  "processName",
+  "category",
+  "notes",
+  "requester",
+  "department",
+  "dueDate",
+  "estimatedAmount",
+  "description",
+  "justification",
+  "additionalRecipients",
+  "internalReferenceCode",
+]
+
+function computeStartProcessPercent(data: StartProcessDraftData) {
+  const filled = TRACKED_TEXT_FIELDS.filter((k) => String(data[k]).trim() !== "").length
+  return Math.round((filled / TRACKED_TEXT_FIELDS.length) * 100)
+}
 
 /* ── Layout primitives ───────────────────────────────────────────────── */
 
@@ -88,8 +159,8 @@ function Field({
 
 /* ── Reusable field pieces ───────────────────────────────────────────── */
 
-function DateField() {
-  const [date, setDate] = useState<Date | undefined>()
+function DateField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const date = value ? new Date(value) : undefined
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -104,21 +175,24 @@ function DateField() {
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar mode="single" selected={date} onSelect={setDate} />
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={(d) => onChange(d ? d.toISOString() : "")}
+        />
       </PopoverContent>
     </Popover>
   )
 }
 
-function CurrencyField() {
-  const [raw, setRaw] = useState("")
-  const display = raw ? Number(raw).toLocaleString("id-ID") : ""
+function CurrencyField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const display = value ? Number(value).toLocaleString("id-ID") : ""
   return (
     <div className="relative">
       <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">Rp</span>
       <Input
         value={display}
-        onChange={(e) => setRaw(e.target.value.replace(/\D/g, ""))}
+        onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
         inputMode="numeric"
         placeholder="0"
         className="pl-9 tabular-nums"
@@ -153,6 +227,7 @@ function AttachmentField() {
           ))}
         </div>
       )}
+      <p className="mt-1.5 text-xs text-muted-foreground">Not saved in the draft — re-attach if you resume this later.</p>
     </div>
   )
 }
@@ -168,7 +243,37 @@ const CHECKLIST = [
 /* ── Page ────────────────────────────────────────────────────────────── */
 
 export function StartProcessPage() {
-  const [long, setLong] = useState(false)
+  const {
+    data,
+    setField,
+    status,
+    savedAt,
+    saveNow,
+    clearDraft,
+    resumedNotice,
+    dismissResumedNotice,
+    discardResumed,
+  } = useDraft(EMPTY_DRAFT, {
+    key: "start-process",
+    title: "Start a Process",
+    context: "New process — not yet started",
+    computePercent: computeStartProcessPercent,
+    mode: "auto",
+  })
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const long = data.long
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    await new Promise((resolve) => setTimeout(resolve, 600))
+    setIsSubmitting(false)
+    clearDraft()
+    toast.success("Process started", {
+      description: data.processName ? `"${data.processName}" is now running.` : "Your process is now running.",
+    })
+  }
 
   return (
     <div className="min-h-full">
@@ -188,14 +293,33 @@ export function StartProcessPage() {
           </div>
           <Label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm font-normal text-muted-foreground">
             <span className={cn(!long && "font-medium text-foreground")}>Short</span>
-            <Switch checked={long} onCheckedChange={setLong} />
+            <Switch checked={long} onCheckedChange={(v) => setField({ long: v })} />
             <span className={cn(long && "font-medium text-foreground")}>Long</span>
           </Label>
         </div>
       </div>
 
       {/* Form body */}
-      <form className="mx-auto max-w-3xl px-4 pb-6 pt-2 sm:px-6" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-auto max-w-3xl px-4 pb-6 pt-2 sm:px-6" onSubmit={handleSubmit}>
+        {resumedNotice && (
+          <Alert className="mb-4">
+            <HugeiconsIcon icon={InformationCircleIcon} />
+            <AlertTitle>Resumed your draft</AlertTitle>
+            <AlertDescription>
+              {savedAt ? `Restored what you had saved ${formatRelativeTime(savedAt)}.` : "Restored your last saved draft."}{" "}
+              <button type="button" onClick={discardResumed} className="underline underline-offset-3 hover:text-foreground">
+                Discard and start blank
+              </button>
+              .
+            </AlertDescription>
+            <AlertAction>
+              <Button variant="ghost" size="icon-sm" onClick={dismissResumedNotice}>
+                <HugeiconsIcon icon={Cancel01Icon} />
+              </Button>
+            </AlertAction>
+          </Alert>
+        )}
+
         {/* The boxed form — no overflow-hidden so the in-box footer can stick */}
         <div className="rounded-4xl bg-card shadow-md ring-1 ring-foreground/5 dark:ring-foreground/10">
           <div className="space-y-6 p-6 sm:p-8">
@@ -204,11 +328,15 @@ export function StartProcessPage() {
               description={long ? "What are you asking for?" : undefined}
             >
               <Field label="Process name" required>
-                <Input placeholder="e.g. Purchase of office equipment" />
+                <Input
+                  placeholder="e.g. Purchase of office equipment"
+                  value={data.processName}
+                  onChange={(e) => setField({ processName: e.target.value })}
+                />
               </Field>
 
               <Field label="Category" required>
-                <Select>
+                <Select value={data.category} onValueChange={(v) => setField({ category: v })}>
                   <SelectTrigger className="w-full"><SelectValue placeholder="Select a category" /></SelectTrigger>
                   <SelectContent>
                     {CATEGORIES.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
@@ -217,7 +345,11 @@ export function StartProcessPage() {
               </Field>
 
               <Field label="Priority">
-                <RadioGroup defaultValue="medium" className="flex gap-4 pt-1">
+                <RadioGroup
+                  value={data.priority}
+                  onValueChange={(v) => setField({ priority: v as StartProcessDraftData["priority"] })}
+                  className="flex gap-4 pt-1"
+                >
                   {["low", "medium", "high"].map((v) => (
                     <Label key={v} className="flex items-center gap-1.5 font-normal capitalize">
                       <RadioGroupItem value={v} /> {v}
@@ -227,7 +359,12 @@ export function StartProcessPage() {
               </Field>
 
               <Field label="Notes">
-                <Textarea rows={3} placeholder="Add any context for the approver…" />
+                <Textarea
+                  rows={3}
+                  placeholder="Add any context for the approver…"
+                  value={data.notes}
+                  onChange={(e) => setField({ notes: e.target.value })}
+                />
               </Field>
             </Group>
 
@@ -238,11 +375,15 @@ export function StartProcessPage() {
 
                 <Group title="Requester & budget" description="Who is requesting, and how much.">
                   <Field label="Requester" required>
-                    <Input placeholder="Full name" />
+                    <Input
+                      placeholder="Full name"
+                      value={data.requester}
+                      onChange={(e) => setField({ requester: e.target.value })}
+                    />
                   </Field>
 
                   <Field label="Department">
-                    <Select>
+                    <Select value={data.department} onValueChange={(v) => setField({ department: v })}>
                       <SelectTrigger className="w-full"><SelectValue placeholder="Select a department" /></SelectTrigger>
                       <SelectContent>
                         {DEPARTMENTS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
@@ -252,19 +393,29 @@ export function StartProcessPage() {
 
                   <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
                     <Field label="Due date">
-                      <DateField />
+                      <DateField value={data.dueDate} onChange={(v) => setField({ dueDate: v })} />
                     </Field>
                     <Field label="Estimated amount" hint="Rupiah">
-                      <CurrencyField />
+                      <CurrencyField value={data.estimatedAmount} onChange={(v) => setField({ estimatedAmount: v })} />
                     </Field>
                   </div>
 
                   <Field label="Description" hint="detailed">
-                    <Textarea rows={5} placeholder="Describe the purpose and scope of this process…" />
+                    <Textarea
+                      rows={5}
+                      placeholder="Describe the purpose and scope of this process…"
+                      value={data.description}
+                      onChange={(e) => setField({ description: e.target.value })}
+                    />
                   </Field>
 
                   <Field label="Justification">
-                    <Textarea rows={4} placeholder="Why is this needed now?" />
+                    <Textarea
+                      rows={4}
+                      placeholder="Why is this needed now?"
+                      value={data.justification}
+                      onChange={(e) => setField({ justification: e.target.value })}
+                    />
                   </Field>
                 </Group>
 
@@ -286,15 +437,24 @@ export function StartProcessPage() {
                   </Field>
 
                   <Field label="Additional recipients" hint="notified on completion">
-                    <Textarea rows={3} placeholder="One email per line…" />
+                    <Textarea
+                      rows={3}
+                      placeholder="One email per line…"
+                      value={data.additionalRecipients}
+                      onChange={(e) => setField({ additionalRecipients: e.target.value })}
+                    />
                   </Field>
 
                   <Field label="Internal reference code">
-                    <Input placeholder="e.g. PRC-2026-0142" />
+                    <Input
+                      placeholder="e.g. PRC-2026-0142"
+                      value={data.internalReferenceCode}
+                      onChange={(e) => setField({ internalReferenceCode: e.target.value })}
+                    />
                   </Field>
 
                   <div className="flex items-center gap-2 pt-1">
-                    <Switch id="urgent" />
+                    <Switch id="urgent" checked={data.urgent} onCheckedChange={(v) => setField({ urgent: v })} />
                     <Label htmlFor="urgent" className="font-normal">Flag as urgent — skips the queue</Label>
                   </div>
                 </Group>
@@ -305,11 +465,18 @@ export function StartProcessPage() {
           {/* In-box submit footer — rests at the box bottom, sticks to the
               viewport when the form overflows so it is always visible */}
           <div className="sticky bottom-0 z-10 rounded-b-4xl border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur sm:px-8">
-            <div className="flex justify-center">
-              <Button type="submit" size="lg" className="min-w-52 gap-2 rounded-full shadow-sm">
-                Start Process
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
-              </Button>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <DraftAutosaveStatus status={status} savedAt={savedAt} className="order-2 sm:order-1" />
+              <div className="order-1 flex items-center gap-2 sm:order-2">
+                <Button type="button" variant="outline" className="gap-2" onClick={() => { saveNow(); toast.success("Draft saved") }}>
+                  <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+                  Save as Draft
+                </Button>
+                <Button type="submit" size="lg" className="min-w-40 gap-2 rounded-full shadow-sm" disabled={isSubmitting}>
+                  {isSubmitting ? "Starting…" : "Start Process"}
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -12,28 +12,65 @@ import {
 } from "@/components/ui/select"
 import type { Task, TaskField } from "@/data/tasks"
 
-interface FormTabProps {
-  task: Task
+/** Editable field values, keyed by field id — the shape persisted to a local draft. */
+export type FormValues = Record<string, string | boolean>
+
+export function fieldsToValues(fields: TaskField[]): FormValues {
+  const values: FormValues = {}
+  for (const field of fields) {
+    if (field.type === "file" || field.type === "images") continue
+    if (field.type === "boolean") {
+      values[field.id] = Boolean(field.value)
+    } else if (field.type === "json") {
+      values[field.id] = JSON.stringify(field.value, null, 2)
+    } else {
+      values[field.id] = field.value == null ? "" : String(field.value)
+    }
+  }
+  return values
 }
 
-export function FormTab({ task }: FormTabProps) {
+/** Share of fields the user has actually changed from the task's current values. */
+export function computeEditedPercent(original: FormValues, current: FormValues) {
+  const keys = Object.keys(original)
+  if (keys.length === 0) return 0
+  const changed = keys.filter((k) => String(current[k]) !== String(original[k])).length
+  return Math.round((changed / keys.length) * 100)
+}
+
+interface FormTabProps {
+  task: Task
+  values: FormValues
+  onFieldChange: (id: string, value: string | boolean) => void
+}
+
+export function FormTab({ task, values, onFieldChange }: FormTabProps) {
   return (
     <div className="flex flex-col divide-y divide-border">
       {task.fields.map((field) => (
         <div key={field.id} className="flex flex-col gap-1.5 px-6 py-4">
           <Label className="text-xs text-muted-foreground">{field.label}</Label>
-          <FieldInput field={field} />
+          <FieldInput field={field} value={values[field.id]} onChange={(v) => onFieldChange(field.id, v)} />
         </div>
       ))}
     </div>
   )
 }
 
-function FieldInput({ field }: { field: TaskField }) {
+function FieldInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: TaskField
+  value: string | boolean | undefined
+  onChange: (value: string | boolean) => void
+}) {
   if (field.type === "longtext") {
     return (
       <Textarea
-        defaultValue={field.value as string}
+        value={(value as string) ?? ""}
+        onChange={(e) => onChange(e.target.value)}
         rows={3}
         className="resize-none"
       />
@@ -43,7 +80,8 @@ function FieldInput({ field }: { field: TaskField }) {
   if (field.type === "json") {
     return (
       <Textarea
-        defaultValue={JSON.stringify(field.value, null, 2)}
+        value={(value as string) ?? ""}
+        onChange={(e) => onChange(e.target.value)}
         rows={4}
         className="resize-none font-mono text-xs"
       />
@@ -52,7 +90,7 @@ function FieldInput({ field }: { field: TaskField }) {
 
   if (field.type === "boolean") {
     return (
-      <Select defaultValue={field.value ? "yes" : "no"}>
+      <Select value={value ? "yes" : "no"} onValueChange={(v) => onChange(v === "yes")}>
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -85,6 +123,7 @@ function FieldInput({ field }: { field: TaskField }) {
             ))}
           </div>
         )}
+        <p className="text-xs text-muted-foreground">Not saved in the draft — re-attach if you resume this later.</p>
       </div>
     )
   }
@@ -111,7 +150,8 @@ function FieldInput({ field }: { field: TaskField }) {
   return (
     <Input
       type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
-      defaultValue={field.value as string | number}
+      value={(value as string) ?? ""}
+      onChange={(e) => onChange(e.target.value)}
     />
   )
 }
