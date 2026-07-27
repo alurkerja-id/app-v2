@@ -20,7 +20,7 @@ interface UseDraftOptions<T> {
   mode?: "auto" | "confirm"
 }
 
-export function useDraft<T extends Record<string, unknown>>(
+export function useDraft<T extends object>(
   emptyData: T,
   { key, title, context, computePercent, autosaveDelay = 1000, mode = "auto" }: UseDraftOptions<T>,
 ) {
@@ -34,28 +34,30 @@ export function useDraft<T extends Record<string, unknown>>(
   const [pendingDraft, setPendingDraft] = useState<DraftRecord<T> | null>(mode === "confirm" ? existing : null)
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const dataRef = useRef(data)
-  dataRef.current = data
 
-  const persist = useCallback(() => {
-    const record = saveDraft<T>(key, {
-      title,
-      context,
-      percent: computePercent ? computePercent(dataRef.current) : 0,
-      data: dataRef.current,
-    })
-    setSavedAt(record.savedAt)
-    setStatus("saved")
-  }, [key, title, context, computePercent])
+  const persist = useCallback(
+    (current: T) => {
+      const record = saveDraft<T>(key, {
+        title,
+        context,
+        percent: computePercent ? computePercent(current) : 0,
+        data: current,
+      })
+      setSavedAt(record.savedAt)
+      setStatus("saved")
+    },
+    [key, title, context, computePercent],
+  )
 
   const setField = useCallback(
     (patch: Partial<T>) => {
-      setData((prev) => ({ ...prev, ...patch }))
+      const next = { ...data, ...patch }
+      setData(next)
       setStatus("saving")
       if (timer.current) clearTimeout(timer.current)
-      timer.current = setTimeout(persist, autosaveDelay)
+      timer.current = setTimeout(() => persist(next), autosaveDelay)
     },
-    [persist, autosaveDelay],
+    [data, persist, autosaveDelay],
   )
 
   useEffect(
@@ -67,8 +69,8 @@ export function useDraft<T extends Record<string, unknown>>(
 
   const saveNow = useCallback(() => {
     if (timer.current) clearTimeout(timer.current)
-    persist()
-  }, [persist])
+    persist(data)
+  }, [data, persist])
 
   /** Call after a successful submit — the process/task now lives on the server. */
   const clearDraft = useCallback(() => {

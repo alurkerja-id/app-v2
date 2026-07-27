@@ -11,32 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Task, TaskField } from "@/data/tasks"
-
-/** Editable field values, keyed by field id — the shape persisted to a local draft. */
-export type FormValues = Record<string, string | boolean>
-
-export function fieldsToValues(fields: TaskField[]): FormValues {
-  const values: FormValues = {}
-  for (const field of fields) {
-    if (field.type === "file" || field.type === "images") continue
-    if (field.type === "boolean") {
-      values[field.id] = Boolean(field.value)
-    } else if (field.type === "json") {
-      values[field.id] = JSON.stringify(field.value, null, 2)
-    } else {
-      values[field.id] = field.value == null ? "" : String(field.value)
-    }
-  }
-  return values
-}
-
-/** Share of fields the user has actually changed from the task's current values. */
-export function computeEditedPercent(original: FormValues, current: FormValues) {
-  const keys = Object.keys(original)
-  if (keys.length === 0) return 0
-  const changed = keys.filter((k) => String(current[k]) !== String(original[k])).length
-  return Math.round((changed / keys.length) * 100)
-}
+import type { FormValues } from "@/lib/task-fields"
 
 interface FormTabProps {
   task: Task
