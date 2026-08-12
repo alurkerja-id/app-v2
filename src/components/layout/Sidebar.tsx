@@ -22,9 +22,11 @@ import {
   Database01Icon,
   RecordIcon,
   Analytics01Icon,
+  Flowchart01Icon,
   BarChartIcon,
   UserMultiple02Icon,
   Folder02Icon,
+  Ticket01Icon,
 } from "@hugeicons/core-free-icons"
 import type { Page } from "@/types/navigation"
 import { cn } from "@/lib/utils"
@@ -85,7 +87,9 @@ const navItems: NavItem[] = [
     icon: Analytics01Icon,
     children: [
       { id: "analytics-process" as Page, label: "Process Analytics", icon: BarChartIcon },
+      { id: "process-discovery" as Page, label: "Process Discovery", icon: Flowchart01Icon },
       { id: "analytics-workforce" as Page, label: "Workforce Analytics", icon: UserMultiple02Icon },
+      { id: "helpdesk-dashboard" as Page, label: "HelpDesk Dashboard", icon: Ticket01Icon },
     ],
   },
   {

@@ -46,8 +46,10 @@ import { REQUESTS } from "@/data/requests"
 import type { Request } from "@/data/requests"
 import { processes } from "@/components/processes/ProcessList"
 import { RequestDetailPanel } from "@/components/requests/RequestDetailPanel"
+import { formatFieldValue } from "@/lib/task-fields"
 
 const PAGE_SIZE = 10
+const MAX_VISIBLE_VARIABLES = 2
 
 const PROCESS_GRADIENTS: Record<string, string> = {
   "Employee Onboarding": "from-blue-500 to-indigo-600",
@@ -176,6 +178,20 @@ function RequestCard({
   const currentTasks = request.currentTask !== "-"
     ? request.currentTask.split(",").map(t => t.trim()).filter(Boolean)
     : []
+  const compactVariables = request.fields.slice(0, MAX_VISIBLE_VARIABLES)
+  const variableContent = compactVariables.length > 0 && (
+    <span
+      className="min-w-0 flex-1 truncate text-[11px] text-muted-foreground"
+      title={compactVariables.map((f) => `${f.label}: ${formatFieldValue(f)}`).join(" · ")}
+    >
+      {compactVariables.map((f, i) => (
+        <span key={f.id}>
+          {i > 0 && <span className="mx-1.5 text-muted-foreground/40">·</span>}
+          <span className="font-medium text-foreground/70">{f.label}:</span> {formatFieldValue(f)}
+        </span>
+      ))}
+    </span>
+  )
 
   return (
     <button
@@ -208,8 +224,8 @@ function RequestCard({
         />
       </div>
 
-      {/* Row 2: Timeline visual, user avatar & name, priority */}
-      <div className="flex items-center justify-start w-full gap-3 flex-wrap min-w-0 mt-1">
+      {/* Row 2: Timeline visual, variables, priority */}
+      <div className="flex items-center justify-start w-full gap-3 flex-nowrap min-w-0 mt-1">
         {/* Race Duration Timeline */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <div className="flex items-center gap-1 title-xs text-xs font-medium text-muted-foreground">
@@ -258,10 +274,12 @@ function RequestCard({
 
         {/* Priority */}
         {request.priority === "High" && (
-          <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ml-1">
+          <span className="rounded-full bg-destructive/10 text-destructive px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ml-1 shrink-0">
             High
           </span>
         )}
+
+        {variableContent}
       </div>
     </button>
   )

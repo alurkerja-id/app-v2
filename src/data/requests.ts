@@ -1,3 +1,5 @@
+import type { TaskField } from "@/data/tasks"
+
 export type RequestStatus = "Active" | "Completed"
 
 export interface Request {
@@ -13,6 +15,7 @@ export interface Request {
   status: RequestStatus
   priority: "High" | "Medium" | "Low"
   steps: number
+  fields: TaskField[]
 }
 
 export const REQUESTS: Request[] = [
@@ -28,6 +31,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "Medium",
     steps: 3,
+    fields: [
+      { id: "f1", label: "Employee", type: "text", value: "Emma Wilson", group: "Info" },
+      { id: "f2", label: "Leave Type", type: "text", value: "Annual Leave", group: "Info" },
+    ],
   },
   {
     id: "REQ-1002",
@@ -42,6 +49,10 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Low",
     steps: 5,
+    fields: [
+      { id: "f1", label: "Reporter", type: "text", value: "Carlos Ruiz", group: "Info" },
+      { id: "f2", label: "Category", type: "text", value: "Hardware", group: "Info" },
+    ],
   },
   {
     id: "REQ-1003",
@@ -55,6 +66,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "High",
     steps: 4,
+    fields: [
+      { id: "f1", label: "Employee", type: "text", value: "John Doe", group: "Info" },
+      { id: "f2", label: "Period", type: "text", value: "Q1 2026 (Jan–Mar)", group: "Info" },
+    ],
   },
   {
     id: "REQ-1004",
@@ -69,6 +84,10 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Medium",
     steps: 7,
+    fields: [
+      { id: "f1", label: "Requestor", type: "text", value: "Aisha Kamara", group: "Info" },
+      { id: "f2", label: "Description", type: "longtext", value: "Ergonomic standing desk for home office setup", group: "Info" },
+    ],
   },
   {
     id: "REQ-1005",
@@ -82,6 +101,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "High",
     steps: 5,
+    fields: [
+      { id: "f1", label: "Traveler", type: "text", value: "Ken Watanabe", group: "Info" },
+      { id: "f2", label: "Destination", type: "text", value: "Tokyo, Japan", group: "Info" },
+    ],
   },
   {
     id: "REQ-1006",
@@ -96,6 +119,10 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Low",
     steps: 3,
+    fields: [
+      { id: "f1", label: "Employee", type: "text", value: "Maria Santos", group: "Info" },
+      { id: "f2", label: "Leave Type", type: "text", value: "Sick Leave", group: "Info" },
+    ],
   },
   {
     id: "REQ-1007",
@@ -109,6 +136,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "Medium",
     steps: 4,
+    fields: [
+      { id: "f1", label: "Reporter", type: "text", value: "Liam O'Brien", group: "Info" },
+      { id: "f2", label: "Category", type: "text", value: "Access Request", group: "Info" },
+    ],
   },
   {
     id: "REQ-1008",
@@ -123,6 +154,10 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Low",
     steps: 4,
+    fields: [
+      { id: "f1", label: "Employee", type: "text", value: "Priya Sharma", group: "Info" },
+      { id: "f2", label: "Period", type: "text", value: "Q1 2026 (Jan–Mar)", group: "Info" },
+    ],
   },
   {
     id: "REQ-1009",
@@ -136,6 +171,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "Medium",
     steps: 6,
+    fields: [
+      { id: "f1", label: "Requestor", type: "text", value: "Tom Brady", group: "Info" },
+      { id: "f2", label: "Description", type: "longtext", value: "Annual Adobe Creative Cloud subscription for design team", group: "Info" },
+    ],
   },
   {
     id: "REQ-1010",
@@ -150,6 +189,10 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Medium",
     steps: 6,
+    fields: [
+      { id: "f1", label: "Traveler", type: "text", value: "Rachel Kim", group: "Info" },
+      { id: "f2", label: "Destination", type: "text", value: "London, UK", group: "Info" },
+    ],
   },
   {
     id: "REQ-1011",
@@ -163,6 +206,10 @@ export const REQUESTS: Request[] = [
     status: "Active",
     priority: "Medium",
     steps: 3,
+    fields: [
+      { id: "f1", label: "Employee Name", type: "text", value: "Alex Tan", group: "Info" },
+      { id: "f2", label: "Department", type: "text", value: "Engineering", group: "Info" },
+    ],
   },
   {
     id: "REQ-1012",
@@ -177,5 +224,9 @@ export const REQUESTS: Request[] = [
     status: "Completed",
     priority: "Low",
     steps: 8,
+    fields: [
+      { id: "f1", label: "Employee Name", type: "text", value: "Yuki Sato", group: "Info" },
+      { id: "f2", label: "Department", type: "text", value: "Design", group: "Info" },
+    ],
   },
 ]

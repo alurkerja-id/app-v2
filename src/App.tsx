@@ -16,7 +16,10 @@ import { StartProcessPage } from "@/components/pages/StartProcessPage"
 import { FormComponentsPage } from "@/components/pages/FormComponentsPage"
 import { BusinessProcessesPage } from "@/components/pages/BusinessProcessesPage"
 import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
+import { HelpDeskDashboardPage } from "@/components/pages/HelpDeskDashboardPage"
+import { ProcessDiscoveryPage } from "@/components/pages/ProcessDiscoveryPage"
 import { PreferencesProvider } from "@/contexts/PreferencesContext"
+import { AppModeProvider } from "@/contexts/AppModeContext"
 import { Toaster } from "@/components/ui/sonner"
 import type { Page } from "@/types/navigation"
 
@@ -38,7 +41,9 @@ const PAGE_PATHS: Record<Page, string> = {
   "form-component": "/pages/form-component",
   "business-processes": "/business-processes",
   "analytics-process": "/analytics/process",
+  "process-discovery": "/analytics/discovery",
   "analytics-workforce": "/analytics/workforce",
+  "helpdesk-dashboard": "/analytics/helpdesk",
   "invite-link": "/invite_link",
 }
 
@@ -134,21 +139,27 @@ export default function App() {
         return <BusinessProcessesPage processId={activeProcessId} />
       case "analytics-process":
         return <AnalyticsPage variant="process" />
+      case "process-discovery":
+        return <ProcessDiscoveryPage />
       case "analytics-workforce":
         return <AnalyticsPage variant="workforce" />
+      case "helpdesk-dashboard":
+        return <HelpDeskDashboardPage />
     }
   }
 
   return (
     <PreferencesProvider>
-      {activePage === "login" || activePage === "workspaces" || activePage === "invitations" || activePage === "invite-link" ? (
-        renderPage()
-      ) : (
-        <AppLayout activePage={activePage} onNavigate={navigate} activeProcessId={activeProcessId} onNavigateProcess={navigateProcess}>
-          {renderPage()}
-        </AppLayout>
-      )}
-      <Toaster position="top-center" />
+      <AppModeProvider>
+        {activePage === "login" || activePage === "workspaces" || activePage === "invitations" || activePage === "invite-link" ? (
+          renderPage()
+        ) : (
+          <AppLayout activePage={activePage} onNavigate={navigate} activeProcessId={activeProcessId} onNavigateProcess={navigateProcess}>
+            {renderPage()}
+          </AppLayout>
+        )}
+        <Toaster position="top-center" />
+      </AppModeProvider>
     </PreferencesProvider>
   )
 }

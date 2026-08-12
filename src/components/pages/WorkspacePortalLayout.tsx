@@ -2,21 +2,10 @@ import { useMemo } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Building06Icon,
-  Logout01Icon,
   Mail01Icon,
-  ArrowDown01Icon,
-  UserIcon,
-  Settings02Icon,
 } from "@hugeicons/core-free-icons"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { UserMenu } from "@/components/layout/UserMenu"
 import { usePreferences } from "@/contexts/PreferencesContext"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
@@ -62,54 +51,7 @@ export function WorkspacePortalLayout({
                 <img src="https://alurkerja.com/images/alurkerja-logo.png" alt="AlurKerja" className="h-4 w-auto object-contain" />
                 <span className="font-semibold font-heading">AlurKerja</span>
               </button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2 px-2">
-                    <Avatar size="sm">
-                      <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
-                    </Avatar>
-                    <div className="text-left">
-                      <p className="text-xs font-semibold leading-tight">Alice Wang</p>
-                      <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
-                    </div>
-                    <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52">
-                  <div className="flex items-center gap-2.5 px-2 py-2">
-                    <Avatar size="sm">
-                      <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold">Alice Wang</p>
-                      <p className="truncate text-[10px] text-muted-foreground">alice@company.com</p>
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
-                    <HugeiconsIcon icon={UserIcon} className="size-3.5" />
-                    My Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2" onClick={() => {}}>
-                    <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
-                    My Preferences
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
-                    <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
-                    My Workspaces
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
-                    <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
-                    My Invitations
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
-                    <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
-                    Log Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserMenu onNavigate={onNavigate} activePage={activeTab} showMcpConnection />
             </div>
             <div className="flex gap-1">
               <Button variant={activeTab === "workspaces" ? "secondary" : "ghost"} size="sm" className="h-8 flex-1 gap-1.5 text-xs" onClick={() => onNavigate("workspaces")}>
@@ -149,54 +91,7 @@ export function WorkspacePortalLayout({
               </Button>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 px-2">
-                  <Avatar size="sm">
-                    <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <p className="text-xs font-semibold leading-tight">Alice Wang</p>
-                    <p className="text-[10px] leading-tight text-muted-foreground">alice@company.com</p>
-                  </div>
-                  <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <div className="flex items-center gap-2.5 px-2 py-2">
-                  <Avatar size="sm">
-                    <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">AW</AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold">Alice Wang</p>
-                    <p className="truncate text-[10px] text-muted-foreground">alice@company.com</p>
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
-                  <HugeiconsIcon icon={UserIcon} className="size-3.5" />
-                  My Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2" onClick={() => {}}>
-                  <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
-                  My Preferences
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
-                  <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
-                  My Workspaces
-                </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
-                  <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
-                  My Invitations
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
-                  <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserMenu onNavigate={onNavigate} activePage={activeTab} showMcpConnection />
           </header>
         </div>
 
