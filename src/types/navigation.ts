@@ -16,5 +16,7 @@ export type Page =
   | "form-component"
   | "business-processes"
   | "analytics-process"
+  | "process-discovery"
   | "analytics-workforce"
+  | "helpdesk-dashboard"
   | "invite-link"

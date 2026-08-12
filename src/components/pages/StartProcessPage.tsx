@@ -41,6 +41,8 @@ import { Alert, AlertTitle, AlertDescription, AlertAction } from "@/components/u
    Camunda for the user's in-progress input to be safe — see the
    "Save as Draft" PRD. Attachments are intentionally excluded: a real
    implementation should stage them separately (see PRD, "Attachments").
+   Button copy is deliberately "Save Draft" everywhere (matches the terse
+   verb-first labels used elsewhere: Delegate, Unclaim, Complete Task).
 ──────────────────────────────────────────────────────────────────────── */
 
 const CATEGORIES = [
@@ -465,18 +467,18 @@ export function StartProcessPage() {
           {/* In-box submit footer — rests at the box bottom, sticks to the
               viewport when the form overflows so it is always visible */}
           <div className="sticky bottom-0 z-10 rounded-b-4xl border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur sm:px-8">
-            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-              <DraftAutosaveStatus status={status} savedAt={savedAt} className="order-2 sm:order-1" />
-              <div className="order-1 flex items-center gap-2 sm:order-2">
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Button type="button" variant="outline" className="gap-2" onClick={() => { saveNow(); toast.success("Draft saved") }}>
                   <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
-                  Save as Draft
+                  Save Draft
                 </Button>
                 <Button type="submit" size="lg" className="min-w-40 gap-2 rounded-full shadow-sm" disabled={isSubmitting}>
                   {isSubmitting ? "Starting…" : "Start Process"}
                   <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
                 </Button>
               </div>
+              <DraftAutosaveStatus status={status} savedAt={savedAt} />
             </div>
           </div>
         </div>

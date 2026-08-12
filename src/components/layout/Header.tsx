@@ -1,17 +1,11 @@
-import { useState, Fragment } from "react"
+import { Fragment } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Menu02Icon,
   Notification02Icon,
-  UserIcon,
-  Settings02Icon,
-  Logout01Icon,
-  ArrowDown01Icon,
-  Building06Icon,
-  Mail01Icon,
   GridViewIcon,
+  InformationCircleIcon,
 } from "@hugeicons/core-free-icons"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Breadcrumb,
@@ -30,9 +24,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { PreferencesPanel } from "@/components/pages/PreferencesPage"
+import { UserMenu } from "@/components/layout/UserMenu"
 import { usePreferences } from "@/contexts/PreferencesContext"
+import { useAppMode } from "@/contexts/AppModeContext"
 import { cn } from "@/lib/utils"
 import type { Page } from "@/types/navigation"
 import { processes } from "@/components/processes/ProcessList"
@@ -55,7 +49,9 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "form-component": ["Pages", "Form Component"],
   "business-processes": ["Business Processes"],
   "analytics-process": ["Analytics", "Process Analytics"],
+  "process-discovery": ["Analytics", "Process Discovery"],
   "analytics-workforce": ["Analytics", "Workforce Analytics"],
+  "helpdesk-dashboard": ["Analytics", "HelpDesk Dashboard"],
   "invite-link": [],
 }
 
@@ -114,8 +110,8 @@ interface HeaderProps {
 
 export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false, activeProcessId }: HeaderProps) {
   const { color } = usePreferences()
+  const { testMode, setTestMode } = useAppMode()
   const isDefaultAccent = color.id === "zinc"
-  const [preferencesOpen, setPreferencesOpen] = useState(false)
 
   const breadcrumbs = (() => {
     if (activePage === "business-processes" && activeProcessId) {
@@ -127,6 +123,31 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
 
   return (
     <>
+      {testMode && (
+        <div className="sticky top-0 z-40 border-b border-blue-500/20 bg-blue-500/10 backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3 px-4 py-2">
+            <div className="flex items-start gap-2">
+              <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400">
+                <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+              </div>
+
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  You are in Test Mode
+                </p>
+
+                <p className="text-xs text-blue-600/80 dark:text-blue-400/80">
+                  All changes will not affect the live environment
+                </p>
+              </div>
+            </div>
+
+            <Button size="sm" className="h-8 shrink-0" onClick={() => setTestMode(false)}>
+              Switch to Live
+            </Button>
+          </div>
+        </div>
+      )}
       <div className={cn(
         "sticky top-0 z-30 transition-all duration-300",
         scrolled ? "p-0" : "px-3 pt-2"
@@ -276,70 +297,10 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
         </DropdownMenu>
 
         {/* User Profile */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2 px-2">
-              <Avatar size="sm">
-                <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">
-                  AW
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-left hidden sm:block max-w-[160px]">
-                <p className="text-xs font-semibold leading-tight truncate">Alice Wonderland McPherson</p>
-                <p className="text-[10px] text-muted-foreground leading-tight truncate">alice.wonderland.mcpherson@internationalcorporation.com</p>
-              </div>
-              <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground hidden sm:block" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52">
-            <div className="flex items-center gap-2.5 px-2 py-2">
-              <Avatar size="sm">
-                <AvatarFallback className="bg-foreground/[0.08] text-foreground text-[10px]">
-                  AW
-                </AvatarFallback>
-              </Avatar>
-              <div className="min-w-0">
-                <p className="truncate font-semibold">Alice Wonderland McPherson</p>
-                <p className="truncate text-[10px] text-muted-foreground">alice.wonderland.mcpherson@internationalcorporation.com</p>
-              </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("profile")}>
-              <HugeiconsIcon icon={UserIcon} className="size-3.5" />
-              My Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2" onClick={() => setPreferencesOpen(true)}>
-              <HugeiconsIcon icon={Settings02Icon} className="size-3.5" />
-              My Preferences
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("workspaces")}>
-              <HugeiconsIcon icon={Building06Icon} className="size-3.5" />
-              My Workspaces
-            </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2" onClick={() => onNavigate("invitations")}>
-              <HugeiconsIcon icon={Mail01Icon} className="size-3.5" />
-              My Invitations
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" className="gap-2" onClick={() => onNavigate("login")}>
-              <HugeiconsIcon icon={Logout01Icon} className="size-3.5" />
-              Log Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserMenu onNavigate={onNavigate} activePage={activePage} showAdvanced />
       </div>
       </header>
       </div>
-
-      <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-        <DialogContent
-          className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] overflow-hidden p-0 sm:max-w-3xl"
-          overlayClassName="supports-backdrop-filter:backdrop-blur-none backdrop-blur-none"
-        >
-          <PreferencesPanel inDialog />
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
