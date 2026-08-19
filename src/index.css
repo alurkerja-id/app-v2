@@ -40,6 +40,36 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    --input-surface: transparent;
+
+    /* ── Editable-field depth (from AlurKerja DS · previews/08-form-controls) ──
+       An editable field carries no fill: four thin layers do the work — a
+       hairline ring, an inner shadow falling from the top edge, a 1px light
+       catch along the bottom inner edge, and a hair of outer lift. The field
+       reads as pressed into the card. That depth IS the affordance: it deepens
+       on hover, and readonly/disabled give it up entirely for a flat fill. */
+    --input-depth:
+        inset 0 0 0 1px var(--border),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.08),
+        inset 0 -1px 0 rgb(255 255 255 / 0.7),
+        0 1px 1.5px rgb(0 0 0 / 0.04);
+    --input-depth-hover:
+        inset 0 0 0 1px var(--border),
+        inset 0 1.5px 4px rgb(0 0 0 / 0.13),
+        inset 0 -1px 0 rgb(255 255 255 / 0.7),
+        0 1px 2px rgb(0 0 0 / 0.06);
+    --input-depth-focus:
+        inset 0 0 0 1px color-mix(in oklab, var(--ring) 50%, transparent),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.07),
+        0 0 0 3px color-mix(in oklab, var(--ring) 14%, transparent);
+    --input-depth-invalid:
+        inset 0 0 0 1px var(--destructive),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.08),
+        inset 0 -1px 0 rgb(255 255 255 / 0.7),
+        0 0 0 3px color-mix(in oklab, var(--destructive) 20%, transparent);
+    --input-depth-readonly-focus:
+        0 0 0 3px color-mix(in oklab, var(--ring) 10%, transparent);
 }
 
 .dark {
@@ -74,6 +104,33 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+
+    /* Translucent rather than a flat token so the well sits below whatever
+       surface it lands on (card at 0.205, page at 0.145). */
+    --input-surface: rgb(0 0 0 / 0.22);
+
+    /* Same four-layer structure, re-tuned for a dark surface (see :root note). */
+    --input-depth:
+        inset 0 0 0 1px var(--border),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.45),
+        inset 0 -1px 0 rgb(255 255 255 / 0.06),
+        0 1px 1.5px rgb(0 0 0 / 0.25);
+    --input-depth-hover:
+        inset 0 0 0 1px var(--border),
+        inset 0 1.5px 4px rgb(0 0 0 / 0.6),
+        inset 0 -1px 0 rgb(255 255 255 / 0.07),
+        0 1px 2px rgb(0 0 0 / 0.3);
+    --input-depth-focus:
+        inset 0 0 0 1px color-mix(in oklab, var(--ring) 55%, transparent),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.4),
+        0 0 0 3px color-mix(in oklab, var(--ring) 16%, transparent);
+    --input-depth-invalid:
+        inset 0 0 0 1px var(--destructive),
+        inset 0 1.5px 3px rgb(0 0 0 / 0.45),
+        inset 0 -1px 0 rgb(255 255 255 / 0.06),
+        0 0 0 3px color-mix(in oklab, var(--destructive) 25%, transparent);
+    --input-depth-readonly-focus:
+        0 0 0 3px color-mix(in oklab, var(--ring) 12%, transparent);
 }
 
 @theme inline {

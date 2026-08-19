@@ -168,7 +168,7 @@ function DateField({ value, onChange }: { value: string; onChange: (value: strin
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex h-9 w-full items-center justify-between gap-2 rounded-3xl border border-transparent bg-input/50 px-3 py-1 text-left text-sm transition-[color,box-shadow,background-color] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
+          className="flex h-9 w-full items-center justify-between gap-2 rounded-3xl border border-transparent bg-[var(--input-surface)] shadow-[var(--input-depth)] [&:hover:not(:focus-visible):not(:disabled)]:shadow-[var(--input-depth-hover)] focus-visible:shadow-[var(--input-depth-focus)] disabled:shadow-none px-3 py-1 text-left text-sm transition-[color,box-shadow,background-color] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
         >
           <span className={cn("truncate", !date && "text-muted-foreground")}>
             {date ? format(date, "dd MMM yyyy") : "Pick a date"}

@@ -93,7 +93,57 @@ const DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
 // Luma-style trigger (matches Input/NativeSelect: rounded-3xl pill, bg-input/50).
 const dateTriggerClass =
-  "flex h-9 items-center justify-between gap-2 rounded-3xl border border-transparent bg-input/50 px-3 py-1 text-left text-sm transition-[color,box-shadow,background-color] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50"
+  "flex h-9 items-center justify-between gap-2 rounded-3xl border border-transparent bg-[var(--input-surface)] shadow-[var(--input-depth)] [&:hover:not(:focus-visible):not(:disabled)]:shadow-[var(--input-depth-hover)] focus-visible:shadow-[var(--input-depth-focus)] disabled:shadow-none px-3 py-1 text-left text-sm transition-[color,box-shadow,background-color] outline-none disabled:cursor-not-allowed disabled:border-transparent disabled:bg-muted disabled:text-muted-foreground"
+
+/* ── Field states ─────────────────────────────────────────────────────────
+   Three distinct states, and the difference between the last two matters:
+
+   active    editable. Clean surface + border + inset well = "you can type here".
+   readonly  shows a value the user may not change, but MAY read, select and
+             copy. Uses the `readOnly` attribute: still focusable, still
+             announced by screen readers, still submitted with the form.
+             Greyed fill (the conventional "inactive" cue) but FULL-CONTRAST
+             text — the value is information, so it must stay readable.
+   disabled  not available (yet / no permission). Uses `disabled`: skipped by
+             keyboard and assistive tech, not submitted. Same greyed fill AND
+             muted text, plus a not-allowed cursor.
+
+   Read-only and disabled share the greyed fill on purpose — they are both
+   "not editable". They are told apart by text contrast, cursor and behaviour
+   (focusable / submitted vs not), which is what actually differs.
+─────────────────────────────────────────────────────────────────────────── */
+
+type FieldState = "active" | "readonly" | "disabled"
+
+const FIELD_STATES: { id: FieldState; label: string; note: string }[] = [
+  { id: "active", label: "Active", note: "editable" },
+  { id: "readonly", label: "Read-only", note: "value shown · selectable · submitted" },
+  { id: "disabled", label: "Disabled", note: "unavailable · not submitted" },
+]
+
+/** Props for native text controls (input / textarea) that support `readOnly`. */
+function ctl(state: FieldState) {
+  return { disabled: state === "disabled", readOnly: state === "readonly" }
+}
+
+/** Controls with no native read-only mode (select, checkbox, radio, colour…).
+    Only `disabled` applies; the read-only column is made inert by its wrapper,
+    so these still render at full contrast with their real value visible. */
+function ctlNoReadOnly(state: FieldState) {
+  return { disabled: state === "disabled" }
+}
+
+/* Controls with no HTML read-only equivalent (select, checkbox, switch,
+   slider, OTP…) are made inert by the column wrapper instead, so the
+   read-only column still renders them at full contrast with their real
+   value visible. Text inputs stay pointer-interactive so the value can be
+   selected and copied — the whole point of read-only over disabled. */
+const READONLY_COLUMN_CLASS = cn(
+  "pointer-events-none [&_input]:pointer-events-auto [&_textarea]:pointer-events-auto",
+  "[&_[data-slot=select-trigger]]:border-transparent [&_[data-slot=select-trigger]]:bg-muted [&_[data-slot=select-trigger]]:shadow-none",
+  "[&_[data-slot=native-select]]:border-transparent [&_[data-slot=native-select]]:bg-muted [&_[data-slot=native-select]]:shadow-none",
+  "[&_[data-slot=input-otp-group]]:bg-muted [&_[data-slot=input-otp-group]]:shadow-none",
+)
 
 /* ── Layout primitives ───────────────────────────────────────────────── */
 
@@ -104,7 +154,7 @@ function ShowField({
 }: {
   title: string
   hint?: string
-  children: (disabled: boolean) => React.ReactNode
+  children: (state: FieldState) => React.ReactNode
 }) {
   return (
     <div className="border-b border-border/60 py-5 last:border-0">
@@ -112,10 +162,36 @@ function ShowField({
         {title}
         {hint && <span className="ml-1.5 font-normal text-muted-foreground">— {hint}</span>}
       </p>
-      <div className="grid grid-cols-2 gap-6 max-sm:grid-cols-1">
-        <div className="min-w-0">{children(false)}</div>
-        <div className="min-w-0">{children(true)}</div>
+      <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+        {FIELD_STATES.map((st) => (
+          <div key={st.id} className="min-w-0">
+            {/* per-column label, only on stacked (mobile) layout */}
+            <p className="mb-1.5 hidden text-[10px] font-semibold uppercase tracking-wider text-muted-foreground max-lg:block">
+              {st.label}
+            </p>
+            <div
+              className={cn("min-w-0", st.id === "readonly" && READONLY_COLUMN_CLASS)}
+              aria-readonly={st.id === "readonly" || undefined}
+            >
+              {children(st.id)}
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
+  )
+}
+
+/** Sticky column headings so the three states stay identifiable while scrolling. */
+function StateLegend() {
+  return (
+    <div className="sticky top-[4.5rem] z-10 mb-3 grid grid-cols-3 gap-6 rounded-xl border border-border/60 bg-background/85 px-4 py-2 backdrop-blur max-lg:hidden sm:px-6">
+      {FIELD_STATES.map((st) => (
+        <div key={st.id} className="min-w-0">
+          <p className="text-xs font-semibold text-foreground">{st.label}</p>
+          <p className="truncate text-[11px] text-muted-foreground">{st.note}</p>
+        </div>
+      ))}
     </div>
   )
 }
@@ -130,12 +206,25 @@ function Section({ id, title, visible = true, children }: { id: string; title: s
   )
 }
 
-/* a faded read-only box that just shows a value (for composite widgets) */
-function ReadOnlyBox({ children, className }: { children: React.ReactNode; className?: string }) {
+/* Value display for composite widgets that have no native read-only mode.
+   Same chrome in both states (no fill + hairline outline); the difference is
+   emphasis — read-only keeps the value at full contrast and selectable,
+   disabled mutes it and shows a not-allowed cursor. */
+function ReadOnlyBox({
+  state = "disabled",
+  children,
+  className,
+}: {
+  state?: FieldState
+  children: React.ReactNode
+  className?: string
+}) {
+  const isDisabled = state === "disabled"
   return (
     <div
       className={cn(
-        "flex min-h-9 items-center rounded-3xl border border-transparent bg-input/50 px-3 py-2 text-sm text-muted-foreground opacity-70",
+        "flex min-h-9 items-center rounded-3xl border border-transparent bg-muted px-3 py-2 text-sm",
+        isDisabled ? "cursor-not-allowed text-muted-foreground" : "cursor-default text-foreground select-text",
         className,
       )}
     >
@@ -146,19 +235,21 @@ function ReadOnlyBox({ children, className }: { children: React.ReactNode; class
 
 /* ── Stateful demo widgets ───────────────────────────────────────────── */
 
-function SwitchDemo({ disabled }: { disabled: boolean }) {
+function SwitchDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   const [on, setOn] = useState(true)
   return (
     <div className="flex items-center gap-2">
-      <Switch checked={on} onCheckedChange={setOn} disabled={disabled} id={`sw-${disabled}`} />
-      <Label htmlFor={`sw-${disabled}`} className={cn(disabled && "text-muted-foreground")}>
+      <Switch checked={on} onCheckedChange={setOn} disabled={disabled} id={`sw-${state}`} />
+      <Label htmlFor={`sw-${state}`} className={cn(disabled && "text-muted-foreground")}>
         Email notifications
       </Label>
     </div>
   )
 }
 
-function ToggleGroupDemo({ disabled }: { disabled: boolean }) {
+function ToggleGroupDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   return (
     <ToggleGroup type="single" defaultValue="medium" disabled={disabled} variant="outline">
       <ToggleGroupItem value="low">Low</ToggleGroupItem>
@@ -168,7 +259,8 @@ function ToggleGroupDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function CheckboxGroupDemo({ disabled }: { disabled: boolean }) {
+function CheckboxGroupDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   const items = [
     { id: "terms", label: "Accept terms", def: true },
     { id: "marketing", label: "Marketing emails", def: false },
@@ -185,7 +277,8 @@ function CheckboxGroupDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function SliderDemo({ disabled }: { disabled: boolean }) {
+function SliderDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   const [v, setV] = useState([60])
   return (
     <div className="pt-2">
@@ -195,8 +288,9 @@ function SliderDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function ComboboxDemo({ disabled }: { disabled: boolean }) {
-  if (disabled) return <ReadOnlyBox>Acme Corporation</ReadOnlyBox>
+function ComboboxDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  if (inert) return <ReadOnlyBox state={state}>Acme Corporation</ReadOnlyBox>
   return (
     <Combobox>
       <ComboboxInput placeholder="Search company…" showTrigger showClear className="w-full" />
@@ -213,7 +307,9 @@ function ComboboxDemo({ disabled }: { disabled: boolean }) {
 }
 
 // Email with leading icon + live client-side validation (error state).
-function EmailValidatedDemo({ disabled }: { disabled: boolean }) {
+function EmailValidatedDemo({ state }: { state: FieldState }) {
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   const [v, setV] = useState("anita@javan.co.id")
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
   const showError = v.length > 0 && !valid
@@ -226,6 +322,7 @@ function EmailValidatedDemo({ disabled }: { disabled: boolean }) {
           value={v}
           onChange={(e) => setV(e.target.value)}
           disabled={disabled}
+          readOnly={readOnly}
           aria-invalid={showError}
           placeholder="name@company.com"
           className={cn("pl-9", showError && "border-destructive focus-visible:ring-destructive/30")}
@@ -237,9 +334,10 @@ function EmailValidatedDemo({ disabled }: { disabled: boolean }) {
 }
 
 // Single remote select — fetches provinces live from the mock API.
-function RemoteSelectDemo({ disabled }: { disabled: boolean }) {
-  const { data, loading, error } = useRegions(disabled ? null : "/states")
-  if (disabled) return <ReadOnlyBox>DKI JAKARTA</ReadOnlyBox>
+function RemoteSelectDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const { data, loading, error } = useRegions(inert ? null : "/states")
+  if (inert) return <ReadOnlyBox state={state}>DKI JAKARTA</ReadOnlyBox>
   return (
     <div>
       <NativeSelect className="w-full" disabled={loading} defaultValue="">
@@ -252,7 +350,8 @@ function RemoteSelectDemo({ disabled }: { disabled: boolean }) {
 }
 
 // Remote select that loads nothing until the user types — debounced query.
-function SearchRemoteDemo({ disabled }: { disabled: boolean }) {
+function SearchRemoteDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
   const [value, setValue] = useState("")
   const [open, setOpen] = useState(false)
   const [results, setResults] = useState<Region[]>([])
@@ -271,7 +370,7 @@ function SearchRemoteDemo({ disabled }: { disabled: boolean }) {
     return () => { alive = false; clearTimeout(t) }
   }, [value])
 
-  if (disabled) return <ReadOnlyBox>SUMATERA UTARA</ReadOnlyBox>
+  if (inert) return <ReadOnlyBox state={state}>SUMATERA UTARA</ReadOnlyBox>
   return (
     <div className="relative">
       <Input
@@ -309,20 +408,21 @@ function SearchRemoteDemo({ disabled }: { disabled: boolean }) {
 
 // Cascade — province → city → district, each fetched on parent change.
 // Dropdowns are left-aligned (flex), not justified to equal columns.
-function CascadeDemo({ disabled }: { disabled: boolean }) {
+function CascadeDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
   const [prov, setProv] = useState("")
   const [city, setCity] = useState("")
   const [dist, setDist] = useState("")
-  const provinces = useRegions(disabled ? null : "/states")
-  const cities = useRegions(!disabled && prov ? `/states/${prov}/cities` : null)
-  const districts = useRegions(!disabled && city ? `/cities/${city}/districts` : null)
+  const provinces = useRegions(inert ? null : "/states")
+  const cities = useRegions(!inert && prov ? `/states/${prov}/cities` : null)
+  const districts = useRegions(!inert && city ? `/cities/${city}/districts` : null)
 
-  if (disabled) {
+  if (inert) {
     return (
       <div className="flex flex-wrap items-start gap-2">
-        <ReadOnlyBox className="w-40 truncate">DKI JAKARTA</ReadOnlyBox>
-        <ReadOnlyBox className="w-40 truncate">JAKARTA SELATAN</ReadOnlyBox>
-        <ReadOnlyBox className="w-40 truncate">KEBAYORAN BARU</ReadOnlyBox>
+        <ReadOnlyBox state={state} className="w-40 truncate">DKI JAKARTA</ReadOnlyBox>
+        <ReadOnlyBox state={state} className="w-40 truncate">JAKARTA SELATAN</ReadOnlyBox>
+        <ReadOnlyBox state={state} className="w-40 truncate">KEBAYORAN BARU</ReadOnlyBox>
       </div>
     )
   }
@@ -347,19 +447,21 @@ function CascadeDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function TagsDemo({ disabled }: { disabled: boolean }) {
+function TagsDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
   const [tags, setTags] = useState(["urgent", "finance"])
   const [draft, setDraft] = useState("")
   const add = () => { const t = draft.trim(); if (t && !tags.includes(t)) setTags([...tags, t]); setDraft("") }
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5 rounded-md border border-input px-2 py-1.5", disabled && "bg-muted/40")}>
+    <div className={cn("flex flex-wrap items-center gap-1.5 rounded-md border border-input px-2 py-1.5", inert && "border-transparent bg-muted", disabled && "cursor-not-allowed text-muted-foreground")}>
       {tags.map((t) => (
         <Badge key={t} variant="secondary" className="gap-1">
           {t}
-          {!disabled && <button onClick={() => setTags(tags.filter((x) => x !== t))} className="text-muted-foreground hover:text-foreground">×</button>}
+          {!inert && <button onClick={() => setTags(tags.filter((x) => x !== t))} className="text-muted-foreground hover:text-foreground">×</button>}
         </Badge>
       ))}
-      {!disabled && (
+      {!inert && (
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -372,7 +474,8 @@ function TagsDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function RatingDemo({ disabled }: { disabled: boolean }) {
+function RatingDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   const [val, setVal] = useState(4)
   return (
     <div className="flex items-center gap-1 pt-1">
@@ -390,10 +493,11 @@ function RatingDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function DatePickerDemo({ disabled, withTime = false }: { disabled: boolean; withTime?: boolean }) {
+function DatePickerDemo({ state, withTime = false }: { state: FieldState; withTime?: boolean }) {
+  const inert = state !== "active"
   const [date, setDate] = useState<Date | undefined>(new Date(2026, 2, 18))
   const label = date ? format(date, withTime ? "dd MMM yyyy, HH:mm" : "dd MMM yyyy") : "Pick a date"
-  if (disabled) return <ReadOnlyBox>{label}</ReadOnlyBox>
+  if (inert) return <ReadOnlyBox state={state}>{label}</ReadOnlyBox>
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -425,12 +529,13 @@ const RANGE_PRESETS: { label: string; range: () => DateRange }[] = [
   { label: "This year", range: () => ({ from: startOfYear(new Date()), to: new Date() }) },
 ]
 
-function DateRangeDemo({ disabled }: { disabled: boolean }) {
+function DateRangeDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
   const [range, setRange] = useState<DateRange | undefined>({ from: new Date(2026, 2, 1), to: new Date(2026, 2, 15) })
   const label = range?.from
     ? range.to ? `${format(range.from, "dd MMM")} – ${format(range.to, "dd MMM yyyy")}` : format(range.from, "dd MMM yyyy")
     : "Pick a range"
-  if (disabled) return <ReadOnlyBox>{label}</ReadOnlyBox>
+  if (inert) return <ReadOnlyBox state={state}>{label}</ReadOnlyBox>
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -459,10 +564,11 @@ function DateRangeDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function MonthPickerDemo({ disabled }: { disabled: boolean }) {
+function MonthPickerDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
   const [m, setM] = useState(2)
   const [open, setOpen] = useState(false)
-  if (disabled) return <ReadOnlyBox className="w-44">{MONTHS[m]}</ReadOnlyBox>
+  if (inert) return <ReadOnlyBox state={state} className="w-44">{MONTHS[m]}</ReadOnlyBox>
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -488,11 +594,12 @@ function MonthPickerDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function YearPickerDemo({ disabled }: { disabled: boolean }) {
+function YearPickerDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
   const [year, setYear] = useState(2026)
   const [open, setOpen] = useState(false)
   const [pageStart, setPageStart] = useState(2026 - (2026 % 12)) // align to 12-year groups
-  if (disabled) return <ReadOnlyBox className="w-44">{year}</ReadOnlyBox>
+  if (inert) return <ReadOnlyBox state={state} className="w-44">{year}</ReadOnlyBox>
   const years = Array.from({ length: 12 }, (_, i) => pageStart + i)
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -524,7 +631,8 @@ function YearPickerDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function DmyDemo({ disabled }: { disabled: boolean }) {
+function DmyDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   return (
     <div className="flex gap-1.5">
       <NativeSelect defaultValue="17" disabled={disabled} className="w-16">
@@ -540,7 +648,8 @@ function DmyDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function OtpDemo({ disabled }: { disabled: boolean }) {
+function OtpDemo({ state }: { state: FieldState }) {
+  const disabled = state === "disabled"
   return (
     <InputOTP maxLength={6} defaultValue="1284" disabled={disabled}>
       <InputOTPGroup>
@@ -554,7 +663,9 @@ function OtpDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function MaskedDemo({ disabled }: { disabled: boolean }) {
+function MaskedDemo({ state }: { state: FieldState }) {
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   const [val, setVal] = useState("09.254.294.3-407.000")
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const d = e.target.value.replace(/\D/g, "").slice(0, 15)
@@ -566,11 +677,13 @@ function MaskedDemo({ disabled }: { disabled: boolean }) {
     if (d.length > 12) out = `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}.${d.slice(8, 9)}-${d.slice(9, 12)}.${d.slice(12)}`
     setVal(out)
   }
-  return <Input value={val} onChange={onChange} disabled={disabled} placeholder="00.000.000.0-000.000" inputMode="numeric" />
+  return <Input value={val} onChange={onChange} disabled={disabled} readOnly={readOnly} placeholder="00.000.000.0-000.000" inputMode="numeric" />
 }
 
 // Rupiah currency — auto-formats digits with thousand separators as you type.
-function CurrencyDemo({ disabled }: { disabled: boolean }) {
+function CurrencyDemo({ state }: { state: FieldState }) {
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   const [raw, setRaw] = useState("1250000")
   const display = raw ? Number(raw).toLocaleString("id-ID") : ""
   return (
@@ -580,6 +693,7 @@ function CurrencyDemo({ disabled }: { disabled: boolean }) {
         value={display}
         onChange={(e) => setRaw(e.target.value.replace(/\D/g, ""))}
         disabled={disabled}
+        readOnly={readOnly}
         inputMode="numeric"
         placeholder="0"
         className="pl-9 tabular-nums"
@@ -596,7 +710,9 @@ const DIAL_CODES = [
   { value: "+44", flag: "🇬🇧", name: "United Kingdom" },
 ]
 
-function PhoneDemo({ disabled }: { disabled: boolean }) {
+function PhoneDemo({ state }: { state: FieldState }) {
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   const [code, setCode] = useState("+62")
   const sel = DIAL_CODES.find((c) => c.value === code) ?? DIAL_CODES[0]
   return (
@@ -618,25 +734,29 @@ function PhoneDemo({ disabled }: { disabled: boolean }) {
           ))}
         </SelectContent>
       </Select>
-      <Input type="tel" defaultValue="812 3456 7890" disabled={disabled} className="rounded-l-none" />
+      <Input type="tel" defaultValue="812 3456 7890" disabled={disabled} readOnly={readOnly} className="rounded-l-none" />
     </div>
   )
 }
 
-function AddonDemo({ disabled, suffix }: { disabled: boolean; suffix: string }) {
+function AddonDemo({ state, suffix }: { state: FieldState; suffix: string }) {
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   return (
     <div className="relative">
-      <Input defaultValue="75" disabled={disabled} inputMode="numeric" className="pr-9" />
+      <Input defaultValue="75" disabled={disabled} readOnly={readOnly} inputMode="numeric" className="pr-9" />
       <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{suffix}</span>
     </div>
   )
 }
 
-function SignatureDemo({ disabled }: { disabled: boolean }) {
+function SignatureDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const drawing = useRef(false)
   const draw = (e: React.PointerEvent, down: boolean) => {
-    if (disabled) return
+    if (inert) return
     const c = canvasRef.current
     if (!c) return
     const rect = c.getBoundingClientRect()
@@ -657,10 +777,10 @@ function SignatureDemo({ disabled }: { disabled: boolean }) {
         onPointerUp={() => (drawing.current = false)}
         className={cn(
           "h-24 w-full rounded-md border border-input bg-card",
-          disabled ? "bg-muted/40 opacity-70" : "cursor-crosshair touch-none",
+          inert ? cn("border-transparent bg-muted", disabled && "cursor-not-allowed") : "cursor-crosshair touch-none",
         )}
       />
-      {disabled ? (
+      {inert ? (
         <p className="mt-1 text-xs italic text-muted-foreground">Signed — Budi Santoso</p>
       ) : (
         <Button variant="ghost" size="sm" className="mt-1 h-7 px-2 text-xs" onClick={clear}>Clear</Button>
@@ -669,18 +789,20 @@ function SignatureDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function RichTextDemo({ disabled }: { disabled: boolean }) {
+function RichTextDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
   const editor = useEditor({
     extensions: [StarterKit, Underline, Link.configure({ openOnClick: false })],
     content: "<p>This <strong>contract</strong> is governed by the laws of the Republic of Indonesia.</p>",
-    editable: !disabled,
+    editable: !inert,
     editorProps: {
       attributes: {
         class: "min-h-[100px] px-3 py-2 text-sm outline-none prose prose-sm dark:prose-invert max-w-none",
       },
     },
   })
-  useEffect(() => { editor?.setEditable(!disabled) }, [editor, disabled])
+  useEffect(() => { editor?.setEditable(!inert) }, [editor, inert])
   // Mirrors app-react-v2 discussion composer (EditorToolbar.tsx) formats.
   const promptLink = (e: Editor) => {
     const prev = e.getAttributes("link").href as string | undefined
@@ -691,8 +813,8 @@ function RichTextDemo({ disabled }: { disabled: boolean }) {
   }
   const Div = () => <span className="mx-0.5 h-5 w-px bg-border" />
   return (
-    <div className={cn("overflow-hidden rounded-md border border-input", disabled && "bg-muted/40")}>
-      {!disabled && (
+    <div className={cn("overflow-hidden rounded-md border border-input", inert && "border-transparent bg-muted", disabled && "cursor-not-allowed text-muted-foreground")}>
+      {!inert && (
         <div className="flex flex-wrap items-center gap-0.5 border-b border-border/60 px-1.5 py-1">
           <ToolbarBtn ed={editor} cmd={(e) => e.chain().focus().toggleBold().run()} active={editor?.isActive("bold")}><span className="font-bold">B</span></ToolbarBtn>
           <ToolbarBtn ed={editor} cmd={(e) => e.chain().focus().toggleItalic().run()} active={editor?.isActive("italic")}><span className="italic">I</span></ToolbarBtn>
@@ -727,29 +849,31 @@ function ToolbarBtn({ ed, cmd, active, children }: { ed: Editor | null; cmd: (e:
   )
 }
 
-function FileUploadDemo({ disabled }: { disabled: boolean }) {
-  const [files, setFiles] = useState<string[]>(disabled ? ["contract-draft.pdf"] : [])
+function FileUploadDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
+  const [files, setFiles] = useState<string[]>(inert ? ["contract-draft.pdf"] : [])
   const onDrop = useCallback((accepted: File[]) => setFiles((p) => [...p, ...accepted.map((f) => f.name)]), [])
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, disabled })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, disabled: inert })
   return (
     <div>
       <div
         {...getRootProps()}
         className={cn(
           "flex flex-col items-center justify-center rounded-md border border-dashed border-input px-4 py-5 text-center text-sm",
-          disabled ? "cursor-not-allowed bg-muted/40 text-muted-foreground" : "cursor-pointer hover:border-primary/50 hover:bg-muted/40",
+          inert ? cn("border-dashed border-border bg-muted", disabled ? "cursor-not-allowed text-muted-foreground" : "cursor-default") : "cursor-pointer hover:border-primary/50 hover:bg-muted/40",
           isDragActive && "border-primary bg-primary/5",
         )}
       >
         <input {...getInputProps()} />
-        <p className="text-muted-foreground">{disabled ? "Upload disabled" : isDragActive ? "Drop files here…" : "Drag files or click to upload"}</p>
+        <p className="text-muted-foreground">{inert ? (disabled ? "Upload disabled" : "Upload (read-only)") : isDragActive ? "Drop files here…" : "Drag files or click to upload"}</p>
       </div>
       {files.length > 0 && (
         <div className="mt-2 flex flex-col gap-1">
           {files.map((f, i) => (
             <div key={i} className="flex items-center justify-between rounded-md border border-border bg-card px-2 py-1 text-xs">
               <span className="truncate">📄 {f}</span>
-              {!disabled && <button onClick={() => setFiles(files.filter((_, x) => x !== i))} className="text-muted-foreground hover:text-foreground">×</button>}
+              {!inert && <button onClick={() => setFiles(files.filter((_, x) => x !== i))} className="text-muted-foreground hover:text-foreground">×</button>}
             </div>
           ))}
         </div>
@@ -759,8 +883,11 @@ function FileUploadDemo({ disabled }: { disabled: boolean }) {
 }
 
 // Search bar that queries the live province API (debounced) — icon + clear.
-function SearchDemo({ disabled }: { disabled: boolean }) {
-  const [v, setV] = useState(disabled ? "Jawa Barat" : "")
+function SearchDemo({ state }: { state: FieldState }) {
+  const readOnly = state === "readonly"
+  const inert = state !== "active"
+  const disabled = state === "disabled"
+  const [v, setV] = useState(inert ? "Jawa Barat" : "")
   const [open, setOpen] = useState(false)
   const [results, setResults] = useState<Region[]>([])
   const [loading, setLoading] = useState(false)
@@ -787,13 +914,14 @@ function SearchDemo({ disabled }: { disabled: boolean }) {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         disabled={disabled}
+        readOnly={readOnly}
         placeholder="Search province…"
         className="px-9"
       />
-      {v && !disabled && (
+      {v && !inert && (
         <button onMouseDown={(e) => e.preventDefault()} onClick={() => { setV(""); setResults([]) }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">×</button>
       )}
-      {open && v.trim() && !disabled && (
+      {open && v.trim() && !inert && (
         <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-border bg-popover shadow-md">
           {loading ? (
             <p className="px-3 py-2 text-sm text-muted-foreground">Searching…</p>
@@ -814,47 +942,73 @@ function SearchDemo({ disabled }: { disabled: boolean }) {
   )
 }
 
-function StepperDemo({ disabled }: { disabled: boolean }) {
+function StepperDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const readOnly = state === "readonly"
+  const disabled = state === "disabled"
   const [n, setN] = useState(3)
+  // One field, not three controls: the wrapper carries the depth chrome and the
+  // ± buttons and the number sit inside it flat. (The old `border-x-0` trick
+  // cancelled real borders — the ring is a box-shadow now, so it can't be.)
+  const step = (delta: number) => setN((x) => Math.max(0, x + delta))
+  const btn = "flex size-9 shrink-0 items-center justify-center text-base text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:text-muted-foreground/50"
   return (
-    <div className="flex w-fit items-center">
-      <Button type="button" variant="outline" size="icon" disabled={disabled} onClick={() => setN((x) => Math.max(0, x - 1))} className="rounded-l-md rounded-r-none">−</Button>
-      <Input value={n} onChange={(e) => setN(Number(e.target.value.replace(/\D/g, "")) || 0)} disabled={disabled} inputMode="numeric" className="w-14 rounded-none border-x-0 text-center tabular-nums" />
-      <Button type="button" variant="outline" size="icon" disabled={disabled} onClick={() => setN((x) => x + 1)} className="rounded-r-md rounded-l-none">+</Button>
+    <div
+      className={cn(
+        "flex w-fit items-center rounded-3xl transition-shadow",
+        inert
+          ? "bg-muted"
+          : "bg-[var(--input-surface)] shadow-[var(--input-depth)] focus-within:shadow-[var(--input-depth-focus)]",
+      )}
+    >
+      <button type="button" disabled={inert} onClick={() => step(-1)} className={cn(btn, "rounded-l-3xl")} aria-label="Decrease">−</button>
+      <Input
+        value={n}
+        onChange={(e) => setN(Number(e.target.value.replace(/\D/g, "")) || 0)}
+        disabled={disabled}
+        readOnly={readOnly}
+        inputMode="numeric"
+        className="w-12 border-0 bg-transparent text-center tabular-nums shadow-none focus-visible:shadow-none disabled:bg-transparent disabled:shadow-none [&:read-only:not(:disabled)]:bg-transparent [&:read-only:not(:disabled)]:shadow-none"
+      />
+      <button type="button" disabled={inert} onClick={() => step(1)} className={cn(btn, "rounded-r-3xl")} aria-label="Increase">+</button>
     </div>
   )
 }
 
-function AvatarUploadDemo({ disabled }: { disabled: boolean }) {
-  const [url, setUrl] = useState<string | null>(disabled ? "preset" : null)
+function AvatarUploadDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
+  const [url, setUrl] = useState<string | null>(inert ? "preset" : null)
   const onDrop = useCallback((files: File[]) => { const f = files[0]; if (f) setUrl(URL.createObjectURL(f)) }, [])
-  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: { "image/*": [] }, multiple: false, disabled })
+  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: { "image/*": [] }, multiple: false, disabled: inert })
   return (
     <div className="flex items-center gap-3">
       <div
         {...getRootProps()}
         className={cn(
           "flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-dashed border-input bg-muted/40 text-xs text-muted-foreground",
-          disabled ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:border-primary/50",
+          inert ? cn("border-transparent bg-muted", disabled && "cursor-not-allowed") : "cursor-pointer hover:border-primary/50",
         )}
       >
         <input {...getInputProps()} />
         {url === "preset" ? <span className="text-2xl">🧑</span> : url ? <img src={url} alt="" className="size-full object-cover" /> : <span>Photo</span>}
       </div>
-      <p className="text-xs text-muted-foreground">{disabled ? "Locked" : "Click or drop image · max 2 MB"}</p>
+      <p className="text-xs text-muted-foreground">{inert ? (disabled ? "Locked" : "Read-only") : "Click or drop image · max 2 MB"}</p>
     </div>
   )
 }
 
 // Image upload with a basic editor: rotate, flip, zoom, crop frame.
-function ImageEditorDemo({ disabled }: { disabled: boolean }) {
-  const [src, setSrc] = useState<string | null>(disabled ? "preset" : null)
+function ImageEditorDemo({ state }: { state: FieldState }) {
+  const inert = state !== "active"
+  const disabled = state === "disabled"
+  const [src, setSrc] = useState<string | null>(inert ? "preset" : null)
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [flip, setFlip] = useState(false)
   const reset = () => { setRotation(0); setZoom(1); setFlip(false) }
   const onDrop = useCallback((files: File[]) => { const f = files[0]; if (f) { setSrc(URL.createObjectURL(f)); setRotation(0); setZoom(1); setFlip(false) } }, [])
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { "image/*": [] }, multiple: false, disabled })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { "image/*": [] }, multiple: false, disabled: inert })
 
   if (!src) {
     return (
@@ -862,7 +1016,7 @@ function ImageEditorDemo({ disabled }: { disabled: boolean }) {
         {...getRootProps()}
         className={cn(
           "flex flex-col items-center justify-center rounded-md border border-dashed border-input px-4 py-6 text-center text-sm",
-          disabled ? "cursor-not-allowed bg-muted/40 text-muted-foreground" : "cursor-pointer hover:border-primary/50 hover:bg-muted/40",
+          inert ? cn("border-dashed border-border bg-muted", disabled ? "cursor-not-allowed text-muted-foreground" : "cursor-default") : "cursor-pointer hover:border-primary/50 hover:bg-muted/40",
           isDragActive && "border-primary bg-primary/5",
         )}
       >
@@ -890,7 +1044,7 @@ function ImageEditorDemo({ disabled }: { disabled: boolean }) {
         <Button type="button" variant="outline" size="sm" disabled={disabled}>⛶ Crop</Button>
         <span className="ml-1 text-xs text-muted-foreground">Zoom</span>
         <div className="w-24"><Slider value={[zoom]} min={0.5} max={2} step={0.1} disabled={disabled} onValueChange={(v) => setZoom(v[0])} /></div>
-        {!disabled && <Button type="button" variant="ghost" size="sm" onClick={reset}>Reset</Button>}
+        {!inert && <Button type="button" variant="ghost" size="sm" onClick={reset}>Reset</Button>}
       </div>
     </div>
   )
@@ -918,8 +1072,9 @@ export function FormComponentsPage() {
           <div>
             <h1 className="font-heading text-lg font-semibold text-foreground">Form Components</h1>
             <p className="text-xs text-muted-foreground">
-              Left column = <span className="font-medium text-foreground">Active</span> ·
-              Right column = <span className="font-medium text-foreground">Disabled</span> (value shown, no interaction)
+              <span className="font-medium text-foreground">Active</span> (clean surface + border = editable) ·
+              <span className="font-medium text-foreground"> Read-only</span> (greyed, value readable &amp; copyable) ·
+              <span className="font-medium text-foreground"> Disabled</span> (greyed + muted text, unavailable)
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
@@ -953,88 +1108,90 @@ export function FormComponentsPage() {
           ))}
         </div>
 
+        <StateLegend />
+
         {/* ── Text & basic ── */}
         <Section id="text" title="Basic" visible={show("text")}>
-          <ShowField title="Text" hint="single-line">{(d) => <Input defaultValue="Service Agreement #2024-118" disabled={d} placeholder="Enter text" />}</ShowField>
-          <ShowField title="Search" hint="icon + clear · live province API">{(d) => <SearchDemo disabled={d} />}</ShowField>
-          <ShowField title="Number stepper" hint="quantity ±">{(d) => <StepperDemo disabled={d} />}</ShowField>
-          <ShowField title="Number">{(d) => <Input type="number" defaultValue={42} disabled={d} />}</ShowField>
-          <ShowField title="Email" hint="icon + client-side validation">{(d) => <EmailValidatedDemo disabled={d} />}</ShowField>
-          <ShowField title="Password">{(d) => <Input type="password" defaultValue="secret123" disabled={d} />}</ShowField>
-          <ShowField title="URL" hint="https:// prefix">{(d) => (
+          <ShowField title="Text" hint="single-line">{(s) => <Input defaultValue="Service Agreement #2024-118" {...ctl(s)} placeholder="Enter text" />}</ShowField>
+          <ShowField title="Search" hint="icon + clear · live province API">{(s) => <SearchDemo state={s} />}</ShowField>
+          <ShowField title="Number stepper" hint="quantity ±">{(s) => <StepperDemo state={s} />}</ShowField>
+          <ShowField title="Number">{(s) => <Input type="number" defaultValue={42} {...ctl(s)} />}</ShowField>
+          <ShowField title="Email" hint="icon + client-side validation">{(s) => <EmailValidatedDemo state={s} />}</ShowField>
+          <ShowField title="Password">{(s) => <Input type="password" defaultValue="secret123" {...ctl(s)} />}</ShowField>
+          <ShowField title="URL" hint="https:// prefix">{(s) => (
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">https://</span>
-              <Input type="text" defaultValue="alurkerja.com" disabled={d} className="pl-[4.25rem]" />
+              <Input type="text" defaultValue="alurkerja.com" {...ctl(s)} className="pl-[4.25rem]" />
             </div>
           )}</ShowField>
-          <ShowField title="Time">{(d) => <Input type="time" defaultValue="09:30" disabled={d} />}</ShowField>
-          <ShowField title="Textarea" hint="multi-line">{(d) => <Textarea defaultValue="Internal notes about this contract…" rows={3} disabled={d} />}</ShowField>
-          <ShowField title="Input + add-on" hint="suffix unit">{(d) => <AddonDemo disabled={d} suffix="kg" />}</ShowField>
-          <ShowField title="Currency (Rupiah)" hint="auto thousand separators">{(d) => <CurrencyDemo disabled={d} />}</ShowField>
-          <ShowField title="Masked — NPWP" hint="formatted identity">{(d) => <MaskedDemo disabled={d} />}</ShowField>
-          <ShowField title="Phone" hint="country code + number">{(d) => <PhoneDemo disabled={d} />}</ShowField>
+          <ShowField title="Time">{(s) => <Input type="time" defaultValue="09:30" {...ctl(s)} />}</ShowField>
+          <ShowField title="Textarea" hint="multi-line">{(s) => <Textarea defaultValue="Internal notes about this contract…" rows={3} {...ctl(s)} />}</ShowField>
+          <ShowField title="Input + add-on" hint="suffix unit">{(s) => <AddonDemo state={s} suffix="kg" />}</ShowField>
+          <ShowField title="Currency (Rupiah)" hint="auto thousand separators">{(s) => <CurrencyDemo state={s} />}</ShowField>
+          <ShowField title="Masked — NPWP" hint="formatted identity">{(s) => <MaskedDemo state={s} />}</ShowField>
+          <ShowField title="Phone" hint="country code + number">{(s) => <PhoneDemo state={s} />}</ShowField>
         </Section>
 
         {/* ── Choice & selection ── */}
         <Section id="choice" title="Choice & Selection" visible={show("choice")}>
-          <ShowField title="Switch">{(d) => <SwitchDemo disabled={d} />}</ShowField>
-          <ShowField title="Toggle group" hint="segmented">{(d) => <ToggleGroupDemo disabled={d} />}</ShowField>
-          <ShowField title="Checkbox group">{(d) => <CheckboxGroupDemo disabled={d} />}</ShowField>
-          <ShowField title="Single checkbox" hint="consent">{(d) => (
-            <Label className={cn("flex items-center gap-2 font-normal", d && "text-muted-foreground")}>
-              <Checkbox defaultChecked disabled={d} /> I agree to the Terms &amp; Privacy Policy
+          <ShowField title="Switch">{(s) => <SwitchDemo state={s} />}</ShowField>
+          <ShowField title="Toggle group" hint="segmented">{(s) => <ToggleGroupDemo state={s} />}</ShowField>
+          <ShowField title="Checkbox group">{(s) => <CheckboxGroupDemo state={s} />}</ShowField>
+          <ShowField title="Single checkbox" hint="consent">{(s) => (
+            <Label className={cn("flex items-center gap-2 font-normal", s === "disabled" && "text-muted-foreground")}>
+              <Checkbox defaultChecked {...ctlNoReadOnly(s)} /> I agree to the Terms &amp; Privacy Policy
             </Label>
           )}</ShowField>
-          <ShowField title="Radio group">{(d) => (
-            <RadioGroup defaultValue="medium" disabled={d} className="flex gap-4">
+          <ShowField title="Radio group">{(s) => (
+            <RadioGroup defaultValue="medium" {...ctlNoReadOnly(s)} className="flex gap-4">
               {["low", "medium", "high"].map((v) => (
-                <Label key={v} className={cn("flex items-center gap-1.5 font-normal capitalize", d && "text-muted-foreground")}>
+                <Label key={v} className={cn("flex items-center gap-1.5 font-normal capitalize", s === "disabled" && "text-muted-foreground")}>
                   <RadioGroupItem value={v} /> {v}
                 </Label>
               ))}
             </RadioGroup>
           )}</ShowField>
-          <ShowField title="Select" hint="single">{(d) => (
-            <Select defaultValue="service" disabled={d}>
+          <ShowField title="Select" hint="single">{(s) => (
+            <Select defaultValue="service" {...ctlNoReadOnly(s)}>
               <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
               <SelectContent>{SELECT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
             </Select>
           )}</ShowField>
-          <ShowField title="Native select">{(d) => (
-            <NativeSelect defaultValue="employment" disabled={d}>
+          <ShowField title="Native select">{(s) => (
+            <NativeSelect defaultValue="employment" {...ctlNoReadOnly(s)}>
               {SELECT_OPTIONS.map((o) => <NativeSelectOption key={o.value} value={o.value}>{o.label}</NativeSelectOption>)}
             </NativeSelect>
           )}</ShowField>
-          <ShowField title="Combobox" hint="autocomplete / large datasets">{(d) => <ComboboxDemo disabled={d} />}</ShowField>
-          <ShowField title="Cascading select" hint="province → city → district · live mock.alurkerja.com">{(d) => <CascadeDemo disabled={d} />}</ShowField>
-          <ShowField title="Tags / chips">{(d) => <TagsDemo disabled={d} />}</ShowField>
-          <ShowField title="Remote select — populated" hint="options loaded upfront (live provinces)">{(d) => <RemoteSelectDemo disabled={d} />}</ShowField>
-          <ShowField title="Remote select — search to load" hint="type first to query the API">{(d) => <SearchRemoteDemo disabled={d} />}</ShowField>
+          <ShowField title="Combobox" hint="autocomplete / large datasets">{(s) => <ComboboxDemo state={s} />}</ShowField>
+          <ShowField title="Cascading select" hint="province → city → district · live mock.alurkerja.com">{(s) => <CascadeDemo state={s} />}</ShowField>
+          <ShowField title="Tags / chips">{(s) => <TagsDemo state={s} />}</ShowField>
+          <ShowField title="Remote select — populated" hint="options loaded upfront (live provinces)">{(s) => <RemoteSelectDemo state={s} />}</ShowField>
+          <ShowField title="Remote select — search to load" hint="type first to query the API">{(s) => <SearchRemoteDemo state={s} />}</ShowField>
         </Section>
 
         {/* ── Date & time ── */}
         <Section id="date" title="Date & Time" visible={show("date")}>
-          <ShowField title="Date">{(d) => <DatePickerDemo disabled={d} />}</ShowField>
-          <ShowField title="Date + time">{(d) => <DatePickerDemo disabled={d} withTime />}</ShowField>
-          <ShowField title="Date range" hint="reuse BP filter picker">{(d) => <DateRangeDemo disabled={d} />}</ShowField>
-          <ShowField title="Month picker" hint="month name only">{(d) => <MonthPickerDemo disabled={d} />}</ShowField>
-          <ShowField title="Year picker">{(d) => <YearPickerDemo disabled={d} />}</ShowField>
-          <ShowField title="Date — D / M / Y dropdowns" hint="birthdate entry">{(d) => <DmyDemo disabled={d} />}</ShowField>
+          <ShowField title="Date">{(s) => <DatePickerDemo state={s} />}</ShowField>
+          <ShowField title="Date + time">{(s) => <DatePickerDemo state={s} withTime />}</ShowField>
+          <ShowField title="Date range" hint="reuse BP filter picker">{(s) => <DateRangeDemo state={s} />}</ShowField>
+          <ShowField title="Month picker" hint="month name only">{(s) => <MonthPickerDemo state={s} />}</ShowField>
+          <ShowField title="Year picker">{(s) => <YearPickerDemo state={s} />}</ShowField>
+          <ShowField title="Date — D / M / Y dropdowns" hint="birthdate entry">{(s) => <DmyDemo state={s} />}</ShowField>
         </Section>
 
         {/* ── Advanced ── */}
         <Section id="advanced" title="Advanced" visible={show("advanced")}>
-          <ShowField title="Input OTP" hint="verification / 2FA">{(d) => <OtpDemo disabled={d} />}</ShowField>
-          <ShowField title="Rich text" hint="Tiptap — same formats as discussion composer">{(d) => <RichTextDemo disabled={d} />}</ShowField>
-          <ShowField title="File upload" hint="react-dropzone">{(d) => <FileUploadDemo disabled={d} />}</ShowField>
-          <ShowField title="Avatar / photo upload" hint="circular, single image">{(d) => <AvatarUploadDemo disabled={d} />}</ShowField>
-          <ShowField title="Image editor" hint="upload · rotate / flip / zoom / crop">{(d) => <ImageEditorDemo disabled={d} />}</ShowField>
-          <ShowField title="Signature pad">{(d) => <SignatureDemo disabled={d} />}</ShowField>
-          <ShowField title="Slider">{(d) => <SliderDemo disabled={d} />}</ShowField>
-          <ShowField title="Rating">{(d) => <RatingDemo disabled={d} />}</ShowField>
-          <ShowField title="Color picker" hint="branding">{(d) => (
+          <ShowField title="Input OTP" hint="verification / 2FA">{(s) => <OtpDemo state={s} />}</ShowField>
+          <ShowField title="Rich text" hint="Tiptap — same formats as discussion composer">{(s) => <RichTextDemo state={s} />}</ShowField>
+          <ShowField title="File upload" hint="react-dropzone">{(s) => <FileUploadDemo state={s} />}</ShowField>
+          <ShowField title="Avatar / photo upload" hint="circular, single image">{(s) => <AvatarUploadDemo state={s} />}</ShowField>
+          <ShowField title="Image editor" hint="upload · rotate / flip / zoom / crop">{(s) => <ImageEditorDemo state={s} />}</ShowField>
+          <ShowField title="Signature pad">{(s) => <SignatureDemo state={s} />}</ShowField>
+          <ShowField title="Slider">{(s) => <SliderDemo state={s} />}</ShowField>
+          <ShowField title="Rating">{(s) => <RatingDemo state={s} />}</ShowField>
+          <ShowField title="Color picker" hint="branding">{(s) => (
             <div className="flex items-center gap-2">
-              <input type="color" defaultValue="#6366f1" disabled={d} className={cn("size-9 rounded-md border border-input bg-card p-0.5", d && "opacity-60")} />
+              <input type="color" defaultValue="#6366f1" {...ctlNoReadOnly(s)} className={cn("size-9 rounded-md border border-input bg-card p-0.5", s !== "active" && "cursor-not-allowed border-transparent bg-muted opacity-60")} />
               <span className="text-sm text-muted-foreground">#6366F1</span>
             </div>
           )}</ShowField>
