@@ -59,9 +59,8 @@ export function DashboardPage({
   /** Right side of the title row — e.g. an "Updating…" indicator. */
   status?: React.ReactNode
   /**
-   * Studio-style: put the filter bar in the header's second row, one box with
-   * the navbar. The breadcrumb already ends in the dashboard name, so the page
-   * title is dropped (kept for screen readers).
+   * Studio-style: title, subtitle and filter bar go inside the header box, under
+   * the navbar — one box instead of three stacked blocks.
    */
   merged?: boolean
   children: React.ReactNode
@@ -76,8 +75,16 @@ export function DashboardPage({
       <div className="mx-auto max-w-screen-xl space-y-5 p-4 sm:p-6">
         {merged ? (
           <>
-            <h1 className="sr-only">{title}</h1>
             <HeaderToolbar>
+              {/* Title row stays white — same weight as the navbar. */}
+              <div className="flex items-start justify-between gap-3 px-4 pt-3 pb-3 sm:px-5">
+                <div className="min-w-0">
+                  <h1 className="text-xl font-bold">{title}</h1>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+                </div>
+              </div>
+              {/* Filter row: a light tint keeps it a step below the title. */}
+              <div className="rounded-b-[inherit] border-t border-border/60 bg-muted/60 px-3 py-2.5 sm:px-4 dark:bg-muted/30">
               <FilterBar
                 period={state.period}
                 filters={filters}
@@ -93,6 +100,7 @@ export function DashboardPage({
                   ) : undefined
                 }
               />
+              </div>
             </HeaderToolbar>
           </>
         ) : (

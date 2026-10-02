@@ -309,15 +309,10 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
         <UserMenu onNavigate={onNavigate} activePage={activePage} showAdvanced />
       </div>
       </div>
-      {/* Row 2: page toolbar slot (HeaderToolbar portals here); hidden while empty.
-          A light tint keeps it a step below the navbar row (as in Studio); its
-          bottom corners inherit the card's radius, and go square with it when
-          the header docks on scroll. */}
-      <div
-        ref={toolbarRef}
-        data-slot="header-toolbar"
-        className="rounded-b-[inherit] border-t border-border/60 bg-muted/60 px-3 py-2.5 empty:hidden dark:bg-muted/30"
-      />
+      {/* Below the navbar: the page's slot (HeaderToolbar portals here); hidden
+          while empty. The page lays out its own rows inside; the bottom corners
+          inherit the card's radius and go square when the header docks. */}
+      <div ref={toolbarRef} data-slot="header-toolbar" className="rounded-b-[inherit] border-t border-border/60 empty:hidden" />
       </header>
       </div>
     </>
