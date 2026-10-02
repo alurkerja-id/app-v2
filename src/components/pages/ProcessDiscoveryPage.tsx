@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Add01Icon,
   Analytics01Icon,
   ArrowDown01Icon,
-  Calendar03Icon,
   Clock01Icon,
   InformationCircleIcon,
   MinusSignIcon,
@@ -57,6 +56,11 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { cn } from "@/lib/utils"
+import { DashboardPage, useDashboardState } from "@/components/dashboard/dashboard-page"
+import { dateTriggerClass } from "@/components/dashboard/date-range-picker"
+import { ExportButton } from "@/components/dashboard/export-button"
+import { rangeDays } from "@/lib/mock-series"
+import { fieldValues, type TypedFilterDef } from "@/lib/typed-filters"
 import {
   DISCOVERY_NODES,
   PROCESS_OPTIONS,
@@ -72,11 +76,23 @@ import {
   type HeatmapType,
 } from "@/data/process-discovery"
 
-const DATE_PRESETS = [
-  { value: "7", label: "Last 7 days" },
-  { value: "30", label: "Last 30 days" },
-  { value: "90", label: "Last 90 days" },
+// Instance status is an optional filter; process, version and heatmap mode are
+// not filters — process/version scope the diagram, the heatmap is a view lens.
+const DISCOVERY_FILTERS: TypedFilterDef[] = [
+  {
+    id: "status",
+    label: "Instance status",
+    kind: "field",
+    pinned: true,
+    options: [
+      { value: "running", label: "Active" },
+      { value: "completed", label: "Completed" },
+    ],
+  },
 ]
+
+// Rough share of instances per status, for the period-scaled mock counts.
+const STATUS_SHARE: Record<ExecutionStatus, number> = { all: 1, running: 0.35, completed: 0.65 }
 
 const activityTypes = new Set(["userTask", "serviceTask"])
 
@@ -112,8 +128,18 @@ export function ProcessDiscoveryPage() {
 
   const [procKey, setProcKey] = useState(PROCESS_OPTIONS[0]?.key ?? "")
   const [versionId, setVersionId] = useState(VERSION_OPTIONS[0]?.id ?? "")
-  const [rangeDays, setRangeDays] = useState("30")
-  const [instanceType, setInstanceType] = useState<ExecutionStatus>("all")
+  const state = useDashboardState()
+  const statusSel = fieldValues(state.values.status)
+  const instanceType: ExecutionStatus = statusSel.length === 1 ? (statusSel[0] as ExecutionStatus) : "all"
+
+  // Counts scale with the period (data is a 30-day sample) and the status share;
+  // durations and SLA results are per-run, so they stay as measured.
+  const scale = (rangeDays(state.range) / 30) * STATUS_SHARE[instanceType]
+  const nodes = useMemo(
+    () => DISCOVERY_NODES.map((n) => ({ ...n, frequency: n.frequency ? Math.max(1, Math.round(n.frequency * scale)) : 0 })),
+    [scale],
+  )
+  const totalInstances = Math.max(1, Math.round(TOTAL_INSTANCES * scale))
   const [heatmapType, setHeatmapType] = useState<HeatmapType>("duration")
   const [deltaSort, setDeltaSort] = useState<"none" | "asc" | "desc">("none")
   const [bpmnLoaded, setBpmnLoaded] = useState(false)
@@ -146,8 +172,8 @@ export function ProcessDiscoveryPage() {
     // Range of values across nodes that have data — sets the colour scale.
     let minVal = Infinity
     let maxVal = -Infinity
-    const byId: Record<string, (typeof DISCOVERY_NODES)[number]> = {}
-    DISCOVERY_NODES.forEach((n) => {
+    const byId: Record<string, (typeof nodes)[number]> = {}
+    nodes.forEach((n) => {
       byId[n.id] = n
       const v = nodeValue(n, heatmapType)
       if (v == null) return
@@ -174,7 +200,7 @@ export function ProcessDiscoveryPage() {
       // (no SLA target, or no execution data) stay neutral. ────────────────
       if (heatmapType === "slaStatus") {
         const status = slaStatus(node)
-        const intensity = slaIntensity(node, DISCOVERY_NODES)
+        const intensity = slaIntensity(node, nodes)
         const delta = slaDelta(node)
         if (status == null || intensity == null || delta == null) {
           neutralBadge(element.id, `<span>—</span>`)
@@ -234,7 +260,7 @@ export function ProcessDiscoveryPage() {
         html: `<div class="flex items-baseline gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-zinc-900 shadow-md ring-1 ring-zinc-200/60"><span>${b.value}</span><span class="text-[10px] font-medium text-zinc-500">${b.unit}</span></div>`,
       })
     })
-  }, [heatmapType])
+  }, [heatmapType, nodes])
 
   // Load the contract diagram once.
   useEffect(() => {
@@ -280,7 +306,7 @@ export function ProcessDiscoveryPage() {
       setIsLoading(false)
     }, 250)
     return () => clearTimeout(t)
-  }, [bpmnLoaded, heatmapType, instanceType, rangeDays, versionId, renderHeatmap])
+  }, [bpmnLoaded, heatmapType, state.range, state.values, versionId, renderHeatmap])
 
   const zoom = (factor: number) => {
     const canvas = viewerInstance.current?.get("canvas")
@@ -289,14 +315,14 @@ export function ProcessDiscoveryPage() {
   const zoomReset = () => viewerInstance.current?.get("canvas")?.zoom("fit-viewport")
 
   // ── Derived summaries ────────────────────────────────────────────────
-  const userTasks = DISCOVERY_NODES.filter((n) => activityTypes.has(n.type) && n.avgDurationHours != null)
+  const userTasks = nodes.filter((n) => activityTypes.has(n.type) && n.avgDurationHours != null)
   const slaTasks = userTasks.filter((n) => n.sla != null)
   const withinSla = slaTasks.filter((n) => slaStatus(n) === "Met").length
   const breaches = slaTasks.length - withinSla
 
   const slowest = [...userTasks].sort((a, b) => (b.avgDurationHours ?? 0) - (a.avgDurationHours ?? 0))[0]
   const fastest = [...userTasks].sort((a, b) => (a.avgDurationHours ?? 0) - (b.avgDurationHours ?? 0))[0]
-  const mostFrequent = [...DISCOVERY_NODES].filter((n) => activityTypes.has(n.type)).sort((a, b) => b.frequency - a.frequency)[0]
+  const mostFrequent = [...nodes].filter((n) => activityTypes.has(n.type)).sort((a, b) => b.frequency - a.frequency)[0]
   const totalManhour = userTasks.reduce((sum, n) => sum + (manhourOf(n) ?? 0), 0)
   const biggestEffort = [...userTasks].sort((a, b) => (manhourOf(b) ?? 0) - (manhourOf(a) ?? 0))[0]
   const totalExecutions = userTasks.reduce((sum, n) => sum + n.frequency, 0)
@@ -320,7 +346,7 @@ export function ProcessDiscoveryPage() {
   const tiles =
     heatmapType === "frequency"
       ? [
-          { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(TOTAL_INSTANCES) },
+          { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(totalInstances) },
           { tint: "violet", icon: ReloadIcon, label: "Most Repeated", value: mostFrequent?.name ?? "—", sub: `${mostFrequent?.frequency}x` },
           { tint: "purple", icon: TimeHalfPassIcon, label: "Total Executions", value: String(totalExecutions) },
           { tint: "fuchsia", icon: UserGroupIcon, label: "Activities", value: String(userTasks.length) },
@@ -328,7 +354,7 @@ export function ProcessDiscoveryPage() {
         ]
       : heatmapType === "manhour"
         ? [
-            { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(TOTAL_INSTANCES) },
+            { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(totalInstances) },
             { tint: "violet", icon: UserGroupIcon, label: "Total Man-hours", value: formatManhour(totalManhour) },
             { tint: "purple", icon: StopWatchIcon, label: "Biggest Effort", value: biggestEffort?.name ?? "—", sub: formatManhour(manhourOf(biggestEffort!) ?? 0) },
             { tint: "fuchsia", icon: TimeHalfPassIcon, label: "Avg per Activity", value: formatManhour(totalManhour / userTasks.length) },
@@ -336,7 +362,7 @@ export function ProcessDiscoveryPage() {
           ]
         : heatmapType === "slaStatus"
           ? [
-              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(TOTAL_INSTANCES) },
+              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(totalInstances) },
               { tint: withinSla === slaTasks.length ? "emerald" : "violet", icon: Clock01Icon, label: "Within SLA", value: `${withinSla} / ${slaTasks.length}`, sub: `${withinPct}% of activities` },
               { tint: breaches > 0 ? "red" : "pink", icon: InformationCircleIcon, label: "SLA Breaches", value: String(breaches) },
               { tint: "purple", icon: StopWatchIcon, label: "Worst Breach", value: worstBreach?.name ?? "—", sub: worstBreach ? `+${(slaDelta(worstBreach) ?? 0).toFixed(1)} h` : "—" },
@@ -344,14 +370,14 @@ export function ProcessDiscoveryPage() {
             ]
           : heatmapType === "slaRate"
           ? [
-              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(TOTAL_INSTANCES) },
+              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(totalInstances) },
               { tint: overallOnTime >= 80 ? "emerald" : "violet", icon: Clock01Icon, label: "Overall On-time", value: `${overallOnTime}%`, sub: "of all runs within SLA" },
               { tint: atRisk > 0 ? "red" : "pink", icon: InformationCircleIcon, label: "At Risk (<80%)", value: String(atRisk), sub: `of ${rateTasks.length} activities` },
               { tint: "purple", icon: StopWatchIcon, label: "Lowest Compliance", value: lowestCompliance?.name ?? "—", sub: lowestCompliance ? `${Math.round((lowestCompliance.onTimeRate ?? 0) * 100)}% on time` : "—" },
               { tint: "fuchsia", icon: TimeHalfPassIcon, label: "Within SLA (avg)", value: `${withinSla} / ${slaTasks.length}`, sub: `${withinPct}% of activities` },
             ]
           : [
-              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(TOTAL_INSTANCES) },
+              { tint: "neutral", icon: Analytics01Icon, label: "Process Instances", value: String(totalInstances) },
               { tint: "violet", icon: TimeHalfPassIcon, label: "Avg Activity Duration", value: formatDuration(userTasks.reduce((s, n) => s + (n.avgDurationHours ?? 0), 0) / userTasks.length) },
               { tint: "purple", icon: StopWatchIcon, label: "Slowest Activity", value: slowest?.name ?? "—", sub: formatDuration(slowest?.avgDurationHours ?? 0) },
               { tint: "fuchsia", icon: StopWatchIcon, label: "Fastest Activity", value: fastest?.name ?? "—", sub: formatDuration(fastest?.avgDurationHours ?? 0) },
@@ -359,7 +385,7 @@ export function ProcessDiscoveryPage() {
             ]
 
   // Activity table rows — user tasks (+ service tasks) only, in diagram order.
-  const rows = DISCOVERY_NODES.filter((n) =>
+  const rows = nodes.filter((n) =>
     heatmapType === "frequency" ? true : activityTypes.has(n.type),
   )
 
@@ -382,90 +408,63 @@ export function ProcessDiscoveryPage() {
   const cycleDeltaSort = () =>
     setDeltaSort((s) => (s === "none" ? "desc" : s === "desc" ? "asc" : "none"))
 
+  const valueHeader =
+    heatmapType === "frequency" ? "Frequency" : heatmapType === "manhour" ? "Man-hours" : heatmapType === "slaRate" ? "On-time %" : "Avg duration (h)"
+
   return (
-    <div className="p-6 md:p-10">
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <span className="flex h-7 shrink-0 items-center">
-            <HugeiconsIcon icon={Analytics01Icon} className="size-5 text-muted-foreground" />
-          </span>
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">Process Discovery</h1>
-            <p className="text-sm text-muted-foreground">
-              Visualize process performance on the diagram — by duration, frequency, man-hours, SLA status, or SLA compliance.
-            </p>
-          </div>
-        </div>
-        {isLoading && (
+    <DashboardPage
+      title="Process Discovery"
+      description="Visualize process performance on the diagram — by duration, frequency, man-hours, SLA status, or SLA compliance."
+      state={state}
+      filters={DISCOVERY_FILTERS}
+      merged
+      status={
+        isLoading && (
           <div className="flex shrink-0 items-center gap-2 text-sm text-muted-foreground">
             <Spinner /> Updating…
           </div>
-        )}
-      </div>
-
-      {/* Filter bar */}
-      <Card className="mb-6 p-4">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
-          <FilterField label="Process">
-            <FilterCombobox
-              value={procKey}
-              onValueChange={setProcKey}
-              options={PROCESS_OPTIONS.map((p) => ({ value: p.key, label: p.name }))}
-              placeholder="Select a process…"
-            />
-          </FilterField>
-          <FilterField label="Version">
-            <FilterCombobox
-              value={versionId}
-              onValueChange={setVersionId}
-              options={VERSION_OPTIONS.map((v, i) => ({
-                value: v.id,
-                label: i === 0 ? `Latest (v${v.version})` : `v${v.version}`,
-              }))}
-              placeholder="—"
-            />
-          </FilterField>
-          <FilterField label="Creation Date">
-            <FilterCombobox
-              value={rangeDays}
-              onValueChange={setRangeDays}
-              options={DATE_PRESETS}
-              placeholder="Last 30 days"
-              icon={Calendar03Icon}
-            />
-          </FilterField>
-          <FilterField label="Instances">
-            <FilterCombobox
-              value={instanceType}
-              onValueChange={(v) => setInstanceType(v as ExecutionStatus)}
-              options={[
-                { value: "all", label: "All Instances" },
-                { value: "running", label: "Only Active" },
-                { value: "completed", label: "Only Completed" },
-              ]}
-              placeholder="All Instances"
-            />
-          </FilterField>
-          <FilterField label="Heatmap">
-            <FilterCombobox
-              value={heatmapType}
-              onValueChange={(v) => setHeatmapType(v as HeatmapType)}
-              options={[
-                { value: "duration", label: "By Duration (hrs)" },
-                { value: "frequency", label: "By Frequency (x)" },
-                { value: "manhour", label: "By Man-hours (mh)" },
-                { value: "slaStatus", label: "By SLA Status" },
-                { value: "slaRate", label: "By SLA Compliance (%)" },
-              ]}
-              placeholder="By Duration (hrs)"
-            />
-          </FilterField>
-        </div>
-      </Card>
-
+        )
+      }
+      leading={
+        <>
+          <FilterCombobox
+            label="Process"
+            value={procKey}
+            onValueChange={setProcKey}
+            options={PROCESS_OPTIONS.map((p) => ({ value: p.key, label: p.name }))}
+            placeholder="Select a process…"
+          />
+          <FilterCombobox
+            label="Version"
+            value={versionId}
+            onValueChange={setVersionId}
+            options={VERSION_OPTIONS.map((v, i) => ({
+              value: v.id,
+              label: i === 0 ? `Latest (v${v.version})` : `v${v.version}`,
+            }))}
+            placeholder="—"
+          />
+        </>
+      }
+      trailing={
+        <FilterCombobox
+          label="Heatmap"
+          align="end"
+          value={heatmapType}
+          onValueChange={(v) => setHeatmapType(v as HeatmapType)}
+          options={[
+            { value: "duration", label: "By Duration (hrs)" },
+            { value: "frequency", label: "By Frequency (x)" },
+            { value: "manhour", label: "By Man-hours (mh)" },
+            { value: "slaStatus", label: "By SLA Status" },
+            { value: "slaRate", label: "By SLA Compliance (%)" },
+          ]}
+          placeholder="By Duration (hrs)"
+        />
+      }
+    >
       {/* Summary tiles */}
-      <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
         {tiles.map((t) => (
           <SummaryCell key={t.label} {...(t as SummaryProps)} />
         ))}
@@ -482,6 +481,39 @@ export function ProcessDiscoveryPage() {
               <ZoomBtn onClick={() => zoom(1 / 1.25)} icon={MinusSignIcon} tip="Zoom Out" />
               <ZoomBtn onClick={zoomReset} icon={ReloadIcon} tip="Reset Zoom" />
               <ZoomBtn onClick={() => zoom(1.25)} icon={Add01Icon} tip="Zoom In" />
+              <span className="mx-1 h-4 w-px bg-border" />
+              <ExportButton
+                card="Heatmap Analysis"
+                table={{
+                  columns: [
+                    { header: "Activity", value: (n) => n.name, width: 28 },
+                    { header: "Type", value: (n) => n.type, width: 14 },
+                    {
+                      header: valueHeader,
+                      value: (n) => {
+                        const v = nodeValue(n, heatmapType)
+                        return v == null ? null : Math.round(v * 10) / 10
+                      },
+                      width: 18,
+                    },
+                    ...(showSlaColumns
+                      ? [
+                          { header: "SLA target (h)", value: (n: (typeof nodes)[number]) => n.sla, width: 16 },
+                          { header: "Status", value: (n: (typeof nodes)[number]) => slaStatus(n) },
+                          {
+                            header: "Δ vs SLA (h)",
+                            value: (n: (typeof nodes)[number]) => {
+                              const d = slaDelta(n)
+                              return d == null ? null : Math.round(d * 10) / 10
+                            },
+                            width: 14,
+                          },
+                        ]
+                      : []),
+                  ],
+                  rows: displayRows,
+                }}
+              />
             </div>
           </TooltipProvider>
         </div>
@@ -615,21 +647,12 @@ export function ProcessDiscoveryPage() {
         </div>
       </Card>
 
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Prototype — sample data for the Contract Approval process.
+      <p className="text-center text-xs text-muted-foreground">
+        Prototype — sample data for the Contract Approval process; counts scale with the selected period.
       </p>
 
       <style>{heatmapStyles}</style>
-    </div>
-  )
-}
-
-function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      {children}
-    </div>
+    </DashboardPage>
   )
 }
 
@@ -647,39 +670,37 @@ function ZoomBtn({ onClick, icon, tip }: { onClick: () => void; icon: typeof Add
 }
 
 function FilterCombobox({
+  label,
   value,
   onValueChange,
   options,
   placeholder,
-  icon,
+  align = "start",
 }: {
+  /** Shown inside the trigger ("Process  Contract Approval") — no separate label row. */
+  label: string
   value: string
   onValueChange: (value: string) => void
   options: { value: string; label: string }[]
   placeholder: string
-  icon?: typeof Add01Icon
+  align?: "start" | "end"
 }) {
   const [open, setOpen] = useState(false)
   const selected = options.find((o) => o.value === value)
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="h-8 w-full justify-between gap-1.5 px-2.5 text-xs font-normal"
-        >
+        <button type="button" role="combobox" aria-expanded={open} aria-label={label} className={cn(dateTriggerClass, "max-w-full min-w-0")}>
           <span className="flex min-w-0 items-center gap-1.5">
-            {icon && <HugeiconsIcon icon={icon} className="size-3.5 shrink-0 text-muted-foreground" />}
-            <span className={cn("truncate", !selected && "text-muted-foreground")}>
+            <span className="shrink-0 text-muted-foreground">{label}</span>
+            <span className={cn("truncate font-medium", !selected && "font-normal text-muted-foreground")}>
               {selected ? selected.label : placeholder}
             </span>
           </span>
           <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-muted-foreground" />
-        </Button>
+        </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-44 p-0" align="start">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-52 p-0" align={align}>
         <Command>
           <CommandInput placeholder="Search…" />
           <CommandList>
@@ -732,13 +753,28 @@ const SUMMARY_TINTS: Record<SummaryTint, { card: string; ring: string; chip: str
 function SummaryCell({ label, value, sub, icon, tint }: SummaryProps) {
   const tones = SUMMARY_TINTS[tint]
   return (
-    <div className={cn("relative overflow-hidden rounded-xl bg-gradient-to-br to-card px-3 py-2.5 ring-1 ring-inset", tones.card, tones.ring)}>
+    <div className={cn("group/card relative overflow-hidden rounded-xl bg-gradient-to-br to-card px-3 py-2.5 ring-1 ring-inset", tones.card, tones.ring)}>
       <div className="flex items-start gap-2.5">
         <div className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-sm", tones.chip)}>
           <HugeiconsIcon icon={icon} className="size-4" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[10px] font-semibold leading-5 tracking-wider text-muted-foreground uppercase">{label}</p>
+          <div className="flex items-center gap-1">
+            <p className="min-w-0 flex-1 truncate text-[10px] font-semibold leading-5 tracking-wider text-muted-foreground uppercase">{label}</p>
+            <ExportButton
+              reveal="hover"
+              card={label}
+              className="-my-1.5 -mr-1.5 size-6"
+              table={{
+                columns: [
+                  { header: "Metric", value: () => label, width: 24 },
+                  { header: "Value", value: () => value, width: 24 },
+                  ...(sub ? [{ header: "Detail", value: () => sub, width: 24 }] : []),
+                ],
+                rows: [{}],
+              }}
+            />
+          </div>
           <p className="mt-0.5 truncate text-lg font-bold leading-tight text-foreground" title={value}>{value}</p>
           {sub && <p className="truncate text-[11px] font-medium text-muted-foreground">{sub}</p>}
         </div>

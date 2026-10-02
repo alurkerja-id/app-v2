@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
+import { HeaderToolbarContext } from "./header-toolbar-context"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePreferences } from "@/contexts/PreferencesContext"
 import type { Page } from "@/types/navigation"
@@ -30,11 +31,22 @@ function useIsDesktop() {
 export function AppLayout({ activePage, onNavigate, children, activeProcessId, onNavigateProcess }: AppLayoutProps) {
   const isDesktop = useIsDesktop()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  // Two loading states. The sidebar is app-shell data (workspace, menus,
+  // processes): it loads once, when the shell mounts, and stays put while the
+  // user moves between pages. Only the page content reloads on navigation —
+  // sharing one flag re-skeletoned the sidebar on every menu click.
+  const [toolbarSlot, setToolbarSlot] = useState<HTMLDivElement | null>(null)
+  const [shellLoading, setShellLoading] = useState(true)
+  const [contentLoading, setContentLoading] = useState(true)
 
   useEffect(() => {
-    setIsLoading(true)
-    const t = setTimeout(() => setIsLoading(false), 1500)
+    const t = setTimeout(() => setShellLoading(false), 1500)
+    return () => clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    setContentLoading(true)
+    const t = setTimeout(() => setContentLoading(false), 1500)
     return () => clearTimeout(t)
   }, [activePage])
 
@@ -95,7 +107,7 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
           if (!isDesktop) setMobileSidebarOpen(false)
         }}
         open={sidebarOpen}
-        isLoading={isLoading}
+        isLoading={shellLoading}
         activeProcessId={activeProcessId}
         onNavigateProcess={(processId) => {
           onNavigateProcess?.(processId)
@@ -119,9 +131,18 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
           onNavigate={onNavigate}
           scrolled={scrolled}
           activeProcessId={activeProcessId}
+          toolbarRef={setToolbarSlot}
         />
         <main ref={mainRef} className="flex-1 overflow-auto bg-background" style={patternStyle}>
-        {isLoading ? (
+        <HeaderToolbarContext.Provider value={toolbarSlot}>
+          {/* The page mounts at once and the loading skeleton sits over it, rather
+              than the page mounting after it: a page that merges its toolbar into
+              the header has it there from the first frame (no late jump), and
+              charts measure their real size underneath. */}
+          <div className="relative min-h-full">
+            {children}
+            {contentLoading && (
+              <div className="absolute inset-0 z-10 bg-background" style={patternStyle} aria-busy="true">
           <div className="flex flex-col gap-8 px-4 py-10 md:px-6 md:py-12 max-w-4xl mx-auto w-full">
             <div className="flex items-center justify-between gap-4">
               <div className="flex flex-col gap-2">
@@ -153,7 +174,10 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
               </div>
             </div>
           </div>
-        ) : children}
+              </div>
+            )}
+          </div>
+        </HeaderToolbarContext.Provider>
       </main>
       </div>
     </div>

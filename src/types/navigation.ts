@@ -14,6 +14,7 @@ export type Page =
   | "md-locations"
   | "start"
   | "form-component"
+  | "filter-patterns"
   | "business-processes"
   | "analytics-process"
   | "process-discovery"

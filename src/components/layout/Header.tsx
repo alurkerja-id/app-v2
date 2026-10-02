@@ -47,6 +47,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-locations": ["Master Data", "Locations"],
   start: ["Start Process", "Formulation"],
   "form-component": ["Pages", "Form Component"],
+  "filter-patterns": ["Pages", "Filter Patterns"],
   "business-processes": ["Business Processes"],
   "analytics-process": ["Analytics", "Process Analytics"],
   "process-discovery": ["Analytics", "Process Discovery"],
@@ -106,9 +107,11 @@ interface HeaderProps {
   onNavigate: (page: Page) => void
   scrolled?: boolean
   activeProcessId?: string
+  /** Receives the second-row slot node (see HeaderToolbar). */
+  toolbarRef?: (el: HTMLDivElement | null) => void
 }
 
-export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false, activeProcessId }: HeaderProps) {
+export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false, activeProcessId, toolbarRef }: HeaderProps) {
   const { color } = usePreferences()
   const { testMode, setTestMode } = useAppMode()
   const isDefaultAccent = color.id === "zinc"
@@ -153,11 +156,17 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
         scrolled ? "p-0" : "px-3 pt-2"
       )}>
       <header className={cn(
-        "flex h-11 items-center gap-2 px-3 transition-all duration-300",
+        "flex flex-col transition-all duration-300",
         scrolled
           ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
-          : "rounded-full border border-border/50 bg-background/80 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl"
+          : // A pill on its own; a two-row card once a page puts a toolbar in the slot.
+            cn(
+              "rounded-full border border-border/50 bg-background/80 backdrop-blur-md dark:border-border/65 dark:bg-background/60 dark:backdrop-blur-xl",
+              // Two-row card: a firmer edge + soft lift so it reads as one box (Studio).
+              "has-[>[data-slot=header-toolbar]:not(:empty)]:rounded-3xl has-[>[data-slot=header-toolbar]:not(:empty)]:border-border has-[>[data-slot=header-toolbar]:not(:empty)]:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_4px_12px_rgb(0_0_0/0.04)]",
+            )
       )}>
+      <div className="flex h-11 items-center gap-2 px-3">
       {/* Left: hamburger + app switcher + breadcrumb */}
       <div className="flex items-center gap-1.5">
         {/* Hamburger (mobile) */}
@@ -299,6 +308,16 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
         {/* User Profile */}
         <UserMenu onNavigate={onNavigate} activePage={activePage} showAdvanced />
       </div>
+      </div>
+      {/* Row 2: page toolbar slot (HeaderToolbar portals here); hidden while empty.
+          A light tint keeps it a step below the navbar row (as in Studio); its
+          bottom corners inherit the card's radius, and go square with it when
+          the header docks on scroll. */}
+      <div
+        ref={toolbarRef}
+        data-slot="header-toolbar"
+        className="rounded-b-[inherit] border-t border-border/60 bg-muted/60 px-3 py-2.5 empty:hidden dark:bg-muted/30"
+      />
       </header>
       </div>
     </>

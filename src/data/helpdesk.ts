@@ -14,17 +14,14 @@
  */
 
 import {
-  subDays,
   startOfWeek,
-  endOfWeek,
   startOfMonth,
-  endOfMonth,
-  startOfYear,
   differenceInCalendarDays,
   differenceInHours,
   isWithinInterval,
   format,
 } from "date-fns"
+import type { DateRangeValue } from "@/lib/date-presets"
 
 /* ── Anchor "now" so the mock data lines up with a deterministic demo ── */
 export const NOW = new Date(2026, 7, 31, 18, 0, 0) // 31 Aug 2026
@@ -177,41 +174,9 @@ function buildTickets(): Ticket[] {
 
 export const TICKETS: Ticket[] = buildTickets()
 
-/* ── Predefined periods — AlurKerja standard set + HelpDesk short ranges ── */
-export interface DateRangeValue {
-  from: Date
-  to: Date
-}
+/* Periods use the shared dashboard type (presets live in @/lib/date-presets). */
+export type { DateRangeValue }
 
-export interface RangePreset {
-  label: string
-  range: () => DateRangeValue
-}
-
-export const RANGE_PRESETS: RangePreset[] = [
-  { label: "Today", range: () => ({ from: startOfDay(NOW), to: NOW }) },
-  { label: "Yesterday", range: () => ({ from: startOfDay(subDays(NOW, 1)), to: endOfDay(subDays(NOW, 1)) }) },
-  { label: "Last 7 days", range: () => ({ from: startOfDay(subDays(NOW, 6)), to: NOW }) },
-  { label: "Last 30 days", range: () => ({ from: startOfDay(subDays(NOW, 29)), to: NOW }) },
-  { label: "This week", range: () => ({ from: startOfWeek(NOW), to: NOW }) },
-  { label: "Last week", range: () => ({ from: startOfWeek(subDays(NOW, 7)), to: endOfWeek(subDays(NOW, 7)) }) },
-  { label: "This month", range: () => ({ from: startOfMonth(NOW), to: NOW }) },
-  { label: "Last month", range: () => ({ from: startOfMonth(subDays(startOfMonth(NOW), 1)), to: endOfMonth(subDays(startOfMonth(NOW), 1)) }) },
-  { label: "This year", range: () => ({ from: startOfYear(NOW), to: NOW }) },
-]
-
-export const DEFAULT_RANGE_LABEL = "Last 30 days"
-
-function startOfDay(d: Date) {
-  const x = new Date(d)
-  x.setHours(0, 0, 0, 0)
-  return x
-}
-function endOfDay(d: Date) {
-  const x = new Date(d)
-  x.setHours(23, 59, 59, 999)
-  return x
-}
 
 /* ── Metric computation ────────────────────────────────────────────────── */
 
@@ -284,9 +249,9 @@ function rate(met: number, resolved: number): number {
 }
 
 /** Core metrics for a window, used for both current and previous periods. */
-function windowStats(from: Date, to: Date) {
-  const createdIn = TICKETS.filter((t) => inRange(t.createdAt, from, to))
-  const resolvedIn = TICKETS.filter((t) => inRange(t.resolvedAt, from, to))
+function windowStats(from: Date, to: Date, tickets: Ticket[]) {
+  const createdIn = tickets.filter((t) => inRange(t.createdAt, from, to))
+  const resolvedIn = tickets.filter((t) => inRange(t.resolvedAt, from, to))
   const met = resolvedIn.filter((t) => t.slaMet === true).length
   const breached = resolvedIn.filter((t) => t.slaMet === false).length
   const resHoursSum = resolvedIn.reduce(
@@ -316,7 +281,7 @@ function pctDelta(cur: number, prev: number): number | null {
   return ((cur - prev) / prev) * 100
 }
 
-function bucketTrend(from: Date, to: Date): TrendPoint[] {
+function bucketTrend(from: Date, to: Date, tickets: Ticket[]): TrendPoint[] {
   const days = differenceInCalendarDays(to, from) + 1
   const mode: "day" | "week" | "month" = days <= 31 ? "day" : days <= 130 ? "week" : "month"
   const buckets = new Map<string, { label: string; order: number; created: number; resolved: number; met: number }>()
@@ -337,7 +302,7 @@ function bucketTrend(from: Date, to: Date): TrendPoint[] {
     return buckets.get(key)!
   }
 
-  for (const t of TICKETS) {
+  for (const t of tickets) {
     if (inRange(t.createdAt, from, to)) ensure(t.createdAt).created++
     if (inRange(t.resolvedAt, from, to)) {
       const b = ensure(t.resolvedAt)
@@ -356,14 +321,18 @@ function bucketTrend(from: Date, to: Date): TrendPoint[] {
     }))
 }
 
-export function computeDashboard(from: Date, to: Date): DashboardData {
-  const cur = windowStats(from, to)
+/**
+ * `tickets` lets callers pre-filter the dataset (priority, category, assignee…);
+ * the previous-period comparison uses the same subset so deltas stay like-for-like.
+ */
+export function computeDashboard(from: Date, to: Date, tickets: Ticket[] = TICKETS): DashboardData {
+  const cur = windowStats(from, to, tickets)
 
   // Previous window of equal length, immediately preceding `from`.
   const lenMs = to.getTime() - from.getTime()
   const prevTo = new Date(from.getTime() - 1)
   const prevFrom = new Date(prevTo.getTime() - lenMs)
-  const prev = windowStats(prevFrom, prevTo)
+  const prev = windowStats(prevFrom, prevTo, tickets)
 
   // Open = created in range, still open at NOW. Escalated = open past resolution due.
   const openTickets = cur.createdIn.filter((t) => t.resolvedAt === null)
@@ -436,7 +405,7 @@ export function computeDashboard(from: Date, to: Date): DashboardData {
     ].filter((s) => s.value > 0),
     categoryStats,
     teamStats,
-    trend: bucketTrend(from, to),
+    trend: bucketTrend(from, to, tickets),
     avgResolutionHours: {
       value: Math.round(cur.avgResolutionHours * 10) / 10,
       deltaPct: pctDelta(cur.avgResolutionHours, prev.avgResolutionHours),

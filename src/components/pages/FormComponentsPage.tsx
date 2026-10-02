@@ -7,7 +7,7 @@ import Link from "@tiptap/extension-link"
 import { useDropzone } from "react-dropzone"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Mail01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
-import { format, subDays, startOfWeek, startOfMonth, startOfYear } from "date-fns"
+import { format } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -35,7 +35,8 @@ import {
   ComboboxItem,
   ComboboxEmpty,
 } from "@/components/ui/combobox"
-import type { DateRange } from "react-day-picker"
+import { DateRangePicker, formatRange } from "@/components/dashboard/date-range-picker"
+import type { DateRangeValue } from "@/lib/date-presets"
 
 /* ────────────────────────────────────────────────────────────────────────
    Form-component showcase for the AlurKerja form-builder revamp.
@@ -518,49 +519,23 @@ function DatePickerDemo({ state, withTime = false }: { state: FieldState; withTi
   )
 }
 
-// Predefined ranges — same set as the app-react-v2 business-process filter.
-const RANGE_PRESETS: { label: string; range: () => DateRange }[] = [
-  { label: "Last 30 days", range: () => ({ from: subDays(new Date(), 29), to: new Date() }) },
-  { label: "Last 3 months", range: () => ({ from: subDays(new Date(), 89), to: new Date() }) },
-  { label: "Last 6 months", range: () => ({ from: subDays(new Date(), 179), to: new Date() }) },
-  { label: "Last 12 months", range: () => ({ from: subDays(new Date(), 364), to: new Date() }) },
-  { label: "This week", range: () => ({ from: startOfWeek(new Date()), to: new Date() }) },
-  { label: "This month", range: () => ({ from: startOfMonth(new Date()), to: new Date() }) },
-  { label: "This year", range: () => ({ from: startOfYear(new Date()), to: new Date() }) },
-]
-
+// The real AlurKerja period picker — the same component every analytics
+// dashboard uses (presets = the app-react-v2 business-process filter set).
 function DateRangeDemo({ state }: { state: FieldState }) {
   const inert = state !== "active"
-  const [range, setRange] = useState<DateRange | undefined>({ from: new Date(2026, 2, 1), to: new Date(2026, 2, 15) })
-  const label = range?.from
-    ? range.to ? `${format(range.from, "dd MMM")} – ${format(range.to, "dd MMM yyyy")}` : format(range.from, "dd MMM yyyy")
-    : "Pick a range"
-  if (inert) return <ReadOnlyBox state={state}>{label}</ReadOnlyBox>
+  const [range, setRange] = useState<DateRangeValue>({ from: new Date(2026, 2, 1), to: new Date(2026, 2, 15) })
+  const [preset, setPreset] = useState<string | null>(null)
+  if (inert) return <ReadOnlyBox state={state}>{preset ?? formatRange(range)}</ReadOnlyBox>
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button className={cn(dateTriggerClass, "w-full")}>
-          <span className="truncate">{label}</span>
-          <HugeiconsIcon icon={Calendar01Icon} className="size-4 shrink-0 text-muted-foreground" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <div className="flex max-sm:flex-col">
-          <div className="flex shrink-0 flex-col gap-0.5 border-r border-border p-2 max-sm:border-b max-sm:border-r-0">
-            {RANGE_PRESETS.map((p) => (
-              <button
-                key={p.label}
-                onClick={() => setRange(p.range())}
-                className="rounded-md px-3 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-          <Calendar mode="range" selected={range} onSelect={setRange} numberOfMonths={2} />
-        </div>
-      </PopoverContent>
-    </Popover>
+    <DateRangePicker
+      value={range}
+      preset={preset}
+      onChange={(r, p) => {
+        setRange(r)
+        setPreset(p)
+      }}
+      className="w-full"
+    />
   )
 }
 

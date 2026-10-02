@@ -556,6 +556,7 @@ export function Sidebar({ activePage, onNavigate, open = true, isLoading = false
           <p className="px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Pages</p>
           {[
             { label: "Form Component", id: "form-component" as Page, icon: Folder02Icon },
+            { label: "Filter Patterns", id: "filter-patterns" as Page, icon: Folder02Icon },
             { label: "External Page 1", id: undefined, icon: RecordIcon },
             { label: "External Page 2", id: undefined, icon: RecordIcon },
           ].map((item) => {
