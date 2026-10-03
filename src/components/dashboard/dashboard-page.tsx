@@ -76,30 +76,38 @@ export function DashboardPage({
         {merged ? (
           <>
             <HeaderToolbar>
-              {/* Title row stays white — same weight as the navbar. */}
-              <div className="flex items-start justify-between gap-3 px-4 pt-3 pb-3 sm:px-5">
-                <div className="min-w-0">
-                  <h1 className="text-xl font-bold">{title}</h1>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+              {/* Title row: folds away once the header docks — the breadcrumb
+                  already names the page. The 1fr → 0fr grid row animates the
+                  height without measuring. */}
+              <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-300 group-data-[scrolled]/header:grid-rows-[0fr]">
+                <div className="min-h-0 overflow-hidden">
+                  <div className="px-4 py-3 sm:px-5">
+                    <h1 className="text-xl font-bold">{title}</h1>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+                  </div>
                 </div>
               </div>
-              {/* Filter row: a light tint keeps it a step below the title. */}
-              <div className="rounded-b-[inherit] border-t border-border/60 bg-muted/60 px-3 py-2.5 sm:px-4 dark:bg-muted/30">
-              <FilterBar
-                period={state.period}
-                filters={filters}
-                values={state.values}
-                onValuesChange={state.setValues}
-                leading={leading}
-                trailing={
-                  status || trailing ? (
-                    <>
-                      {status}
-                      {trailing}
-                    </>
-                  ) : undefined
-                }
-              />
+              {/* Filter row: a light tint keeps it a step below the title. Filled
+                  controls stay on the page surface (white / black) rather than
+                  taking the tint — re-pointing --input-surface covers the
+                  depth-style triggers (date range, comboboxes). Its top border
+                  drops when the title folds, or it would double the slot's. */}
+              <div className="rounded-b-[inherit] border-t border-border/60 bg-muted/60 group-data-[scrolled]/header:border-t-0 px-3 py-2.5 [--input-surface:var(--background)] sm:px-4 dark:bg-muted/30">
+                <FilterBar
+                  period={state.period}
+                  filters={filters}
+                  values={state.values}
+                  onValuesChange={state.setValues}
+                  leading={leading}
+                  trailing={
+                    status || trailing ? (
+                      <>
+                        {status}
+                        {trailing}
+                      </>
+                    ) : undefined
+                  }
+                />
               </div>
             </HeaderToolbar>
           </>

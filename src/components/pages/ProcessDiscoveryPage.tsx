@@ -753,28 +753,13 @@ const SUMMARY_TINTS: Record<SummaryTint, { card: string; ring: string; chip: str
 function SummaryCell({ label, value, sub, icon, tint }: SummaryProps) {
   const tones = SUMMARY_TINTS[tint]
   return (
-    <div className={cn("group/card relative overflow-hidden rounded-xl bg-gradient-to-br to-card px-3 py-2.5 ring-1 ring-inset", tones.card, tones.ring)}>
+    <div className={cn("relative overflow-hidden rounded-xl bg-gradient-to-br to-card px-3 py-2.5 ring-1 ring-inset", tones.card, tones.ring)}>
       <div className="flex items-start gap-2.5">
         <div className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-sm", tones.chip)}>
           <HugeiconsIcon icon={icon} className="size-4" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1">
-            <p className="min-w-0 flex-1 truncate text-[10px] font-semibold leading-5 tracking-wider text-muted-foreground uppercase">{label}</p>
-            <ExportButton
-              reveal="hover"
-              card={label}
-              className="-my-1.5 -mr-1.5 size-6"
-              table={{
-                columns: [
-                  { header: "Metric", value: () => label, width: 24 },
-                  { header: "Value", value: () => value, width: 24 },
-                  ...(sub ? [{ header: "Detail", value: () => sub, width: 24 }] : []),
-                ],
-                rows: [{}],
-              }}
-            />
-          </div>
+          <p className="truncate text-[10px] font-semibold leading-5 tracking-wider text-muted-foreground uppercase">{label}</p>
           <p className="mt-0.5 truncate text-lg font-bold leading-tight text-foreground" title={value}>{value}</p>
           {sub && <p className="truncate text-[11px] font-medium text-muted-foreground">{sub}</p>}
         </div>

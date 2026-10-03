@@ -19,18 +19,11 @@ export const DashboardExportProvider = DashboardExportContext.Provider
 export function ExportButton<Row>({
   card,
   table,
-  reveal = "always",
   className,
 }: {
   /** Card title — used for the file name and the Info sheet. */
   card: string
   table: ExportTable<Row> | (() => ExportTable<Row>)
-  /**
-   * "hover": hidden until the card is hovered or the button is focused — for
-   * compact KPI tiles, where a permanent icon on every tile is noise. Always
-   * shown on touch devices, which have no hover.
-   */
-  reveal?: "always" | "hover"
   className?: string
 }) {
   const ctx = useContext(DashboardExportContext)
@@ -61,8 +54,6 @@ export function ExportButton<Row>({
             aria-label={`Download ${card} as .xlsx`}
             className={cn(
               "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-[opacity,color,background-color] outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-wait",
-              reveal === "hover" &&
-                "opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 data-[busy=true]:opacity-100 [@media(hover:none)]:opacity-100",
               className,
             )}
             data-busy={busy}

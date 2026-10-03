@@ -155,8 +155,10 @@ export function Header({ activePage, onMenuToggle, onNavigate, scrolled = false,
         "sticky top-0 z-30 transition-all duration-300",
         scrolled ? "p-0" : "px-3 pt-2"
       )}>
-      <header className={cn(
-        "flex flex-col transition-all duration-300",
+      {/* data-scrolled lets the page's toolbar rows react to docking (e.g. the
+          dashboard title row folds away) without threading state through. */}
+      <header data-scrolled={scrolled || undefined} className={cn(
+        "group/header flex flex-col transition-all duration-300",
         scrolled
           ? "rounded-none border-b border-border bg-background/95 backdrop-blur-sm"
           : // A pill on its own; a two-row card once a page puts a toolbar in the slot.

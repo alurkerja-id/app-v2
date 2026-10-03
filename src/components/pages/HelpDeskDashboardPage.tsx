@@ -143,7 +143,6 @@ export function HelpDeskDashboardPage() {
           icon={Shield01Icon}
           label="SLA Compliance"
           value={`${data.compliance.value}%`}
-          exportValue={data.compliance.value}
           delta={data.compliance.deltaPct}
           deltaUnit="pp"
           accent="bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"
@@ -169,8 +168,6 @@ export function HelpDeskDashboardPage() {
           icon={Timer01Icon}
           label="Avg Resolution Time"
           value={formatDuration(data.avgResolutionHours.value)}
-          exportValue={Math.round(data.avgResolutionHours.value * 10) / 10}
-          exportUnit="hours"
           sub="created → resolved"
           delta={data.avgResolutionHours.deltaPct}
           goodDown
@@ -189,7 +186,6 @@ export function HelpDeskDashboardPage() {
           icon={FavouriteIcon}
           label="User Satisfaction (CSAT)"
           value={data.csatScore == null ? "—" : `${data.csatScore} / 100`}
-          exportValue={data.csatScore ?? ""}
           sub={`${data.csatCount} rated ticket${data.csatCount === 1 ? "" : "s"}`}
           accent="bg-pink-100 text-pink-600 dark:bg-pink-500/15 dark:text-pink-400"
         />

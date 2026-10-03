@@ -75,7 +75,6 @@ function ProcessAnalytics() {
               icon={Analytics01Icon}
               label="Total Instances"
               value={fmt(data.kpi.total.value)}
-              exportValue={data.kpi.total.value}
               delta={data.kpi.total.delta}
               accent="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
             />
@@ -83,7 +82,6 @@ function ProcessAnalytics() {
               icon={TimeHalfPassIcon}
               label="Active Instances"
               value={fmt(data.kpi.active.value)}
-              exportValue={data.kpi.active.value}
               sub={`${data.kpi.active.share}% of total`}
               accent="bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400"
             />
@@ -91,7 +89,6 @@ function ProcessAnalytics() {
               icon={CheckmarkCircle02Icon}
               label="Completed"
               value={fmt(data.kpi.completed.value)}
-              exportValue={data.kpi.completed.value}
               delta={data.kpi.completed.delta}
               accent="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
             />
@@ -99,7 +96,6 @@ function ProcessAnalytics() {
               icon={Timer01Icon}
               label="Avg. Cycle Time"
               value={`${data.kpi.avgDays.value}d`}
-              exportValue={data.kpi.avgDays.value}
               sub="per completed instance"
               delta={data.kpi.avgDays.delta}
               goodDown
@@ -304,7 +300,6 @@ function WorkforceAnalytics() {
               icon={UserMultiple02Icon}
               label="Total Employees"
               value={fmt(data.kpi.headcount.value)}
-              exportValue={data.kpi.headcount.value}
               sub={`${net >= 0 ? "+" : ""}${net} net this period`}
               accent="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
             />
@@ -312,7 +307,6 @@ function WorkforceAnalytics() {
               icon={Building06Icon}
               label="Departments"
               value={String(data.kpi.departments.value)}
-              exportValue={data.kpi.departments.value}
               sub={`across ${data.kpi.departments.locations} location${data.kpi.departments.locations === 1 ? "" : "s"}`}
               accent="bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"
             />
@@ -320,7 +314,6 @@ function WorkforceAnalytics() {
               icon={Calendar03Icon}
               label="Leave Days Taken"
               value={fmt(data.kpi.leaveDays.value)}
-              exportValue={data.kpi.leaveDays.value}
               delta={data.kpi.leaveDays.delta}
               goodDown
               accent="bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400"
@@ -329,7 +322,6 @@ function WorkforceAnalytics() {
               icon={UserAccountIcon}
               label="Open Positions"
               value={String(data.kpi.openRoles.value)}
-              exportValue={data.kpi.openRoles.value}
               sub="currently hiring"
               accent="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
             />

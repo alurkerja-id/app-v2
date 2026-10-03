@@ -92,7 +92,10 @@ export function AppLayout({ activePage, onNavigate, children, activeProcessId, o
   useEffect(() => {
     const el = mainRef.current
     if (!el) return
-    const onScroll = () => setScrolled(el.scrollTop > 10)
+    // Hysteresis: docking shrinks the header (a dashboard's title row folds
+    // away), so <main> grows and a barely-scrollable page clamps scrollTop
+    // back down; a single threshold would flip back and forth.
+    const onScroll = () => setScrolled((was) => (was ? el.scrollTop > 4 : el.scrollTop > 48))
     el.addEventListener("scroll", onScroll, { passive: true })
     return () => el.removeEventListener("scroll", onScroll)
   }, [])

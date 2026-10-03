@@ -346,7 +346,7 @@ export function FilterFacet({
       className={cn(
         pill,
         slot ? "w-52 shrink-0" : "max-w-72",
-        set ? "bg-secondary ring-1 ring-border/70 ring-inset" : "border border-dashed border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground",
+        set ? "bg-background ring-1 ring-border ring-inset" : "border border-dashed border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground",
         (set || slot) && "pr-1",
       )}
     >
