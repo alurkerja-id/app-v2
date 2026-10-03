@@ -15,6 +15,7 @@ import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
 import { StartProcessPage } from "@/components/pages/StartProcessPage"
 import { FormComponentsPage } from "@/components/pages/FormComponentsPage"
 import { FilterPatternsPage } from "@/components/pages/FilterPatternsPage"
+import { CardPatternsPage } from "@/components/pages/CardPatternsPage"
 import { BusinessProcessesPage } from "@/components/pages/BusinessProcessesPage"
 import { AnalyticsPage } from "@/components/pages/AnalyticsPage"
 import { HelpDeskDashboardPage } from "@/components/pages/HelpDeskDashboardPage"
@@ -41,6 +42,7 @@ const PAGE_PATHS: Record<Page, string> = {
   start: "/start",
   "form-component": "/pages/form-component",
   "filter-patterns": "/pages/filter-patterns",
+  "card-patterns": "/pages/card-patterns",
   "business-processes": "/business-processes",
   "analytics-process": "/analytics/process",
   "process-discovery": "/analytics/discovery",
@@ -137,6 +139,8 @@ export default function App() {
         return <StartProcessPage />
       case "filter-patterns":
         return <FilterPatternsPage />
+      case "card-patterns":
+        return <CardPatternsPage />
       case "form-component":
         return <FormComponentsPage />
       case "business-processes":

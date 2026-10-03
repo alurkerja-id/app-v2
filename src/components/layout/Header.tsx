@@ -48,6 +48,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   start: ["Start Process", "Formulation"],
   "form-component": ["Pages", "Form Component"],
   "filter-patterns": ["Pages", "Filter Patterns"],
+  "card-patterns": ["Pages", "Card Patterns"],
   "business-processes": ["Business Processes"],
   "analytics-process": ["Analytics", "Process Analytics"],
   "process-discovery": ["Analytics", "Process Discovery"],

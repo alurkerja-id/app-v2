@@ -15,6 +15,7 @@ export type Page =
   | "start"
   | "form-component"
   | "filter-patterns"
+  | "card-patterns"
   | "business-processes"
   | "analytics-process"
   | "process-discovery"

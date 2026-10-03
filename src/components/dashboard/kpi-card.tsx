@@ -2,7 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons"
 
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
+import { trayClass, trayPanelClass } from "@/components/dashboard/tray"
 
 /** Change vs the previous equal-length period. `goodDown` flips the colour for metrics where lower is better. */
 export function DeltaBadge({ delta, unit = "%", goodDown = false }: { delta: number | null; unit?: "%" | "pp"; goodDown?: boolean }) {
@@ -26,8 +26,9 @@ export function DeltaBadge({ delta, unit = "%", goodDown = false }: { delta: num
 }
 
 /**
- * Headline metric tile. No .xlsx download: a single number has nothing to
- * tabulate — the exports live on the chart and table cards.
+ * Headline metric tile, drawn as a tray: icon + label on the tray, the number on
+ * the panel. No .xlsx download: a single number has nothing to tabulate — the
+ * exports live on the chart and table cards.
  */
 export function KpiCard({
   icon,
@@ -37,7 +38,6 @@ export function KpiCard({
   delta,
   deltaUnit,
   goodDown,
-  accent,
   footer,
 }: {
   icon: typeof ArrowUp01Icon
@@ -47,26 +47,22 @@ export function KpiCard({
   delta?: number | null
   deltaUnit?: "%" | "pp"
   goodDown?: boolean
-  /** Tailwind classes for the icon chip. */
-  accent?: string
   footer?: React.ReactNode
 }) {
   return (
-    <Card className="py-0">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg", accent ?? "bg-muted text-foreground/70")}>
-            <HugeiconsIcon icon={icon} className="size-4" />
-          </span>
-          <span className="min-w-0 flex-1 truncate text-xs">{label}</span>
-        </div>
-        <p className="mt-2 text-2xl font-bold tracking-tight tabular-nums">{value}</p>
+    <div className={trayClass}>
+      <div className="flex items-center gap-1.5 px-3 pt-1.5 pb-2 text-xs text-muted-foreground">
+        <HugeiconsIcon icon={icon} className="size-3.5 shrink-0" />
+        <span className="truncate">{label}</span>
+      </div>
+      <div className={cn(trayPanelClass, "px-4 py-3")}>
+        <p className="text-2xl font-semibold tracking-tight tabular-nums">{value}</p>
         <div className="mt-1 flex min-h-4 items-center justify-between gap-2">
           {sub ? <span className="truncate text-[11px] text-muted-foreground">{sub}</span> : <span />}
           {delta !== undefined && <DeltaBadge delta={delta} unit={deltaUnit} goodDown={goodDown} />}
         </div>
         {footer}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

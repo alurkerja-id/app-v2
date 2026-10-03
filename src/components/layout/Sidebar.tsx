@@ -557,6 +557,7 @@ export function Sidebar({ activePage, onNavigate, open = true, isLoading = false
           {[
             { label: "Form Component", id: "form-component" as Page, icon: Folder02Icon },
             { label: "Filter Patterns", id: "filter-patterns" as Page, icon: Folder02Icon },
+            { label: "Card Patterns", id: "card-patterns" as Page, icon: Folder02Icon },
             { label: "External Page 1", id: undefined, icon: RecordIcon },
             { label: "External Page 2", id: undefined, icon: RecordIcon },
           ].map((item) => {

@@ -76,21 +76,18 @@ function ProcessAnalytics() {
               label="Total Instances"
               value={fmt(data.kpi.total.value)}
               delta={data.kpi.total.delta}
-              accent="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
             />
             <KpiCard
               icon={TimeHalfPassIcon}
               label="Active Instances"
               value={fmt(data.kpi.active.value)}
               sub={`${data.kpi.active.share}% of total`}
-              accent="bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400"
             />
             <KpiCard
               icon={CheckmarkCircle02Icon}
               label="Completed"
               value={fmt(data.kpi.completed.value)}
               delta={data.kpi.completed.delta}
-              accent="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
             />
             <KpiCard
               icon={Timer01Icon}
@@ -99,7 +96,6 @@ function ProcessAnalytics() {
               sub="per completed instance"
               delta={data.kpi.avgDays.delta}
               goodDown
-              accent="bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-400"
             />
           </div>
 
@@ -301,14 +297,12 @@ function WorkforceAnalytics() {
               label="Total Employees"
               value={fmt(data.kpi.headcount.value)}
               sub={`${net >= 0 ? "+" : ""}${net} net this period`}
-              accent="bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400"
             />
             <KpiCard
               icon={Building06Icon}
               label="Departments"
               value={String(data.kpi.departments.value)}
               sub={`across ${data.kpi.departments.locations} location${data.kpi.departments.locations === 1 ? "" : "s"}`}
-              accent="bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"
             />
             <KpiCard
               icon={Calendar03Icon}
@@ -316,14 +310,12 @@ function WorkforceAnalytics() {
               value={fmt(data.kpi.leaveDays.value)}
               delta={data.kpi.leaveDays.delta}
               goodDown
-              accent="bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400"
             />
             <KpiCard
               icon={UserAccountIcon}
               label="Open Positions"
               value={String(data.kpi.openRoles.value)}
               sub="currently hiring"
-              accent="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
             />
           </div>
 

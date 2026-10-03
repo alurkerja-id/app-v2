@@ -17,7 +17,6 @@ import { is } from "bpmn-js/lib/util/ModelUtil"
 import "bpmn-js/dist/assets/diagram-js.css"
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css"
 
-import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -59,6 +58,7 @@ import { cn } from "@/lib/utils"
 import { DashboardPage, useDashboardState } from "@/components/dashboard/dashboard-page"
 import { dateTriggerClass } from "@/components/dashboard/date-range-picker"
 import { ExportButton } from "@/components/dashboard/export-button"
+import { trayClass, trayPanelClass } from "@/components/dashboard/tray"
 import { rangeDays } from "@/lib/mock-series"
 import { fieldValues, type TypedFilterDef } from "@/lib/typed-filters"
 import {
@@ -471,11 +471,9 @@ export function ProcessDiscoveryPage() {
       </div>
 
       {/* Heatmap + table */}
-      <Card className="gap-0 overflow-hidden py-0">
-        <div className="flex items-center justify-between border-b border-border px-4 py-2">
-          <h3 className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-            Heatmap Analysis
-          </h3>
+      <section className={trayClass}>
+        <div className="flex items-center justify-between gap-2 py-1 pr-1 pl-3">
+          <h3 className="text-[13px] leading-5 font-medium text-muted-foreground">Heatmap Analysis</h3>
           <TooltipProvider>
             <div className="flex items-center gap-0.5">
               <ZoomBtn onClick={() => zoom(1 / 1.25)} icon={MinusSignIcon} tip="Zoom Out" />
@@ -517,7 +515,8 @@ export function ProcessDiscoveryPage() {
             </div>
           </TooltipProvider>
         </div>
-        <div className="h-[320px] w-full p-4 sm:h-[400px] md:h-[460px]">
+        <div className={cn(trayPanelClass, "overflow-hidden")}>
+        <div className="h-[320px] w-full p-3 sm:h-[400px] md:h-[460px]">
           <div ref={viewerRef} className="h-full w-full rounded-lg border border-border bg-card" />
         </div>
 
@@ -645,7 +644,8 @@ export function ProcessDiscoveryPage() {
             </Empty>
           )}
         </div>
-      </Card>
+        </div>
+      </section>
 
       <p className="text-center text-xs text-muted-foreground">
         Prototype — sample data for the Contract Approval process; counts scale with the selected period.
@@ -740,29 +740,30 @@ interface SummaryProps {
   tint: SummaryTint
 }
 
-const SUMMARY_TINTS: Record<SummaryTint, { card: string; ring: string; chip: string }> = {
-  neutral: { card: "from-slate-500/10", ring: "ring-slate-500/15", chip: "from-slate-400 to-slate-600" },
-  violet: { card: "from-violet-500/10", ring: "ring-violet-500/15", chip: "from-violet-400 to-violet-600" },
-  purple: { card: "from-purple-500/10", ring: "ring-purple-500/15", chip: "from-purple-400 to-purple-600" },
-  fuchsia: { card: "from-fuchsia-500/10", ring: "ring-fuchsia-500/15", chip: "from-fuchsia-400 to-fuchsia-600" },
-  pink: { card: "from-pink-500/10", ring: "ring-pink-500/15", chip: "from-pink-400 to-pink-600" },
-  emerald: { card: "from-emerald-500/10", ring: "ring-emerald-500/15", chip: "from-emerald-400 to-emerald-600" },
-  red: { card: "from-red-500/10", ring: "ring-red-500/15", chip: "from-red-400 to-red-600" },
+// The tray keeps colour for the icon only, where it still means something
+// (emerald = within SLA, red = breaches).
+const SUMMARY_TINTS: Record<SummaryTint, string> = {
+  neutral: "",
+  violet: "text-violet-500",
+  purple: "text-purple-500",
+  fuchsia: "text-fuchsia-500",
+  pink: "text-pink-500",
+  emerald: "text-emerald-500",
+  red: "text-red-500",
 }
 
 function SummaryCell({ label, value, sub, icon, tint }: SummaryProps) {
-  const tones = SUMMARY_TINTS[tint]
   return (
-    <div className={cn("relative overflow-hidden rounded-xl bg-gradient-to-br to-card px-3 py-2.5 ring-1 ring-inset", tones.card, tones.ring)}>
-      <div className="flex items-start gap-2.5">
-        <div className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-sm", tones.chip)}>
-          <HugeiconsIcon icon={icon} className="size-4" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[10px] font-semibold leading-5 tracking-wider text-muted-foreground uppercase">{label}</p>
-          <p className="mt-0.5 truncate text-lg font-bold leading-tight text-foreground" title={value}>{value}</p>
-          {sub && <p className="truncate text-[11px] font-medium text-muted-foreground">{sub}</p>}
-        </div>
+    <div className={trayClass}>
+      <div className="flex items-center gap-1.5 px-3 pt-1.5 pb-2 text-xs text-muted-foreground">
+        <HugeiconsIcon icon={icon} className={cn("size-3.5 shrink-0", SUMMARY_TINTS[tint])} />
+        <span className="truncate">{label}</span>
+      </div>
+      <div className={cn(trayPanelClass, "px-3.5 py-2.5")}>
+        <p className="truncate text-lg leading-tight font-semibold text-foreground" title={value}>
+          {value}
+        </p>
+        <p className="min-h-4 truncate text-[11px] text-muted-foreground">{sub}</p>
       </div>
     </div>
   )
