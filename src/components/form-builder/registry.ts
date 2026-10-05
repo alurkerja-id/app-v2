@@ -51,8 +51,21 @@ import { hidden } from "./components/hidden"
 import { image } from "./components/image"
 import { tabs } from "./components/tabs"
 import { wizard } from "./components/wizard"
+import { bankAccount } from "./components/bank-account"
+import { card } from "./components/card"
+import { colorPicker } from "./components/color"
+import { drawing } from "./components/drawing"
+import { duration } from "./components/duration"
+import { otp } from "./components/otp"
+import { qrDisplay } from "./components/qr-display"
+import { ranking } from "./components/ranking"
+import { systemField } from "./components/system-field"
+import { timeRange } from "./components/time-range"
+import { treeSelect } from "./components/tree-select"
+import { video } from "./components/video"
+import { weekPicker } from "./components/week"
 
-/** Wave 1 (8), Wave 2 (12), Wave 3 (7), in shaping order. */
+/** Wave 1 (8), Wave 2 (12), Wave 3 (7), Wave 4 (13), in shaping order. */
 export const COMPONENTS: AnyComponentDef[] = [
   repeater,
   apiTable,
@@ -81,6 +94,19 @@ export const COMPONENTS: AnyComponentDef[] = [
   alert,
   docPreview,
   hidden,
+  card,
+  timeRange,
+  duration,
+  weekPicker,
+  colorPicker,
+  treeSelect,
+  ranking,
+  otp,
+  drawing,
+  video,
+  qrDisplay,
+  systemField,
+  bankAccount,
 ]
 
 export const compBySlug = (slug: string | undefined) => COMPONENTS.find((c) => c.slug === slug)
@@ -110,6 +136,14 @@ export const WAVES: Record<Wave, { label: L10n; blurb: L10n; schedule: L10n }> =
     ),
     schedule: L("6–12 Nov 2026", "6–12 Nov 2026"),
   },
+  4: {
+    label: L("Wave 4", "Gelombang 4"),
+    blurb: L(
+      "Thirteen finishing components: time, choice, media, system data and bank account. The first wave to cut if time runs short.",
+      "Tiga belas komponen pelengkap: waktu, pilihan, media, data sistem, dan rekening bank. Gelombang pertama yang dipotong bila waktu tidak cukup.",
+    ),
+    schedule: L("13–19 Nov 2026", "13–19 Nov 2026"),
+  },
 }
 
 export const WEEKS: Record<Week, L10n> = {
@@ -118,6 +152,7 @@ export const WEEKS: Record<Week, L10n> = {
   3: L("Week 3 · 23–29 Oct", "Minggu 3 · 23–29 Okt"),
   4: L("Week 4 · 30 Oct–5 Nov", "Minggu 4 · 30 Okt–5 Nov"),
   5: L("Week 5 · 6–12 Nov", "Minggu 5 · 6–12 Nov"),
+  6: L("Week 6 · 13–19 Nov", "Minggu 6 · 13–19 Nov"),
 }
 
 /** Shaping links shown on the overview. */
@@ -163,6 +198,8 @@ export const PALETTE: PaletteGroup[] = [
       existing("textarea", TextAlignLeftIcon, L("Textarea", "Teks panjang"), "long text paragraph catatan"),
       fresh("phone", "phone telepon hp handphone ponsel nomor whatsapp wa mobile"),
       fresh("tags", "tags tag label keyword kata kunci chips multiple"),
+      fresh("otp", "otp pin code kode verifikasi verification sandi password digit"),
+      fresh("bank-account", "bank rekening account nomor norek transfer bca mandiri bri bni reimburse"),
     ],
   },
   {
@@ -175,6 +212,8 @@ export const PALETTE: PaletteGroup[] = [
       existing("switch", ToggleOnIcon, L("Switch", "Sakelar"), "toggle on off ya tidak"),
       fresh("autocomplete", "autocomplete typeahead search cari saran isian otomatis combobox"),
       fresh("cascading", "cascading dependent dropdown bertingkat berantai kategori subkategori"),
+      fresh("tree-select", "tree pohon hierarchy hierarki kategori category nested bertingkat unit org"),
+      fresh("color", "color colour warna hex palet palette swatch"),
     ],
   },
   {
@@ -185,6 +224,9 @@ export const PALETTE: PaletteGroup[] = [
       existing("time", Clock01Icon, L("Time", "Waktu"), "jam"),
       existing("month", Calendar02Icon, L("Month", "Bulan"), "month year"),
       fresh("date-range", "period periode durasi duration cuti leave start end mulai selesai"),
+      fresh("time-range", "time range jam mulai selesai shift lembur overtime rentang waktu"),
+      fresh("duration", "duration durasi lama waktu jam menit hours minutes timesheet effort"),
+      fresh("week", "week minggu pekan iso laporan mingguan weekly report"),
     ],
   },
   {
@@ -196,6 +238,7 @@ export const PALETTE: PaletteGroup[] = [
       fresh("nps", "nps net promoter score rekomendasi recommend 0-10"),
       fresh("likert", "likert setuju agree skala scale pernyataan statement"),
       fresh("matrix", "matrix matriks grid kepuasan satisfaction survey survei"),
+      fresh("ranking", "ranking urutan peringkat prioritas priority order sort drag"),
     ],
   },
   {
@@ -208,6 +251,7 @@ export const PALETTE: PaletteGroup[] = [
       fresh("barcode", "barcode qr scan pindai kamera camera kode aset asset"),
       fresh("location", "location lokasi gps map peta koordinat pin titik"),
       fresh("wilayah", "region wilayah provinsi kabupaten kota kecamatan kelurahan desa alamat address"),
+      fresh("drawing", "drawing sketsa gambar coret tandai mark damage kerusakan canvas kanvas"),
     ],
   },
   {
@@ -220,6 +264,7 @@ export const PALETTE: PaletteGroup[] = [
       fresh("tabs", "tabs tab halaman bagian section container"),
       fresh("accordion", "accordion akordeon collapse lipat bagian section container"),
       fresh("wizard", "wizard multi step langkah tahap bertahap stepper next lanjut"),
+      fresh("card", "card kartu fieldset group grup kelompok panel container wadah"),
     ],
   },
   {
@@ -232,6 +277,8 @@ export const PALETTE: PaletteGroup[] = [
       fresh("image", "image gambar foto picture photo denah logo"),
       fresh("alert", "alert callout info warning peringatan catatan pemberitahuan banner"),
       fresh("doc-preview", "pdf preview pratinjau dokumen document viewer lampiran attachment"),
+      fresh("video", "video youtube vimeo embed sematan putar play tonton induksi"),
+      fresh("qr-display", "qr code kode tampil display label aset asset generate buat"),
     ],
   },
   {
@@ -243,6 +290,7 @@ export const PALETTE: PaletteGroup[] = [
       fresh("repeater", "repeat rows array list line items baris berulang daftar rincian tabel input"),
       fresh("api-table", "api endpoint table tabel grid read only baca okr"),
       fresh("hidden", "hidden tersembunyi variabel default nilai tetap user id utm parameter"),
+      fresh("system-field", "system sistem nomor permintaan request number pemohon requester tanggal task id"),
     ],
   },
   {

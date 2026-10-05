@@ -119,7 +119,7 @@ const dateTriggerClass =
 type FieldState = "active" | "readonly" | "disabled"
 
 /** New components whose control is a table or grid: their three states are stacked. */
-const REVAMP_WIDE = new Set(["repeater", "api-table", "matrix", "tabs", "accordion", "wizard", "doc-preview"])
+const REVAMP_WIDE = new Set(["repeater", "api-table", "matrix", "tabs", "accordion", "wizard", "doc-preview", "card", "drawing", "video"])
 
 const FIELD_STATES: { id: FieldState; label: string; note: string }[] = [
   { id: "active", label: "Active", note: "editable" },
@@ -1181,8 +1181,8 @@ export function FormComponentsPage() {
           )}</ShowField>
         </Section>
 
-        {/* ── Form builder revamp: the new components of Wave 1 and Wave 2 ── */}
-        {([1, 2, 3] as const).map((w) => (
+        {/* ── Form builder revamp: the new components of Waves 1–4 ── */}
+        {([1, 2, 3, 4] as const).map((w) => (
           <Section key={w} id={`revamp-wave-${w}`} title={`Form builder revamp · Wave ${w}`} visible={show("revamp")}>
             <p className="border-b border-border/60 py-4 text-xs text-muted-foreground">
               New components from shaping task 147071. Edit Element, spec and payload of each one are on{" "}

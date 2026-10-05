@@ -11,8 +11,8 @@ export type FieldState = "active" | "readonly" | "disabled"
 /** How the value travels in the payload (shaping: value_kind contract). */
 export type ValueKind = "string" | "number" | "boolean" | "list" | "json" | "file" | "none"
 
-export type Wave = 1 | 2 | 3
-export type Week = 1 | 2 | 3 | 4 | 5
+export type Wave = 1 | 2 | 3 | 4
+export type Week = 1 | 2 | 3 | 4 | 5 | 6
 export type GroupId = "input" | "choice" | "date" | "survey" | "field" | "layout" | "display" | "data" | "advanced"
 
 /** Tabs of Studio's Edit Element modal. */

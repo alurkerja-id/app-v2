@@ -84,9 +84,10 @@ function childError(c: ChildField, sections: Section[], hint: L10n): L10n | null
   return null
 }
 
-/* ── fields of one section: list, add (type picker), reorder, remove, edit ── */
+/* ── fields of one section: list, add (type picker), reorder, remove, edit ──
+   Also used by Card / fieldset, which passes itself as the only section. */
 
-function FieldList({
+export function FieldList({
   fields,
   sections,
   onFields,

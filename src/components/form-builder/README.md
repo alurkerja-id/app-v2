@@ -1,6 +1,6 @@
-# Form builder revamp — new components (Waves 1–3)
+# Form builder revamp — new components (Waves 1–4)
 
-Prototype of the 27 new Studio form components from shaping task 147071, merged into app-v2
+Prototype of the 40 new Studio form components from shaping task 147071, merged into app-v2
 from the HTML prototype. Mock data only — nothing here talks to a backend.
 
 - Overview: `/pages/form-builder` (Pages → Form Builder in the sidebar)
@@ -22,7 +22,7 @@ The visuals follow app-v2 (shadcn Luma, HugeIcons, light + dark); they are illus
 | `edit-element-dialog.tsx` | Studio's Edit Element modal: General · Logic · Validation, Save / Discard |
 | `workbench.tsx` | Builder (palette + canvas), Runtime (task form), Data (spec + payload) |
 | `palette.tsx` | Regrouped palette, search in EN + ID, "New" badges |
-| `registry.ts` | The 27 components, waves, weeks, palette groups, value kinds |
+| `registry.ts` | The 40 components, waves, weeks, palette groups, value kinds |
 | `components/container-*.tsx` | Shared model, Edit Element list and runtime fields for Tabs, Accordion and Wizard |
 | `revamp-field.tsx` | One runtime control for the Form Component page |
 | `components/<slug>.tsx` | One module per component; exports one `ComponentDef` |
@@ -63,12 +63,15 @@ Use `components/rating.tsx` (simple) and `components/matrix.tsx` (lists, JSON va
       `canvasWarn` (badge on the canvas node).
     - `valueKindOf(p)` — when the value kind depends on a setting (Hidden field: Value type).
 
-## Containers (Tabs, Accordion, Multi-step wizard)
+## Containers (Tabs, Accordion, Multi-step wizard, Card / fieldset)
 
 Each tab / section / step is a child node with its own `children`; the fields inside stay top-level
 process variables. Build on `container-model.tsx` (sections, issues per section, flat entries, spec children),
 `container-editor.tsx` (`SectionsEditor`: the two-level list in Edit Element) and `container-ui.tsx`
 (`SectionFields`, `IssueBadge`).
+
+Card / fieldset has no section level: it passes itself to `FieldList` as the only section, and its spec lists the fields
+directly in `children` (like Row / Column).
 
 - `vk: "none"` plus **`payloadEntries(p, r)`**: the container sends no key of its own, only one flat entry per field.
 - Field keys are unique across the whole form (`childKeyError`), not per tab.
