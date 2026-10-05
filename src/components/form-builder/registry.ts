@@ -44,8 +44,15 @@ import { slider } from "./components/slider"
 import { tags } from "./components/tags"
 import { templateUpload } from "./components/template-upload"
 import { wilayah } from "./components/wilayah"
+import { accordion } from "./components/accordion"
+import { alert } from "./components/alert"
+import { docPreview } from "./components/doc-preview"
+import { hidden } from "./components/hidden"
+import { image } from "./components/image"
+import { tabs } from "./components/tabs"
+import { wizard } from "./components/wizard"
 
-/** Wave 1 (8) then Wave 2 (12), in shaping order. */
+/** Wave 1 (8), Wave 2 (12), Wave 3 (7), in shaping order. */
 export const COMPONENTS: AnyComponentDef[] = [
   repeater,
   apiTable,
@@ -67,6 +74,13 @@ export const COMPONENTS: AnyComponentDef[] = [
   barcode,
   location,
   wilayah,
+  tabs,
+  accordion,
+  wizard,
+  image,
+  alert,
+  docPreview,
+  hidden,
 ]
 
 export const compBySlug = (slug: string | undefined) => COMPONENTS.find((c) => c.slug === slug)
@@ -88,6 +102,14 @@ export const WAVES: Record<Wave, { label: L10n; blurb: L10n; schedule: L10n }> =
     ),
     schedule: L("23 Oct – 5 Nov 2026", "23 Okt – 5 Nov 2026"),
   },
+  3: {
+    label: L("Wave 3", "Gelombang 3"),
+    blurb: L(
+      "Seven layout, display and data components: three ★ containers, image, callout, document preview and hidden field.",
+      "Tujuh komponen tata letak, tampilan, dan data: tiga container ★, gambar, callout, pratinjau dokumen, dan field tersembunyi.",
+    ),
+    schedule: L("6–12 Nov 2026", "6–12 Nov 2026"),
+  },
 }
 
 export const WEEKS: Record<Week, L10n> = {
@@ -95,6 +117,7 @@ export const WEEKS: Record<Week, L10n> = {
   2: L("Week 2 · 16–22 Oct", "Minggu 2 · 16–22 Okt"),
   3: L("Week 3 · 23–29 Oct", "Minggu 3 · 23–29 Okt"),
   4: L("Week 4 · 30 Oct–5 Nov", "Minggu 4 · 30 Okt–5 Nov"),
+  5: L("Week 5 · 6–12 Nov", "Minggu 5 · 6–12 Nov"),
 }
 
 /** Shaping links shown on the overview. */
@@ -194,6 +217,9 @@ export const PALETTE: PaletteGroup[] = [
       existing("row", LayoutTwoRowIcon, L("Row", "Baris"), "container wadah"),
       existing("column", LayoutTwoColumnIcon, L("Column", "Kolom"), "container wadah"),
       existing("grid", LayoutGridIcon, L("Grid", "Grid"), "container wadah kisi"),
+      fresh("tabs", "tabs tab halaman bagian section container"),
+      fresh("accordion", "accordion akordeon collapse lipat bagian section container"),
+      fresh("wizard", "wizard multi step langkah tahap bertahap stepper next lanjut"),
     ],
   },
   {
@@ -203,6 +229,9 @@ export const PALETTE: PaletteGroup[] = [
       fresh("paragraph", "text teks static statis keterangan description"),
       fresh("link", "url hyperlink button tombol tautan"),
       fresh("rich-text", "html formatted variable variabel catatan notes"),
+      fresh("image", "image gambar foto picture photo denah logo"),
+      fresh("alert", "alert callout info warning peringatan catatan pemberitahuan banner"),
+      fresh("doc-preview", "pdf preview pratinjau dokumen document viewer lampiran attachment"),
     ],
   },
   {
@@ -213,6 +242,7 @@ export const PALETTE: PaletteGroup[] = [
       existing("masterdata", Database01Icon, L("Master data select", "Pilihan master data"), "master data dropdown"),
       fresh("repeater", "repeat rows array list line items baris berulang daftar rincian tabel input"),
       fresh("api-table", "api endpoint table tabel grid read only baca okr"),
+      fresh("hidden", "hidden tersembunyi variabel default nilai tetap user id utm parameter"),
     ],
   },
   {

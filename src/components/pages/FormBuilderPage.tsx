@@ -50,7 +50,7 @@ function readRoute(): Route {
   return {
     slug: m?.[1],
     tab: tab === "runtime" || tab === "data" ? tab : "builder",
-    wave: w === "2" ? 2 : 1,
+    wave: w === "3" ? 3 : w === "2" ? 2 : 1,
   }
 }
 
@@ -124,9 +124,9 @@ function Overview({ wave, onWave, onOpen }: { wave: Wave; onWave: (w: Wave) => v
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 rounded-b-[inherit] border-t border-border/60 bg-muted/60 px-3 py-2.5 group-data-[scrolled]/header:border-t-0 sm:px-4 dark:bg-muted/30">
-          <Tabs value={String(wave)} onValueChange={(v) => onWave(v === "2" ? 2 : 1)}>
+          <Tabs value={String(wave)} onValueChange={(v) => onWave(v === "3" ? 3 : v === "2" ? 2 : 1)}>
             <TabsList>
-              {([1, 2] as Wave[]).map((w) => (
+              {([1, 2, 3] as Wave[]).map((w) => (
                 <TabsTrigger key={w} value={String(w)} className="px-3">
                   {t(WAVES[w].label)}
                   <span className="text-xs text-muted-foreground tabular-nums">{COMPONENTS.filter((c) => c.wave === w).length}</span>

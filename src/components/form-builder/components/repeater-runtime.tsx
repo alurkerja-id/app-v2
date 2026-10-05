@@ -75,7 +75,8 @@ function MoneyInput({ digits, onDigits, className, ...rest }: Omit<ComponentProp
 }
 
 /** One child control in a cell (table) or a card. */
-function CellControl({
+/** One child field control (also used by the Tabs, Accordion and Wizard containers). */
+export function CellControl({
   f,
   value,
   onValue,
