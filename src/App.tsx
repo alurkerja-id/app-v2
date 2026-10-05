@@ -14,6 +14,7 @@ import { PositionsPage } from "@/components/pages/master-data/PositionsPage"
 import { LocationsPage } from "@/components/pages/master-data/LocationsPage"
 import { StartProcessPage } from "@/components/pages/StartProcessPage"
 import { FormComponentsPage } from "@/components/pages/FormComponentsPage"
+import { FormBuilderPage } from "@/components/pages/FormBuilderPage"
 import { FilterPatternsPage } from "@/components/pages/FilterPatternsPage"
 import { CardPatternsPage } from "@/components/pages/CardPatternsPage"
 import { BusinessProcessesPage } from "@/components/pages/BusinessProcessesPage"
@@ -41,6 +42,7 @@ const PAGE_PATHS: Record<Page, string> = {
   "md-locations": "/master-data/locations",
   start: "/start",
   "form-component": "/pages/form-component",
+  "form-builder": "/pages/form-builder",
   "filter-patterns": "/pages/filter-patterns",
   "card-patterns": "/pages/card-patterns",
   "business-processes": "/business-processes",
@@ -55,6 +57,7 @@ function getPageFromPathname(pathname: string): Page {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/"
   if (normalizedPath.startsWith("/business-processes")) return "business-processes"
   if (normalizedPath.startsWith("/invite_link")) return "invite-link"
+  if (normalizedPath.startsWith("/pages/form-builder")) return "form-builder"
   const match = Object.entries(PAGE_PATHS).find(([, path]) => path === normalizedPath)
   return (match?.[0] as Page | undefined) ?? "home"
 }
@@ -73,9 +76,12 @@ export default function App() {
   const [activePage, setActivePage] = useState<Page>(() => getPageFromPathname(window.location.pathname))
   const [activeProcessId, setActiveProcessId] = useState<string | undefined>(() => getProcessIdFromPathname(window.location.pathname))
   const [activeInviteToken, setActiveInviteToken] = useState<string | undefined>(() => getInviteTokenFromPathname(window.location.pathname))
+  // Bumped on every sidebar navigation so a page with sub-routes (Form Builder) returns to its start.
+  const [navNonce, setNavNonce] = useState(0)
 
   const navigate = useCallback((page: Page) => {
     setActivePage(page)
+    setNavNonce((n) => n + 1)
     if (page !== "business-processes") setActiveProcessId(undefined)
     const nextPath = PAGE_PATHS[page]
     const currentPath = window.location.pathname.replace(/\/+$/, "") || "/"
@@ -143,6 +149,8 @@ export default function App() {
         return <CardPatternsPage />
       case "form-component":
         return <FormComponentsPage />
+      case "form-builder":
+        return <FormBuilderPage key={navNonce} />
       case "business-processes":
         return <BusinessProcessesPage processId={activeProcessId} />
       case "analytics-process":
