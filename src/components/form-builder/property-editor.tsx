@@ -103,6 +103,7 @@ function PropFieldView<P extends object>({ field: f, props, onChange }: { field:
   if (f.t === "custom") {
     return (
       <div className="flex flex-col gap-1.5">
+        {f.label && <p className="text-sm font-medium">{t(f.label)}</p>}
         {f.render({ props, set, lang })}
         {error && <FieldMsg error={error} />}
       </div>

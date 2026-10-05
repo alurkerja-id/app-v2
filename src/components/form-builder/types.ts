@@ -11,8 +11,8 @@ export type FieldState = "active" | "readonly" | "disabled"
 /** How the value travels in the payload (shaping: value_kind contract). */
 export type ValueKind = "string" | "number" | "boolean" | "list" | "json" | "file" | "none"
 
-export type Wave = 1 | 2
-export type Week = 1 | 2 | 3 | 4
+export type Wave = 1 | 2 | 3
+export type Week = 1 | 2 | 3 | 4 | 5
 export type GroupId = "input" | "choice" | "date" | "survey" | "field" | "layout" | "display" | "data" | "advanced"
 
 /** Tabs of Studio's Edit Element modal. */
@@ -188,6 +188,13 @@ export interface ComponentDef<P, R> {
   value: (p: P, r: R) => unknown
   /** Payload key; defaults to `p.name`. */
   payloadKey?: (p: P) => string
+  /**
+   * Containers (Tabs, Accordion, Wizard): the child fields' own keys go straight into
+   * the payload — flat, one process variable each — instead of one key for the component.
+   */
+  payloadEntries?: (p: P, r: R) => Record<string, unknown>
+  /** value_kind when it depends on a setting (Hidden field); defaults to `vk`. */
+  valueKindOf?: (p: P) => ValueKind
   /** Simulation controls (camera, GPS…) shown beside the runtime form. */
   Controls?: (props: { props: P; value: R; onChange: (next: R) => void; state: FieldState }) => ReactNode
   /** Show the simulation card only when this returns true (default: whenever `Controls` is set). */

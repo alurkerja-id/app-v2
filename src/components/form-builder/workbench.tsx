@@ -86,7 +86,8 @@ export function Workbench({ def, tab, onPick, onTab }: { def: AnyComponentDef; t
   const payload = useMemo(() => {
     const o: Record<string, unknown> = {}
     for (const f of story.before ?? []) o[f.name] = coerce(f, storyVals[f.name] ?? "")
-    if (def.vk !== "none") o[key] = def.value(props, value)
+    if (def.payloadEntries) Object.assign(o, def.payloadEntries(props, value))
+    else if (def.vk !== "none") o[key] = def.value(props, value)
     for (const f of story.after ?? []) o[f.name] = coerce(f, storyVals[f.name] ?? "")
     return o
   }, [def, props, value, storyVals, story, key])
@@ -116,7 +117,8 @@ export function Workbench({ def, tab, onPick, onTab }: { def: AnyComponentDef; t
     setAttempted(true)
     const found = [...(fieldState === "active" ? def.validate(props, value) : []), ...storyIssues(storyFields, storyVals)]
     if (found.length) {
-      const fields = new Set(found.map((i) => (i.fid.startsWith("story-") ? i.fid : "main"))).size
+      // Containers: every child field is its own variable, so count them one by one.
+      const fields = new Set(found.map((i) => (i.fid.startsWith("story-") || def.payloadEntries ? i.fid : "main"))).size
       toast.error(t(L(`${fields} field${fields === 1 ? "" : "s"} to fix`, `${fields} isian perlu diperbaiki`)), {
         description: t(found[0].msg),
       })
@@ -146,7 +148,7 @@ export function Workbench({ def, tab, onPick, onTab }: { def: AnyComponentDef; t
           storyVals={storyVals}
           setStoryVals={setStoryVals}
           issues={issues}
-          liveValue={def.vk === "none" ? undefined : payload[key]}
+          liveValue={def.payloadEntries ? def.payloadEntries(props, value) : def.vk === "none" ? undefined : payload[key]}
           payloadKey={key}
           onReset={reset}
           onComplete={complete}
@@ -269,7 +271,7 @@ function BuilderView({ def, props, onPick, onEdit }: { def: AnyComponentDef; pro
           <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-4">
             {[
               { k: "ui_type", v: def.fft ? `${def.ui} · ${def.fft}` : def.ui },
-              { k: "value_kind", v: def.vk },
+              { k: "value_kind", v: def.valueKindOf?.(props) ?? def.vk },
               { k: t(L("Key", "Key")), v: name || "—" },
               { k: t(L("Required", "Wajib")), v: def.vk === "none" ? "—" : required ? t(L("Yes", "Ya")) : t(L("No", "Tidak")) },
             ].map((x) => (
@@ -467,7 +469,7 @@ function TaskForm({
 
       <div className="flex flex-col divide-y divide-border">
         {(s.before ?? []).map(storyField)}
-        <div className="px-5 py-4 sm:px-6" data-has-issue={own.length > 0 || undefined}>
+        <div className="px-5 py-4 sm:px-6" data-has-issue={own.length > 0 || undefined} data-component-slot={def.slug}>
           {showLabel ? (
             <FieldShell label={def.fieldLabel(props)} required={def.isRequired(props)} labelId={`${id}-label`} htmlFor={`${id}-input`} issues={own}>
               <Runtime props={props} value={value} onChange={setValue} state={fieldState} issues={own} compact={compact} id={id} />
@@ -596,8 +598,20 @@ function RuntimeView({
             </Card>
           )}
           {Aside && <Aside props={props} value={value} />}
-          {def.vk !== "none" ? (
-            <JsonBlock title={L("Live value", "Nilai saat ini")} sub={`${payloadKey} · value_kind ${def.vk}`} value={liveValue} maxHeight="22rem" />
+          {def.payloadEntries ? (
+            <JsonBlock
+              title={L("Live values", "Nilai saat ini")}
+              sub={L("Child fields · one process variable each", "Field anak · masing-masing satu variabel proses")}
+              value={liveValue}
+              maxHeight="22rem"
+            />
+          ) : def.vk !== "none" ? (
+            <JsonBlock
+              title={L("Live value", "Nilai saat ini")}
+              sub={`${payloadKey} · value_kind ${def.valueKindOf?.(props) ?? def.vk}`}
+              value={liveValue}
+              maxHeight="22rem"
+            />
           ) : (
             <Card className="gap-1 p-4">
               <p className="text-xs font-semibold">{t(L("No value", "Tanpa nilai"))}</p>
@@ -638,7 +652,7 @@ function DataView({
   submitted: Record<string, unknown> | null
 }) {
   const t = useT()
-  const vk = VALUE_KINDS[def.vk]
+  const vk = VALUE_KINDS[def.valueKindOf?.(props) ?? def.vk]
   return (
     <div className="flex flex-col gap-5">
       <div className="grid items-start gap-5 lg:grid-cols-2">
@@ -655,7 +669,7 @@ function DataView({
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-semibold">{t(L("How the value is saved", "Cara nilai disimpan"))}</p>
             <Badge variant="outline" className="font-mono text-[10px]">
-              value_kind: {def.vk}
+              value_kind: {def.valueKindOf?.(props) ?? def.vk}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
