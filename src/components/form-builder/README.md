@@ -1,6 +1,6 @@
-# Form builder revamp — new components (Wave 1 + 2)
+# Form builder revamp — new components (Waves 1–3)
 
-Prototype of the 20 new Studio form components from shaping task 147071, merged into app-v2
+Prototype of the 27 new Studio form components from shaping task 147071, merged into app-v2
 from the HTML prototype. Mock data only — nothing here talks to a backend.
 
 - Overview: `/pages/form-builder` (Pages → Form Builder in the sidebar)
@@ -22,7 +22,8 @@ The visuals follow app-v2 (shadcn Luma, HugeIcons, light + dark); they are illus
 | `edit-element-dialog.tsx` | Studio's Edit Element modal: General · Logic · Validation, Save / Discard |
 | `workbench.tsx` | Builder (palette + canvas), Runtime (task form), Data (spec + payload) |
 | `palette.tsx` | Regrouped palette, search in EN + ID, "New" badges |
-| `registry.ts` | The 20 components, waves, weeks, palette groups, value kinds |
+| `registry.ts` | The 27 components, waves, weeks, palette groups, value kinds |
+| `components/container-*.tsx` | Shared model, Edit Element list and runtime fields for Tabs, Accordion and Wizard |
 | `revamp-field.tsx` | One runtime control for the Form Component page |
 | `components/<slug>.tsx` | One module per component; exports one `ComponentDef` |
 
@@ -60,6 +61,18 @@ Use `components/rating.tsx` (simple) and `components/matrix.tsx` (lists, JSON va
     - `dataExtra(p, r)` — extra JSON blocks in the Data tab (e.g. a sample API response).
     - `devices: true` (desktop / phone switch), `bare: true` (no label: Paragraph, Link),
       `canvasWarn` (badge on the canvas node).
+    - `valueKindOf(p)` — when the value kind depends on a setting (Hidden field: Value type).
+
+## Containers (Tabs, Accordion, Multi-step wizard)
+
+Each tab / section / step is a child node with its own `children`; the fields inside stay top-level
+process variables. Build on `container-model.tsx` (sections, issues per section, flat entries, spec children),
+`container-editor.tsx` (`SectionsEditor`: the two-level list in Edit Element) and `container-ui.tsx`
+(`SectionFields`, `IssueBadge`).
+
+- `vk: "none"` plus **`payloadEntries(p, r)`**: the container sends no key of its own, only one flat entry per field.
+- Field keys are unique across the whole form (`childKeyError`), not per tab.
+- `validate` checks every section, also the ones that are not open; issue fids come from `fieldFid`.
 
 Note: `ui/calendar` defines its `Root` and `DayButton` inline, so a calendar that re-renders while the
 pointer moves (e.g. a hover preview) must pass stable ones through `components` — see `date-range.tsx`.
