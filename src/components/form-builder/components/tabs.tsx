@@ -320,7 +320,7 @@ export const tabs: ComponentDef<TabsProps, TabsValue> = {
 
   Runtime: TabsRuntime,
   initial: (p) => ({ vals: valsByKey(p.sections, STORY_VALUES), active: firstTab(p)?.id ?? "" }),
-  sample: (p) => ({ vals: fillVals(p.sections, { ...STORY_VALUES, pic_email: "dewi@mitrakantor.co.id", bank: "bca", account_number: "1320012345678", account_holder: "CV Mitra Kantor" }), active: firstTab(p)?.id ?? "" }),
+  sample: (p) => ({ vals: fillVals(p.sections, { ...STORY_VALUES, pic_email: "dewi@mitrakantor.co.id", pic_phone: "0812-3456-7890", bank: "bca", account_number: "1320012345678", account_holder: "CV Mitra Kantor" }), active: firstTab(p)?.id ?? "" }),
   validate: (p, v) => containerIssues(p.sections, v.vals),
   value: () => undefined,
   payloadEntries: (p, v) => entries(p.sections, v.vals),
