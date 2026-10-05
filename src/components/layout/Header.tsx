@@ -47,6 +47,7 @@ const PAGE_BREADCRUMBS: Record<Page, string[]> = {
   "md-locations": ["Master Data", "Locations"],
   start: ["Start Process", "Formulation"],
   "form-component": ["Pages", "Form Component"],
+  "form-builder": ["Pages", "Form Builder"],
   "filter-patterns": ["Pages", "Filter Patterns"],
   "card-patterns": ["Pages", "Card Patterns"],
   "business-processes": ["Business Processes"],

@@ -36,6 +36,8 @@ import {
   ComboboxEmpty,
 } from "@/components/ui/combobox"
 import { DateRangePicker, formatRange } from "@/components/dashboard/date-range-picker"
+import { COMPONENTS } from "@/components/form-builder/registry"
+import { RevampField } from "@/components/form-builder/revamp-field"
 import type { DateRangeValue } from "@/lib/date-presets"
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -116,6 +118,9 @@ const dateTriggerClass =
 
 type FieldState = "active" | "readonly" | "disabled"
 
+/** New components whose control is a table or grid: their three states are stacked. */
+const REVAMP_WIDE = new Set(["repeater", "api-table", "matrix"])
+
 const FIELD_STATES: { id: FieldState; label: string; note: string }[] = [
   { id: "active", label: "Active", note: "editable" },
   { id: "readonly", label: "Read-only", note: "value shown · selectable · submitted" },
@@ -151,10 +156,13 @@ const READONLY_COLUMN_CLASS = cn(
 function ShowField({
   title,
   hint,
+  wide = false,
   children,
 }: {
   title: string
   hint?: string
+  /** Stack the three states (tables and grids need the full width). */
+  wide?: boolean
   children: (state: FieldState) => React.ReactNode
 }) {
   return (
@@ -163,11 +171,11 @@ function ShowField({
         {title}
         {hint && <span className="ml-1.5 font-normal text-muted-foreground">— {hint}</span>}
       </p>
-      <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+      <div className={cn("grid gap-6", wide ? "grid-cols-1" : "grid-cols-3 max-lg:grid-cols-1")}>
         {FIELD_STATES.map((st) => (
           <div key={st.id} className="min-w-0">
-            {/* per-column label, only on stacked (mobile) layout */}
-            <p className="mb-1.5 hidden text-[10px] font-semibold uppercase tracking-wider text-muted-foreground max-lg:block">
+            {/* per-column label, only on stacked (mobile or wide) layout */}
+            <p className={cn("mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", wide ? "block" : "hidden max-lg:block")}>
               {st.label}
             </p>
             <div
@@ -1031,11 +1039,12 @@ export function FormComponentsPage() {
   const { theme, setTheme } = useTheme()
   const [filter, setFilter] = useState("all")
   const FILTERS = [
-    { id: "all", label: "All", count: 40 },
+    { id: "all", label: "All", count: 40 + COMPONENTS.length },
     { id: "text", label: "Basic", count: 13 },
     { id: "choice", label: "Choice & Selection", count: 12 },
     { id: "date", label: "Date & Time", count: 6 },
     { id: "advanced", label: "Advanced", count: 9 },
+    { id: "revamp", label: "Form builder revamp", count: COMPONENTS.length },
   ]
   const show = (id: string) => filter === "all" || filter === id
 
@@ -1171,6 +1180,29 @@ export function FormComponentsPage() {
             </div>
           )}</ShowField>
         </Section>
+
+        {/* ── Form builder revamp: the new components of Wave 1 and Wave 2 ── */}
+        {([1, 2] as const).map((w) => (
+          <Section key={w} id={`revamp-wave-${w}`} title={`Form builder revamp · Wave ${w}`} visible={show("revamp")}>
+            <p className="border-b border-border/60 py-4 text-xs text-muted-foreground">
+              New components from shaping task 147071. Edit Element, spec and payload of each one are on{" "}
+              <a href={`/pages/form-builder?wave=${w}`} className="font-medium text-foreground underline underline-offset-4">
+                Pages → Form Builder
+              </a>
+              .
+            </p>
+            {COMPONENTS.filter((c) => c.wave === w).map((c) => (
+              <ShowField
+                key={c.slug}
+                title={c.title.en + (c.star ? " ★" : "")}
+                hint={`${c.ui}${c.fft ? ` · ${c.fft}` : ""} · ${c.vk}`}
+                wide={REVAMP_WIDE.has(c.slug)}
+              >
+                {(s) => <RevampField def={c} state={s} />}
+              </ShowField>
+            ))}
+          </Section>
+        ))}
 
         <Separator className="my-4" />
         <p className="pb-8 text-center text-xs text-muted-foreground">
